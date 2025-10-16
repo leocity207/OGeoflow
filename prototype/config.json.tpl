@@ -1,0 +1,6 @@
+{
+
+	"LOG": {
+		"level": "WARNING"
+	},
+}

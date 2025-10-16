@@ -1,0 +1,56 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files (if applicable)
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directories (e.g., for CMake, Visual Studio)
+build/
+out/
+bin/
+Debug/
+Release/
+
+# IDE-specific files (e.g., Visual Studio, CLion, VS Code)
+.vs/
+*.suo
+*.user
+*.ncb
+*.opensdf
+*.sdf
+.idea/
+.vscode/
+
+# Temporary files
+*~
+*.bak
+*.swp
+*.tmp
+
+# Log files
+*.log
+*.geojson
