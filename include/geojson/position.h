@@ -6,14 +6,11 @@
 namespace GeoJSON
 {
 
-	struct Position {
-		double longitude;
-		double latitude;
+	struct Position
+	{
+		double longitude = 0;
+		double latitude = 0;
 		std::optional<double> altitude;
-
-		Position();
-		Position(double lon, double lat);
-		Position(double lon, double lat, double alt);
 	};
 }
 

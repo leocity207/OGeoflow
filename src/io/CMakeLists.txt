@@ -11,7 +11,6 @@ add_library(io STATIC
 #//////////////
 # LIBRARY LINKS
 target_link_libraries(io
-	PRIVATE geojson
 	PRIVATE RapidJSON::rapidjson
 )
 

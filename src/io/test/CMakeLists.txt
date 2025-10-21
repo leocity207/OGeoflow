@@ -14,10 +14,9 @@ add_executable( io_test
 
 #////////////////
 # EXECUTABLE LINK
-target_link_libraries( io_test
+target_link_libraries(io_test
 	PRIVATE GTest::gtest_main
 	PRIVATE io
-	PRIVATE geojson
 	PRIVATE RapidJSON::rapidjson
 )
 

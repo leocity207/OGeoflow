@@ -48,7 +48,6 @@ set_target_properties(RapidJSON::rapidjson PROPERTIES
 
 #------------------------------------
 # subdirectory include
-add_subdirectory(src/geojson)
 add_subdirectory(src/io)
 
 
