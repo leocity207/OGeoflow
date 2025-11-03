@@ -176,8 +176,9 @@ bool IO::GeoJSON_SAX_Handler::EndObject(rapidjson::SizeType /*elementCount*/)
 				m_geojson.object = std::move(*feature);
 				m_geojson.bbox = std::move(Current_Context().bbox);
 				m_geojson.id = std::move(m_id);
+				return true
 			}
-			return true;
+			return false;
 		case GeoJSON::Type::POINT:
 		case GeoJSON::Type::MULTI_POINT:
 		case GeoJSON::Type::LINE_STRING:

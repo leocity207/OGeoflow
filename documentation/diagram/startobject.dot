@@ -1,0 +1,52 @@
+digraph  {
+	graph [compound=true   newrank=true]
+	rankdir="LR"
+	splines=ortho
+
+	subgraph {
+		rank=same
+		START_OBJECT [shape=circle label="StartObject()"]
+		SWITCH_STATE [shape=box label="Current_State()"]
+		
+		ROOT [shape=diamond]
+		PROPERTIES_OBJECT [shape=diamond]
+		PROPERTIES_SUB_ARRAY [shape=diamond]
+		PROPERTIES_SUB_KEY [shape=diamond]
+		FOREIGN_KEY [shape=diamond]
+		FOREIGN_ARRAY [shape=diamond]
+		FEATURE_COLLECTION [shape=diamond]
+		GEOMETRY_COLLECTION [shape=diamond]
+		GEOMETRY [shape=diamond]
+		FEATURE [shape=diamond]
+
+		START_OBJECT -> SWITCH_STATE ->PROPERTIES_SUB_ARRAY;
+		PROPERTIES_SUB_ARRAY -> PROPERTIES_SUB_KEY -> FOREIGN_KEY -> FOREIGN_ARRAY -> FEATURE_COLLECTION -> GEOMETRY_COLLECTION -> ROOT -> PROPERTIES_OBJECT -> GEOMETRY -> FEATURE -> FALSE [arrowhead=dot dir=both]
+	}
+
+	subgraph {
+		rank=same
+		PUSH_OBJECT_IN_PROPERTY_ARRAY [shape=box label="Push Object in Property array"]
+		PUSH_OBJECT_IN_PROPERTY_KEY [shape=box label="reset state to object \n push key value in property"]
+		RESET_FOREIGN_KEY [shape=box label="Reset_State(FOREIGN_OBJECT)"]
+		PUSH_FOREIGN_ARRAY [shape=box label="Push_State(FOREIGN_OBJECT)"]
+		PUSH_FEATURE_COLLECTION [shape=box label="Push_State(FEATURE)"]
+		PUSH_GEOMETRY_COLLECTION [shape=box label="Push_State(GEOMETRY)"]
+	}
+
+	TRUE  [shape=circle label="True"]
+	subgraph {
+		FALSE [shape=circle label="False"]
+		FALSE_NOTE [shape=none, label="UNEXPECTED_STATE_OBJECT"];
+		FALSE -> FALSE_NOTE [style=invis]
+		rank=same
+	}
+
+	PROPERTIES_SUB_ARRAY -> PUSH_OBJECT_IN_PROPERTY_ARRAY
+	PROPERTIES_SUB_KEY   -> PUSH_OBJECT_IN_PROPERTY_KEY
+	FOREIGN_KEY          -> RESET_FOREIGN_KEY
+	FOREIGN_ARRAY        -> PUSH_FOREIGN_ARRAY
+	FEATURE_COLLECTION   -> PUSH_FEATURE_COLLECTION
+	GEOMETRY_COLLECTION  -> PUSH_GEOMETRY_COLLECTION
+
+	{ROOT PROPERTIES_OBJECT GEOMETRY FEATURE PUSH_OBJECT_IN_PROPERTY_ARRAY PUSH_OBJECT_IN_PROPERTY_KEY RESET_FOREIGN_KEY PUSH_FOREIGN_ARRAY PUSH_FEATURE_COLLECTION PUSH_GEOMETRY_COLLECTION} -> TRUE
+}

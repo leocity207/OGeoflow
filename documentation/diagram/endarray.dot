@@ -1,0 +1,82 @@
+digraph  {
+	graph [compound=true   newrank=true]
+	rankdir="LR"
+	splines=ortho
+	subgraph {
+		rank=same
+		END_ARRAY [shape=circle label="EndArray()"]
+		SWITCH_STATE [shape=box label="Current_State()"]
+		
+		PROPERTIES_SUB_ARRAY [shape=diamond]
+		FOREIGN_ARRAY [shape=diamond]
+		FEATURE_COLLECTION [shape=diamond]
+		GEOMETRY_COLLECTION [shape=diamond]
+		BBOX [shape=diamond]
+		COORDINATES [shape=diamond]
+
+		END_ARRAY -> SWITCH_STATE -> PROPERTIES_SUB_ARRAY;
+		PROPERTIES_SUB_ARRAY -> FEATURE_COLLECTION -> FOREIGN_ARRAY -> GEOMETRY_COLLECTION ->  BBOX -> COORDINATES -> FALSE [arrowtail=dot dir=both]
+	}
+	
+	
+	POP_CONTEXT [shape=box label="Pop_Context()"]
+	MOVE_GEOMETRY_COLLECTION [shape=box label="Pop_Context\nMove geomertry into upper context"]
+    
+    subgraph COORDINATE_G 
+    {
+        subgraph {
+            rank=same
+            FINALIZE_COORDINATE [shape=diamond label="Finalize_Coordinate()"]
+            LEVEL_MINUS [shape=box label="level--"]
+            LEVEL_0 [shape=diamond label="level == 0"]
+        }
+        
+        FALSE_COORDINATE [shape=circle label="False"]
+        
+        FINALIZE_COORDINATE -> LEVEL_MINUS -> LEVEL_0 -> POP_CONTEXT
+        FINALIZE_COORDINATE -> FALSE_COORDINATE [arrowtail=dot dir=both]
+        {LEVEL_0 -> TRUE [arrowtail=dot dir=both] rank=same}
+    }
+    
+    subgraph BBOX_G {
+        subgraph {
+            rank=same
+            POSITION_SIZE_4 [shape=diamond label="m_positions.Size() == 4"]
+            POSITION_SIZE_6 [shape=diamond label="m_positions.Size() == 6"]
+        }
+        PUT_BBOX_6      [shape=box label="Pop_Context\n push coordinate inside current context"]
+        PUT_BBOX_4      [shape=box label="Pop_Context\n push coordinate inside current context"]
+        
+        
+        
+        subgraph {
+    		FALSE_BBOX_INCONSISTENCY [shape=circle label="False"]
+    		BBOX_INCONSISTENCY_NOTE [shape=none, label="BBOX_SIZE_INCONSISTENT"];
+    		FALSE_BBOX_INCONSISTENCY -> BBOX_INCONSISTENCY_NOTE [style=invis]
+    		rank=same
+    	}
+    
+        POSITION_SIZE_4 -> PUT_BBOX_4 -> TRUE
+        POSITION_SIZE_6 -> PUT_BBOX_6 -> TRUE
+        
+        POSITION_SIZE_6 -> FALSE_BBOX_INCONSISTENCY  [arrowtail=dot dir=both]
+        POSITION_SIZE_4 -> POSITION_SIZE_6  [arrowtail=dot dir=both]
+        
+        POSITION_SIZE_4 -> PUT_BBOX_4 -> POSITION_SIZE_6 -> PUT_BBOX_6 [style=invis]
+    }
+
+	TRUE  [shape=circle label="True"]
+	subgraph {
+		FALSE [shape=circle label="False"]
+		FALSE_NOTE [shape=none, label="UNEXPECTED_STATE_OBJECT"];
+		FALSE -> FALSE_NOTE [style=invis]
+		rank=same
+	}
+
+	{PROPERTIES_SUB_ARRAY FOREIGN_ARRAY FEATURE_COLLECTION} -> POP_CONTEXT
+	GEOMETRY_COLLECTION  -> MOVE_GEOMETRY_COLLECTION -> TRUE
+	BBOX -> POSITION_SIZE_4
+	COORDINATES -> FINALIZE_COORDINATE
+	POP_CONTEXT -> TRUE
+
+}

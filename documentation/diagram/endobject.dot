@@ -1,0 +1,89 @@
+digraph  {
+	graph [compound=true   newrank=true]
+	rankdir="LR"
+	splines=ortho
+
+	subgraph {
+		rank=same
+		END_OBJECT [shape=circle label="EndObject()"]
+		SWITCH_STATE [shape=box label="switch(Current_State())"]
+		
+		ROOT [shape=diamond]
+		PROPERTIES_OBJECT [shape=diamond]
+		FOREIGN_OBJECT [shape=diamond]
+		GEOMETRY [shape=diamond]
+		FEATURE [shape=diamond]
+		ROOT [shape=diamond]
+
+		END_OBJECT -> SWITCH_STATE ->PROPERTIES_OBJECT;
+		PROPERTIES_OBJECT -> FOREIGN_OBJECT -> GEOMETRY -> FEATURE -> ROOT -> FALSE [arrowtail=dot dir=both]
+	}
+
+	subgraph {
+		rank=same;
+		POP_CONTEXT [shape=box label="Pop_Context()"]
+	}
+
+	subgraph {
+		rank=same;
+		PUSH_GEOMETRY [shape=box label="Current_State().emplace(geometry)"]
+		PUSH_FEATURE [shape=box label="features.emplace(feature)"]
+	}
+
+	subgraph {
+		rank=same;
+		PUSH_ROOT_GEOMETRY [shape=box label="update geojson object with geometry"]
+		PUSH_ROOT_FEATURE [shape=box label="update geojson object with feature"]
+	}
+
+
+
+	subgraph {
+		rank=same
+		CHECK_GEOMETRY [shape=diamond label="Create_Geometry()"]
+		CHECK_FEATURE [shape=diamond label="Create_Feature()"]
+
+		
+		SWITCH_TYPE [shape=box label="switch(Current_Context().type)"]
+		ROOT_FEATURE_COLLECTION [shape=diamond]
+		ROOT_FEATURE [shape=diamond]
+		ROOT_GEOMETRY [shape=diamond]
+
+		SWITCH_TYPE -> ROOT_FEATURE_COLLECTION
+		ROOT_FEATURE_COLLECTION -> ROOT_FEATURE -> ROOT_GEOMETRY
+	}
+
+	subgraph {
+		rank=same
+		ROOT_PUSH_FEATURE_COLLECTION [shape=box label="push feature in geojson"]
+		ROOT_CHECK_GEOMETRY  [shape=diamond label="Create_Geometry()"]
+		ROOT_CHECK_FEATURE  [shape=diamond label="Create_Feature()"]
+
+		ROOT_PUSH_FEATURE_COLLECTION -> ROOT_CHECK_GEOMETRY -> ROOT_CHECK_FEATURE [style=invis]
+	}
+
+	{PROPERTIES_OBJECT FOREIGN_OBJECT} -> POP_CONTEXT -> TRUE
+	GEOMETRY -> CHECK_GEOMETRY -> PUSH_GEOMETRY -> POP_CONTEXT
+	FEATURE -> CHECK_FEATURE -> PUSH_FEATURE -> POP_CONTEXT
+	ROOT -> SWITCH_TYPE
+
+	ROOT_FEATURE_COLLECTION -> ROOT_PUSH_FEATURE_COLLECTION -> TRUE
+	ROOT_GEOMETRY -> ROOT_CHECK_FEATURE -> PUSH_ROOT_FEATURE -> TRUE
+	ROOT_FEATURE -> ROOT_CHECK_GEOMETRY  -> PUSH_ROOT_GEOMETRY -> TRUE
+	
+	{CHECK_GEOMETRY CHECK_FEATURE ROOT_CHECK_GEOMETRY ROOT_CHECK_FEATURE} -> GENERAL_FALSE [arrowtail=dot dir=both]
+	
+
+	TRUE  [shape=circle label="True"]
+	subgraph {
+		FALSE [shape=circle label="False"]
+		FALSE_NOTE [shape=none, label="UNEXPECTED_STATE_OBJECT"];
+		FALSE -> FALSE_NOTE [style=invis]
+		rank=same
+	}
+
+	subgraph {
+		GENERAL_FALSE [shape=circle label="False"]
+	}
+
+}
