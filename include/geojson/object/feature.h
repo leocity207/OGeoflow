@@ -15,7 +15,7 @@ namespace GeoJSON
 	struct Feature_Collection;
 	struct Feature
 	{
-		Geometry geometry;
+		std::optional<Geometry> geometry;
 		Property properties;
 		std::optional<std::string> id;
 		std::optional<Bbox> bbox;

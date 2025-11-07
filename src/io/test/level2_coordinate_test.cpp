@@ -112,7 +112,7 @@ TEST_F(Level2_Coordinate_Test, With_Too_Much_Coordinate_In_Point) {
 		]
 	})";
 
-	Expect_Parse_Error(json, IO::Error::Type::COORDINATE_OVERSIZED);
+	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::COORDINATE_OVERSIZED);
 }
 
 TEST_F(Level2_Coordinate_Test, With_Not_Enough_Point) {
@@ -123,7 +123,7 @@ TEST_F(Level2_Coordinate_Test, With_Not_Enough_Point) {
 		]
 	})";
 
-	Expect_Parse_Error(json, IO::Error::Type::NEED_AT_LEAST_TWO_POSITION_FOR_LINESTRING);
+	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::NEED_AT_LEAST_TWO_POSITION_FOR_LINESTRING);
 }
 
 TEST_F(Level2_Coordinate_Test, With_Not_Enough_Coordinate_In_Point) {
@@ -137,7 +137,7 @@ TEST_F(Level2_Coordinate_Test, With_Not_Enough_Coordinate_In_Point) {
 		]
 	})";
 
-	Expect_Parse_Error(json, IO::Error::Type::COORDINATE_UNDERSIZED);
+	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::COORDINATE_UNDERSIZED);
 }
 
 TEST_F(Level2_Coordinate_Test, With_Mismatch_Level) {
@@ -151,5 +151,5 @@ TEST_F(Level2_Coordinate_Test, With_Mismatch_Level) {
 		]
 	})";
 
-	Expect_Parse_Error(json, IO::Error::Type::INCONSCISTENT_COORDINATE_LEVEL);
+	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::INCONSCISTENT_COORDINATE_LEVEL);
 }

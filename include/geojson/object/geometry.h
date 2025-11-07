@@ -3,6 +3,7 @@
 
 #include <variant>
 #include <memory>
+#include <string>
 
 #include "include/geojson/geometry_type/line_string.h"
 #include "include/geojson/geometry_type/multi_line_string.h"

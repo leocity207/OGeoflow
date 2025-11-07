@@ -135,5 +135,5 @@ TEST_F(Geometry_Collection_Test, Unknown_Geometry_Type_Inside_Collection_Should_
         ]
     })";
 
-    Expect_Parse_Error(json, IO::Error::Type::UNKNOWN_TYPE);
+    Expect_Parse_Error(json, GeoJSON::IO::Error::Type::UNKNOWN_TYPE);
 }

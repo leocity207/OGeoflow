@@ -18,7 +18,7 @@ struct ExpectedPos
 
 inline GeoJSON::Geometry Parse_To_Geometry(const std::string& json)
 {
-	auto result = IO::Parse_Geojson_String(json);
+	auto result = GeoJSON::IO::Parse_Geojson_String(json);
 	EXPECT_TRUE(result.Has_Value()) << "Parse failed: error = " << static_cast<int>(result.Error());
 	auto& g = result.Value();
 	EXPECT_TRUE(g.Is_Geometry());
@@ -26,9 +26,9 @@ inline GeoJSON::Geometry Parse_To_Geometry(const std::string& json)
 }
 
 // assert parse error
-inline void Expect_Parse_Error(const std::string& json, IO::Error::Type expected_error)
+inline void Expect_Parse_Error(const std::string& json, GeoJSON::IO::Error::Type expected_error)
 {
-	auto result = IO::Parse_Geojson_String(json);
+	auto result = GeoJSON::IO::Parse_Geojson_String(json);
 	EXPECT_FALSE(result.Has_Value());
 	EXPECT_EQ(result.Error(), expected_error);
 }

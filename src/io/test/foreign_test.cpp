@@ -13,7 +13,7 @@ TEST_F(Foreign_Test, Root_Foreign_Primitives_And_Null_Do_Not_Break_Parse) {
         "x-custom-null": null
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on root foreign primitives";
     auto& g = result.Value();
     ASSERT_TRUE(g.Is_Geometry());
@@ -32,7 +32,7 @@ TEST_F(Foreign_Test, Root_Foreign_Object_And_Array_Nested_Do_Not_Affect_Main) {
         }
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on root nested foreign object";
     auto& g = result.Value();
     ASSERT_TRUE(g.Is_Geometry());
@@ -50,7 +50,7 @@ TEST_F(Foreign_Test, Feature_Level_Foreign_Key_Mixed_Types) {
         "x-flag": false
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on feature-level foreign keys";
     auto& g = result.Value();
     ASSERT_TRUE(g.Is_Feature());
@@ -58,8 +58,9 @@ TEST_F(Foreign_Test, Feature_Level_Foreign_Key_Mixed_Types) {
     // core fields unaffected:
     ASSERT_TRUE(feature.id.has_value());
     EXPECT_EQ(*feature.id, "f0");
-    EXPECT_TRUE(feature.geometry.Is_Point());
-    AssertPositionEquals(feature.geometry.Get_Point().position, ExpectedPos{7.0, 8.0, std::nullopt});
+    EXPECT_TRUE(feature.geometry.has_value());
+    EXPECT_TRUE(feature.geometry->Is_Point());
+    AssertPositionEquals(feature.geometry->Get_Point().position, ExpectedPos{7.0, 8.0, std::nullopt});
     ASSERT_TRUE(feature.properties.Is_Object());
     const auto& props = feature.properties.Get_Object();
     ASSERT_TRUE(props.find("name") != props.end());
@@ -74,7 +75,7 @@ TEST_F(Foreign_Test, Geometry_Level_Foreign_Key_Does_Not_Break_Geometry) {
         "x-geom": [ { "a":1 }, { "b":[2,3] }, null ]
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on geometry-level foreign keys";
     auto& g = result.Value();
     ASSERT_TRUE(g.Is_Geometry());
@@ -93,7 +94,7 @@ TEST_F(Foreign_Test, Root_Foreign_Array_Complex_Elements) {
         ]
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on foreign array with complex elements";
     ASSERT_TRUE(result.Value().Is_Geometry());
     ASSERT_TRUE(result.Value().Get_Geometry().Is_Line_String());
@@ -121,15 +122,17 @@ TEST_F(Foreign_Test, Feature_Collection_Multiple_Features_With_Foreign_Keys) {
         ]
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on featurecollection with foreign keys";
     ASSERT_TRUE(result.Value().Is_Feature_Collection());
     const auto& fc = result.Value().Get_Feature_Collection();
     ASSERT_EQ(fc.features.size(), 2u);
-    EXPECT_TRUE(fc.features[0].geometry.Is_Point());
-    EXPECT_TRUE(fc.features[1].geometry.Is_Point());
-    AssertPositionEquals(fc.features[0].geometry.Get_Point().position, ExpectedPos{0,0,std::nullopt});
-    AssertPositionEquals(fc.features[1].geometry.Get_Point().position, ExpectedPos{1,1,std::nullopt});
+    ASSERT_TRUE(fc.features[0].geometry.has_value());
+    EXPECT_TRUE(fc.features[0].geometry->Is_Point());
+    ASSERT_TRUE(fc.features[1].geometry.has_value());
+    EXPECT_TRUE(fc.features[1].geometry->Is_Point());
+    AssertPositionEquals(fc.features[0].geometry->Get_Point().position, ExpectedPos{0,0,std::nullopt});
+    AssertPositionEquals(fc.features[1].geometry->Get_Point().position, ExpectedPos{1,1,std::nullopt});
 }
 
 TEST_F(Foreign_Test, Deeply_Nested_Foreign_Structures) {
@@ -145,7 +148,7 @@ TEST_F(Foreign_Test, Deeply_Nested_Foreign_Structures) {
         "coordinates": [0,0],
         "foreign_deep": )") + deep + "\n}";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on deeply nested foreign structures";
     ASSERT_TRUE(result.Value().Is_Geometry());
     AssertPositionEquals(result.Value().Get_Geometry().Get_Point().position, ExpectedPos{0,0,std::nullopt});
@@ -160,12 +163,13 @@ TEST_F(Foreign_Test, Duplicate_Foreign_Keys_At_Different_Levels) {
         "x": { "root": true }
     })";
 
-    auto result = IO::Parse_Geojson_String(json);
+    auto result = GeoJSON::IO::Parse_Geojson_String(json);
     ASSERT_TRUE(result.Has_Value()) << "Parser failed on duplicate foreign keys";
     ASSERT_TRUE(result.Value().Is_Feature());
     const auto& f = result.Value().Get_Feature();
     EXPECT_EQ(*f.id, "dup");
-    AssertPositionEquals(f.geometry.Get_Point().position, ExpectedPos{9.0, 9.0, std::nullopt});
+    ASSERT_TRUE(f.geometry.has_value());
+    AssertPositionEquals(f.geometry->Get_Point().position, ExpectedPos{9.0, 9.0, std::nullopt});
     // properties unaffected:
     ASSERT_TRUE(f.properties.Is_Object());
     EXPECT_TRUE(f.properties.Get_Object().find("core") != f.properties.Get_Object().end());

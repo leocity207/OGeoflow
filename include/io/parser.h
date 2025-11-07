@@ -10,7 +10,7 @@
 
 
 
-namespace IO
+namespace GeoJSON::IO
 {
 
 	/**
@@ -19,7 +19,7 @@ namespace IO
 	 * @return Parsed GeoJSON structure
 	 * @throws Parse_Exception if parsing fails
 	 */
-	Util::Expected<GeoJSON::GeoJSON, IO::Error::Type> Parse_Geojson_String(const std::string& json_string);
+	Util::Expected<::GeoJSON::GeoJSON, Error::Type> Parse_Geojson_String(const std::string& json_string);
 
 	/**
 	 * @brief Parse GeoJSON from a file
@@ -27,7 +27,7 @@ namespace IO
 	 * @return Parsed GeoJSON structure
 	 * @throws Parse_Exception if file cannot be read or parsing fails
 	 */
-	Util::Expected<GeoJSON::GeoJSON, IO::Error::Type> Parse_Geojson_File(const std::filesystem::path& filename);
+	Util::Expected<::GeoJSON::GeoJSON, Error::Type> Parse_Geojson_File(const std::filesystem::path& filename);
 
 } // namespace GeoJSON
 

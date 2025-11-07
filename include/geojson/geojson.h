@@ -17,8 +17,6 @@ namespace GeoJSON
 	struct GeoJSON
 	{
 		std::variant<Feature, Feature_Collection, Geometry> object;
-		std::optional<Bbox> bbox;
-		std::optional<std::string> id;
 
 		/// @brief Is Function
 		bool Is_Feature()            const noexcept { return std::holds_alternative<Feature>(object); }

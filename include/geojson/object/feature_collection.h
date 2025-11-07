@@ -9,6 +9,8 @@ namespace GeoJSON
 	struct Feature_Collection
 	{
 		std::vector<Feature> features;
+		std::optional<Bbox> bbox;
+		std::optional<std::string> id;
 	};
 }
 
