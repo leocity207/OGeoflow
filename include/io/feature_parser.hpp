@@ -1,10 +1,11 @@
-#include "include/io/full_parser.h"
+#include "include/io/feature_parser.h"
 
 #include <span>
 #include <memory>
 #include <cassert>
 
-bool GeoJSON::IO::Full_Parser::On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number)
+template <class Derived>
+bool GeoJSON::IO::Feature_Parser<Derived>::On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number)
 {
 	if(geometry.Is_Geometry_Collection() && element_number > 0)
 	{
@@ -19,7 +20,8 @@ bool GeoJSON::IO::Full_Parser::On_Geometry(::GeoJSON::Geometry&& geometry, std::
 	return true;
 }
 
-bool GeoJSON::IO::Full_Parser::On_Feature(::GeoJSON::Feature&& feature)
+template <class Derived>
+bool GeoJSON::IO::Feature_Parser<Derived>::On_Feature(::GeoJSON::Feature&& feature)
 {
 	if(!m_geometries.empty())
 		feature.geometry = std::move(m_geometries.back());
@@ -27,7 +29,8 @@ bool GeoJSON::IO::Full_Parser::On_Feature(::GeoJSON::Feature&& feature)
 	return true;
 }
 
-bool GeoJSON::IO::Full_Parser::On_Feature_Collection(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+template <class Derived>
+bool GeoJSON::IO::Feature_Parser<Derived>::On_Feature_Collection(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 {
 	m_bbox = std::move(bbox);
 	m_id   = std::move(id);
