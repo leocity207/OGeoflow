@@ -17,7 +17,7 @@ namespace GeoJSON::IO
 	template <class Out_Stream>
 	class Writer : public rapidjson::Writer<Out_Stream>
 	{
-		public:
+	public:
 		Writer(Out_Stream& out);
 
 		void Write_Position(const Position& p);
