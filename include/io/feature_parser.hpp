@@ -10,7 +10,7 @@ bool GeoJSON::IO::Feature_Parser<Derived>::On_Geometry(::GeoJSON::Geometry&& geo
 	if(geometry.Is_Geometry_Collection() && element_number > 0)
 	{
 		::GeoJSON::Geometry_Collection collection;
-		if(m_geometries.size() < element_number) return Push_Error(::GeoJSON::IO::Error::Type::GEOMETRy_COLLECTION_ELLEMENT_COUNT_MISMATCH);
+		if(m_geometries.size() < element_number) return SAX_Parser<Feature_Parser<Derived>>::Push_Error(::GeoJSON::IO::Error::Type::GEOMETRy_COLLECTION_ELLEMENT_COUNT_MISMATCH);
 		for (auto& temp_geometry : std::span<::GeoJSON::Geometry>(m_geometries.data() + (m_geometries.size() - element_number),element_number))
 			collection.geometries.emplace_back(std::make_shared<::GeoJSON::Geometry>(std::move(temp_geometry)));
 		geometry.value = std::move(collection);
@@ -26,14 +26,5 @@ bool GeoJSON::IO::Feature_Parser<Derived>::On_Feature(::GeoJSON::Feature&& featu
 	if(!m_geometries.empty())
 		feature.geometry = std::move(m_geometries.back());
 	On_Full_Feature(std::move(feature));
-	return true;
-}
-
-template <class Derived>
-bool GeoJSON::IO::Feature_Parser<Derived>::On_Feature_Collection(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
-{
-	m_bbox = std::move(bbox);
-	m_id   = std::move(id);
-	m_is_feature_collection = true;
 	return true;
 }
