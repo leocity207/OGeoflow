@@ -44,3 +44,9 @@ bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Feature(O::GeoJSON::Feature&& f
 	On_Full_Feature(std::move(feature));
 	return true;
 }
+
+template <class Derived>
+bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+{ 
+	return On_Root(std::move(bbox), std::move(id));
+};

@@ -118,10 +118,28 @@ namespace O::GeoJSON
 		/** @} */
 
 		/// @brief Returns the size of the array or object (0 otherwise).
-		std::size_t Size() const noexcept;
+		std::size_t Size() const noexcept
+		{
+			return std::visit([](auto&& val) -> std::size_t {
+				using T = std::decay_t<decltype(val)>;
+				if constexpr (std::is_same_v<T, Array> || std::is_same_v<T, Object>)
+					return val.size();
+				else
+					return 0;
+			}, m_value);
+		}
 
 		/// @brief Clears the content of arrays and objects, resets scalars to default.
-		void Clear() noexcept;
+		void Clear() noexcept
+		{
+			std::visit([](auto&& val) {
+				using T = std::decay_t<decltype(val)>;
+				if constexpr (std::is_same_v<T, Array> || std::is_same_v<T, Object>)
+					val.clear();
+				else if constexpr (!std::is_same_v<T, std::monostate>)
+					val = T{}; // reset type to default
+			}, m_value);
+		}
 	};
 }
 

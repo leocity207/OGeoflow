@@ -828,3 +828,9 @@ std::optional<O::GeoJSON::Geometry> O::GeoJSON::IO::SAX_Parser<Derived>::Create_
 			return std::nullopt;
 	}
 }
+
+template<class Derived>
+bool O::GeoJSON::IO::SAX_Parser<Derived>::Push_Error(Error error)
+{
+	 m_current_error = error; return false; 
+}
