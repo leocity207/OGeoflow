@@ -9,8 +9,8 @@ namespace GeoJSON::IO
 	class Feature_Parser : public SAX_Parser<Feature_Parser<Derived>>
 	{
 	public:
-		bool On_Full_Feature(::GeoJSON::Feature&& feature) {return static_cast<Derived&>(*this).On_Full_Feature(std::move(feature));};
-		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id) {return static_cast<Derived&>(*this).On_Root(std::move(bbox), std::move(id));};
+		bool On_Full_Feature(::GeoJSON::Feature&& feature);
+		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
 
 
 		bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number);
