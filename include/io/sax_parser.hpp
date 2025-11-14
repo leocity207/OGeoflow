@@ -470,7 +470,7 @@ bool SAX_Parser<Derived>::Double(double value)
 	case Parse_State::FOREIGN_ARRAY:
 	case Parse_State::FOREIGN_KEY: break;
 	default:
-		return Double(static_cast<double>(value));
+		return Push_Error(IO::Error::Type::UNEXPECTED_PROPERTY_STATE);
 	}
 	if (!In_Array())
 		Pop_Context();
