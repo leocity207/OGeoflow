@@ -23,3 +23,8 @@ option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
 	include(cmake/testing.cmake)
 endif()
+
+option(BUILD_DOC "Build doc" ON)
+if(BUILD_DOC)
+	add_subdirectory(documentation)
+endif()

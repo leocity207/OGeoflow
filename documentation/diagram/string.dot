@@ -1,0 +1,110 @@
+digraph  {
+	graph [compound=true   newrank=true]
+	rankdir="LR"
+	splines=ortho
+
+	subgraph {
+		rank=same
+		STRING [shape=circle label="String()"]
+		SWITCH_STATE [shape=box label="switch(Current_State())"]
+		
+		PROPERTIES_SUB_KEY   [shape=diamond]
+		PROPERTIES_SUB_ARRAY [shape=diamond]
+        FOREIGN_ARRAY        [shape=diamond]
+        FOREIGN_KEY          [shape=diamond]
+        TYPE                 [shape=diamond]
+        ID                   [shape=diamond]
+
+		STRING -> SWITCH_STATE ->PROPERTIES_SUB_KEY;
+		PROPERTIES_SUB_KEY -> PROPERTIES_SUB_ARRAY -> TYPE -> ID -> FOREIGN_ARRAY -> FOREIGN_KEY -> FALSE [arrowtail=dot dir=both]
+	}
+
+    subgraph PORPERTY_SUBKEY_GRAPH{
+        subgraph {
+            rank=same;
+            CHECK_SUBKEY_IS_OBJECT [shape=diamond label="current_property.Is_Object()"]
+            CHECK_SUBKEY_KEY_DUPLICATION [shape=diamond label="current_property.contains(\"current_key\")"]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_UNEXPECTED_PROPERTY_STATE [shape=circle label="False"]
+            FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [shape=none, label="UNEXPECTED_PROPERTY_STATE"];
+            FALSE_UNEXPECTED_PROPERTY_STATE -> FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [style=invis]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_PROPERTY_KEY_ALREADY_EXIST [shape=circle label="False"]
+            FALSE_PROPERTY_KEY_ALREADY_EXIST_NOTE [shape=none, label="PROPERTY_KEY_ALREADY_EXIST"];
+            FALSE_PROPERTY_KEY_ALREADY_EXIST -> FALSE_PROPERTY_KEY_ALREADY_EXIST_NOTE [style=invis]
+        }
+
+        CHECK_SUBKEY_IS_OBJECT -> FALSE_UNEXPECTED_PROPERTY_STATE [arrowtail=dot dir=both]
+        CHECK_SUBKEY_KEY_DUPLICATION -> FALSE_PROPERTY_KEY_ALREADY_EXIST [arrowtail=dot dir=both]
+        CHECK_SUBKEY_IS_OBJECT -> CHECK_SUBKEY_KEY_DUPLICATION
+        {PROPERTIES_SUB_KEY} ->  CHECK_SUBKEY_IS_OBJECT
+        CHECK_SUBKEY_KEY_DUPLICATION -> IN_ARRAY
+    }
+
+    subgraph PROPERTIES_SUB_ARRAY_GRAPH{
+        subgraph {
+            rank=same;
+            CHECK_SUBARRAY_IS_ARRAY [shape=diamond label="current_property.Is_Array()"]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_UNEXPECTED_PROPERTY_STATE2 [shape=circle label="False"]
+            FALSE_UNEXPECTED_PROPERTY_STATE_NOTE2 [shape=none, label="UNEXPECTED_PROPERTY_STATE"];
+            FALSE_UNEXPECTED_PROPERTY_STATE2 -> FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [style=invis]
+        }
+
+        CHECK_SUBARRAY_IS_ARRAY -> FALSE_UNEXPECTED_PROPERTY_STATE2 [arrowtail=dot dir=both]
+        {PROPERTIES_SUB_ARRAY} ->  CHECK_SUBARRAY_IS_ARRAY
+        CHECK_SUBARRAY_IS_ARRAY -> IN_ARRAY
+    }
+
+    subgraph TYPE_GRAPH{
+ 
+        POP_CONTEXT_EARLY [shape=box label="Pop_Context\n String_To_Type \n set current context with type"]
+        IS_KNOWN_TYPE   [shape=diamond label="Current_Context().type != GeoJSON::Type::UNKNOWN"]
+
+        subgraph {
+            rank=same
+            FALSE_TYPE_STATE [shape=circle label="False"]
+            FALSE_TYPE_NOTE [shape=none, label="UNKNOWN_TYPE"];
+            FALSE_TYPE_STATE -> FALSE_TYPE_NOTE [style=invis]
+        }
+
+        IS_KNOWN_TYPE -> FALSE_TYPE_STATE [arrowtail=dot dir=both]
+        {POP_CONTEXT_EARLY} ->  IS_KNOWN_TYPE
+        IS_KNOWN_TYPE -> TRUE
+    }
+
+    subgraph {
+        IN_ARRAY [shape=diamond label="In_Array()"]
+    }
+
+    subgraph {
+        POP_CONTEXT [shape=box label="Pop_Context()"]
+    }
+    REGISTER_ID [shape=box label="id = std::string(str, length)"]
+
+    {CHECK_SUBKEY_IS_OBJECT -> CHECK_SUBKEY_KEY_DUPLICATION -> CHECK_SUBARRAY_IS_ARRAY [style=invis] rank=same }
+
+    IN_ARRAY -> POP_CONTEXT -> TRUE
+    IN_ARRAY -> TRUE [arrowtail=dot dir=both]
+    {FOREIGN_ARRAY FOREIGN_KEY} -> IN_ARRAY
+    ID -> REGISTER_ID -> IN_ARRAY
+    TYPE -> POP_CONTEXT_EARLY
+
+	TRUE  [shape=circle label="True"]
+	subgraph {
+		FALSE [shape=circle label="False"]
+		FALSE_NOTE [shape=none, label="UNEXPECTED_STATE_VALUE"];
+		FALSE -> FALSE_NOTE [style=invis]
+		rank=same
+	}
+
+}
