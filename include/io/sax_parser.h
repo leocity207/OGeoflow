@@ -20,11 +20,11 @@ namespace GeoJSON::IO
 	template<class Derived = void>
 	class SAX_Parser : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, SAX_Parser<Derived>>
 	{
-	protected:
-		bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number) {return static_cast<Derived&>(*this).On_Geometry(std::move(geometry), element_number);};
-		bool On_Feature(::GeoJSON::Feature&& feature) {return static_cast<Derived&>(*this).On_Feature(std::move(feature));};
-		bool On_Feature_Collection(std::optional<Bbox>&& bbox, std::optional<std::string>&& id) {return static_cast<Derived&>(*this).On_Feature_Collection(std::move(bbox), std::move(id));};
-	// HELPER
+	public:
+		bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number);
+		bool On_Feature(::GeoJSON::Feature&& feature);
+		bool On_Feature_Collection(std::optional<Bbox>&& bbox, std::optional<std::string>&& id);
+
 	public:
 		// Parsing state
 		enum class Parse_State {

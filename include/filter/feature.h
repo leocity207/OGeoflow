@@ -40,46 +40,31 @@ namespace GeoJSON::Filter
 	class Feature_Filter : public ::GeoJSON::IO::Feature_Parser<Feature_Filter<Next_Handler, Predicate>>
 	{
 	public:
-		Feature_Filter(Next_Handler& next, Predicate pred) noexcept(std::is_nothrow_move_constructible_v<Predicate>)
-		: m_next(next), m_pred(std::move(pred)) {}
+		Feature_Filter(Predicate pred) noexcept(std::is_nothrow_move_constructible_v<Predicate>)
+		: m_pred(std::move(pred)) {}
 
 		// called by Feature_Parser when a full feature is available
 		bool On_Full_Feature(::GeoJSON::Feature&& feature)
 		{
+			if constexpr (!requires(Next_Handler d) { d.On_Full_Feature(std::move(feature)); })
+				static_assert(false,"Derived must implement:\n    bool On_Full_Feature(Feature&&)");
 			if (!m_pred(feature)) return true;
-			return m_next.On_Full_Feature(std::move(feature));
+			return static_cast<Next_Handler&>(*this).On_Full_Feature(std::move(feature));
 		}
 
 		// forward root (bbox/id) if next supports it
 		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 		{
-			// If Next_Handler has On_Root, forward; otherwise just continue.
-			if constexpr (std::is_invocable_r_v<bool, decltype(&Next_Handler::On_Root), Next_Handler, std::optional<::GeoJSON::Bbox>, std::optional<std::string>>)
-				return m_next.On_Root(std::move(bbox), std::move(id));
-			else
-			{
-				(void)bbox; (void)id;
-				return true;
-			}
+			if constexpr (!requires(Next_Handler d) { d.On_Root(std::move(bbox), std::move(id)); })
+				static_assert(false,"Derived must implement:\n    bool On_Root(optional<Bbox>&&, optional<string>&&)");
+			return static_cast<Next_Handler&>(*this).On_Root(std::move(bbox), std::move(id));
 		}
 
 		const Predicate& Get_Predicator() { return m_pred; };
 
 	private:
-		Next_Handler& m_next;
 		Predicate m_pred;
 	};
-
-
-	//
-	// Helper factory function - deduces template parameters for convenience.
-	//
-	template <class Next_Handler, class Predicate>
-	inline Feature_Filter<Next_Handler, std::decay_t<Predicate>>
-	Make_Feature_Filter(Next_Handler& next, Predicate&& pred)
-	{
-		return Feature_Filter<Next_Handler, std::decay_t<Predicate>>(next, std::forward<Predicate>(pred));
-	}
 
 }
 

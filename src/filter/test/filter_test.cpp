@@ -34,8 +34,29 @@
 
 using namespace GeoJSON;
 
+
+
+
+// Predicate object that counts invocations and checks properties.name == "keep"
+struct PredCountAndMatch
+{
+    int calls = 0;
+
+    bool operator()(const ::GeoJSON::Feature& f) noexcept
+    {
+        ++calls;
+        if (!f.properties.Is_Object()) return false;
+        const auto& obj = f.properties.Get_Object();
+        auto it = obj.find("name");
+        if (it == obj.end()) return false;
+        if (!it->second.Is_String()) return false;
+        return it->second.Get_String() == "keep";
+    }
+};
+
 // Simple collector used as downstream: stores all received features and counts calls.
-struct FeatureCollector
+template<class Pred>
+struct FeatureCollector : public ::GeoJSON::Filter::Feature_Filter<FeatureCollector<Pred>, Pred >
 {
     std::vector<::GeoJSON::Feature> features;
     std::optional<::GeoJSON::Bbox> root_bbox;
@@ -54,23 +75,6 @@ struct FeatureCollector
         root_bbox = std::move(bbox);
         root_id = std::move(id);
         return true;
-    }
-};
-
-// Predicate object that counts invocations and checks properties.name == "keep"
-struct PredCountAndMatch
-{
-    int calls = 0;
-
-    bool operator()(const ::GeoJSON::Feature& f) noexcept
-    {
-        ++calls;
-        if (!f.properties.Is_Object()) return false;
-        const auto& obj = f.properties.Get_Object();
-        auto it = obj.find("name");
-        if (it == obj.end()) return false;
-        if (!it->second.Is_String()) return false;
-        return it->second.Get_String() == "keep";
     }
 };
 
@@ -107,11 +111,10 @@ TEST(Feature_Filter_Test, FiltersAndForwardsCorrectly)
     rapidjson::StringStream ss(kSampleFeatureCollection);
     rapidjson::Reader reader;
 
-    FeatureCollector collector;
     PredCountAndMatch pred;
 
     // Create filter: note Feature_Filter expects Downstream& and Pred
-    ::GeoJSON::Filter::Feature_Filter<FeatureCollector, PredCountAndMatch> filter(collector, pred);
+    FeatureCollector<PredCountAndMatch> filter(pred);
 
     // Parse: filter will receive SAX events and forward On_Full_Feature to collector when predicate true
     bool ok = reader.Parse(ss, filter);
@@ -121,19 +124,19 @@ TEST(Feature_Filter_Test, FiltersAndForwardsCorrectly)
     EXPECT_EQ(filter.Get_Predicator().calls, 3);
 
     // Collector should have received only the two "keep" features (f1 and f3)
-    ASSERT_EQ(collector.features.size(), 2u);
-    EXPECT_TRUE(collector.features[0].id.has_value());
-    EXPECT_TRUE(collector.features[1].id.has_value());
-    EXPECT_EQ(collector.features[0].id.value(), "f1");
-    EXPECT_EQ(collector.features[1].id.value(), "f3");
+    ASSERT_EQ(filter.features.size(), 2u);
+    EXPECT_TRUE(filter.features[0].id.has_value());
+    EXPECT_TRUE(filter.features[1].id.has_value());
+    EXPECT_EQ(filter.features[0].id.value(), "f1");
+    EXPECT_EQ(filter.features[1].id.value(), "f3");
 
     // Verify the properties of the forwarded features are intact
-    const auto& f1_props = collector.features[0].properties.Get_Object();
+    const auto& f1_props = filter.features[0].properties.Get_Object();
     ASSERT_NE(f1_props.find("value"), f1_props.end());
     EXPECT_TRUE(f1_props.at("value").Is_Integer());
     EXPECT_EQ(f1_props.at("value").Get_Int(), 1);
 
-    const auto& f3_props = collector.features[1].properties.Get_Object();
+    const auto& f3_props = filter.features[1].properties.Get_Object();
     ASSERT_NE(f3_props.find("value"), f3_props.end());
     EXPECT_TRUE(f3_props.at("value").Is_Integer());
     EXPECT_EQ(f3_props.at("value").Get_Int(), 3);
@@ -145,15 +148,14 @@ TEST(Feature_Filter_Test, DropsAllWhenPredicateFalse)
     rapidjson::StringStream ss(kSampleFeatureCollection);
     rapidjson::Reader reader;
 
-    FeatureCollector collector;
     // predicate that always returns false but still counts
     struct PredAlwaysFalse { int calls = 0; bool operator()(const ::GeoJSON::Feature&){ ++calls; return false; } } pred;
 
-    ::GeoJSON::Filter::Feature_Filter<FeatureCollector, decltype(pred)> filter(collector, pred);
+    FeatureCollector<PredAlwaysFalse> filter( pred);
 
     bool ok = reader.Parse(ss, filter);
     ASSERT_TRUE(ok);
 
     EXPECT_EQ(filter.Get_Predicator().calls, 3);          // predicate was called for each feature
-    EXPECT_EQ(collector.features.size(), 0u); // nothing forwarded
+    EXPECT_EQ(filter.features.size(), 0u); // nothing forwarded
 }
