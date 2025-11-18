@@ -49,6 +49,7 @@ set_target_properties(RapidJSON::rapidjson PROPERTIES
 #------------------------------------
 # subdirectory include
 add_subdirectory(src/io)
+add_subdirectory(src/dcel)
 
 
 #------------------------------------
@@ -67,5 +68,6 @@ if(BUILD_TESTS)
 	FetchContent_MakeAvailable(googletest)
 	add_subdirectory(src/io/test)
 	add_subdirectory(src/filter/test)
+	add_subdirectory(src/dcel/test)
 	enable_testing()
 endif()
