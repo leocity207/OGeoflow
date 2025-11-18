@@ -2,21 +2,23 @@
 #include <cassert>
 
 
-bool Parse_GeoJSON(GeoJSON::GeoJSON&& geojson)
+bool DCEL::Builder::Parse_GeoJSON(GeoJSON::GeoJSON&& geojson)
 {
-	std::visit([](auto&& val) {
+	return std::visit([&](auto&& val) {
 		using T = std::decay_t<decltype(val)>;
 		if constexpr (std::is_same_v<T, GeoJSON::Feature_Collection>)
 		{
 			for(auto&& feature : geojson.Get_Feature_Collection().features)
 				On_Full_Feature(std::move(feature));
-			On_Root(std::move(geojson.Get_Feature_Collection().bbox), std::move(geojson.Get_Feature_Collection().id))
+			On_Root(std::move(geojson.Get_Feature_Collection().bbox), std::move(geojson.Get_Feature_Collection().id));
+			return true;
 		}
 		else if constexpr (std::is_same_v<T, GeoJSON::Feature>)
 			return On_Full_Feature(std::move(geojson.Get_Feature()));
 		else
 			return false;
 	}, geojson.object);
+
 }
 
 bool DCEL::Builder::On_Full_Feature(::GeoJSON::Feature&& feature)
