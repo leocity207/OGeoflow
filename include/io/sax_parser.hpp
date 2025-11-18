@@ -12,7 +12,7 @@
 #include "include/geojson/properties.h"
 #include "include/geojson/position.h"
 #include <optional>
-#include <geojson/geometry_type/geometry_collection.h>
+#include "include/geojson/geometry_type/geometry_collection.h"
 
 using Level1 = ::GeoJSON::Position;
 using Level2 = std::vector<::GeoJSON::Position>;

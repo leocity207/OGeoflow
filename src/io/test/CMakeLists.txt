@@ -1,25 +1,24 @@
-#////////////////////////
-# For google test includes
+
 include(GoogleTest)
 
-#/////////////
-# SOURCE FILES
+
 file(GLOB IO_TEST_SRC "./*.cpp")
 
-#///////////
-# EXECUTABLE
+
 add_executable( io_test 
 	${IO_TEST_SRC}
 )
 
-#////////////////
-# EXECUTABLE LINK
+target_include_directories(io_test
+    PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
+)
+
 target_link_libraries(io_test
 	PRIVATE GTest::gtest_main
-	PRIVATE io
+	PRIVATE ${PROJECT_NAME}::io
 	PRIVATE RapidJSON::rapidjson
 )
 
-#/////////////
-# DECLARE TEST
 gtest_discover_tests(io_test)

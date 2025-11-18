@@ -1,16 +1,18 @@
-#//////////////////////////////////
-# SOURCE FILES
-FILE(GLOB IO_SRC "./*.cpp")
+file(GLOB IO_SRC "./*.cpp")
 
-#////////
-# LIBRARY
-add_library(io STATIC
-	${IO_SRC}
+add_library(io STATIC ${IO_SRC})
+
+
+target_include_directories(io
+    PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
 )
 
-#//////////////
-# LIBRARY LINKS
+
 target_link_libraries(io
-	PRIVATE RapidJSON::rapidjson
+    PUBLIC RapidJSON::rapidjson
 )
 
+
+add_library(${PROJECT_NAME}::io ALIAS io)
