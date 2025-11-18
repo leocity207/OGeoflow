@@ -10,9 +10,9 @@ add_executable( io_test
 )
 
 target_include_directories(io_test
-    PUBLIC
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:include>
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+		$<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(io_test

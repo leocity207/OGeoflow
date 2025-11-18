@@ -8,19 +8,15 @@ add_executable( dcel_test
 )
 
 target_include_directories(dcel_test
-    PUBLIC
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:include>
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+		$<INSTALL_INTERFACE:include>
 )
 
-#////////////////
-# EXECUTABLE LINK
 target_link_libraries(dcel_test
 	PRIVATE GTest::gtest_main
 	PRIVATE ${PROJECT_NAME}::dcel
 	PRIVATE RapidJSON::rapidjson
 )
 
-#/////////////
-# DECLARE TEST
 gtest_discover_tests(dcel_test)
