@@ -4,6 +4,7 @@
 
 #include "dcel_builder.h"
 
+#include "include/geojson/geojson.h"
 #include "include/geojson/object/feature.h"
 #include "include/geojson/geometry_type/polygon.h"
 #include "include/geojson/geometry_type/multi_polygon.h"
@@ -14,7 +15,7 @@ namespace DCEL
 	class Builder
 	{
 	public:
-
+		bool Parse_GeoJSON(GeoJSON::GeoJSON&& geojson);
 		bool On_Full_Feature(GeoJSON::Feature&& feature);
 		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
 		std::optional<DCEL> Get_Dcel();
