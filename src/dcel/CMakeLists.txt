@@ -1,16 +1,15 @@
-#//////////////////////////////////
-# SOURCE FILES
-FILE(GLOB DCEL_SRC "./*.cpp")
+file(GLOB DCEL_SRC "./*.cpp")
 
-#////////
-# LIBRARY
-add_library(dcel STATIC
-	${DCEL_SRC}
+add_library(dcel STATIC ${DCEL_SRC})
+
+target_include_directories(dcel
+    PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
 )
 
-#//////////////
-# LIBRARY LINKS
 target_link_libraries(dcel
-	PRIVATE io
+    PUBLIC ${PROJECT_NAME}::io
 )
 
+add_library(${PROJECT_NAME}::dcel ALIAS dcel)
