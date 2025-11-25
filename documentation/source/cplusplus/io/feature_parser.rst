@@ -5,7 +5,7 @@ GeoJSON::IO::Feature_Parser
 
 The :code:`Feature_Parser` class provides the SAX callback interface used
 to parse GeoJSON **Feature** and **FeatureCollection** structures.
-It is part of the :code:`GeoJSON::IO` namespace and is intended
+It is part of the :code:`O::GeoJSON::IO` namespace and is intended
 to be extended through the CRTP pattern.
 
 This component is built on top of :code:`SAX_Parser`, enabling efficient
@@ -32,8 +32,7 @@ Derived classes may override any of these callbacks to implement:
 Doxygen API Reference
 ---------------------
 
-.. doxygenclass:: GeoJSON::IO::Feature_Parser
-   :project: GeoJSON
+.. doxygenclass:: O::GeoJSON::IO::Feature_Parser
    :members:
    :protected-members:
    :private-members:
@@ -49,28 +48,18 @@ using the CRTP mechanism:
 
     #include <io/feature_parser.h>
 
-    class MyParser : public GeoJSON::IO::Feature_Parser<MyParser>
+    class MyParser : public O::GeoJSON::IO::Feature_Parser<MyParser>
     {
     public:
-        bool On_Full_Feature(::GeoJSON::Feature&& feature)
+        bool On_Full_Feature(O::GeoJSON::Feature&& feature)
         {
             // Handle feature
             return true;
         }
 
-        bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t index)
+        bool On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t index)
         {
             // Handle geometry
             return true;
         }
     };
-
-Integration in Documentation Tree
----------------------------------
-
-Add this page to your IO / Parsing section:
-
-.. toctree::
-    :maxdepth: 1
-
-    feature_parser

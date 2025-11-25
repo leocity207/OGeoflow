@@ -28,8 +28,7 @@ as defined in RFC 7946.
 Geometry
 --------
 
-.. doxygenstruct:: GeoJSON::Geometry
-	:project: GeoJSON
+.. doxygenstruct:: O::GeoJSON::Geometry
 	:members:
 	:protected-members:
 	:undoc-members:
@@ -37,8 +36,7 @@ Geometry
 Feature
 -------
 
-.. doxygenstruct:: GeoJSON::Feature
-	:project: GeoJSON
+.. doxygenstruct:: O::GeoJSON::Feature
 	:members:
 	:protected-members:
 	:undoc-members:
@@ -46,8 +44,7 @@ Feature
 FeatureCollection
 -----------------
 
-.. doxygenstruct:: GeoJSON::Feature_Collection
-	:project: GeoJSON
+.. doxygenstruct:: O::GeoJSON::Feature_Collection
 	:members:
 	:protected-members:
 	:undoc-members:

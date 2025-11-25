@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Octoliner-GeoFlow'
+project = 'OGeoFlow'
 copyright = '2025, Léo Cluzel'
 author = 'Léo Cluzel'
 
@@ -14,6 +14,8 @@ author = 'Léo Cluzel'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+	'sphinx.ext.viewcode',
+    'sphinx.ext.todo',
 	'sphinx.ext.graphviz',
 	'sphinx.ext.autodoc',
 	'breathe'
@@ -38,10 +40,10 @@ graphviz_output_format = 'svg'
 
 
 breathe_projects = {
-	"Ocotliner": "../build/doxygen/xml"
+	"OGeoFlow": "../build/doxygen/xml"
 }
 
-breathe_default_project = "Octoliner"
+breathe_default_project = "OGeoFlow"
 
 primary_domain = 'cpp'
 

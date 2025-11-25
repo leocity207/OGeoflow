@@ -30,8 +30,6 @@ namespace O::GeoJSON
 	 *
 	 * @see RFC 7946 §3.1 — Geometry Objects
 	 *
-	 * @image html images/geojson_geometry.png "GeoJSON Geometry Object" width=400
-	 *
 	 * Example JSON:
 	 * @code
 	 * {

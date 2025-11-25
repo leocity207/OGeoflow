@@ -21,8 +21,7 @@ Each type is represented by a C++ struct inside the ``GeoJSON`` namespace.
 Position
 --------
 
-.. doxygenstruct:: GeoJSON::Position
-   :project: GeoJSON
+.. doxygenstruct:: O::GeoJSON::Position
    :members:
    :undoc-members:
    :protected-members:
@@ -31,48 +30,73 @@ Position
 Point
 -----
 
-.. doxygenstruct:: GeoJSON::Point
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_Point.svg
+
+   Point in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Point
    :members:
 
 LineString
 -----------
 
-.. doxygenstruct:: GeoJSON::Line_String
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_LineString.svg
+
+   LineString in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Line_String
    :members:
 
 MultiPoint
 -----------
 
-.. doxygenstruct:: GeoJSON::Multi_Point
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_MultiPoint.svg
+
+   Multipoint in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Multi_Point
    :members:
 
 MultiLineString
 ---------------
 
-.. doxygenstruct:: GeoJSON::Multi_Line_String
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_MultiLineString.svg
+
+   MultiLinestring in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Multi_Line_String
    :members:
 
 Polygon
 --------
 
-.. doxygenstruct:: GeoJSON::Polygon
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_Polygon.svg
+
+   Polygon with one ring in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. figure:: ../../../image/SFA_Polygon_with_hole.svg
+
+   Polygon with two ring creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Polygon
    :members:
 
 MultiPolygon
 ------------
 
-.. doxygenstruct:: GeoJSON::Multi_Polygon
-   :project: GeoJSON
+.. figure:: ../../../image/SFA_MultiPolygon.svg
+
+   Polygons with one ring each in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. figure:: ../../../image/SFA_MultiPolygon_with_hole.svg
+
+   Polygons with multiple rings creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
+
+.. doxygenstruct:: O::GeoJSON::Multi_Polygon
    :members:
 
 GeometryCollection
 ------------------
 
-.. doxygenstruct:: GeoJSON::Geometry_Collection
-   :project: GeoJSON
+.. doxygenstruct:: O::GeoJSON::Geometry_Collection
    :members:

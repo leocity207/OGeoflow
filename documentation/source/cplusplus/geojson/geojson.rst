@@ -13,21 +13,19 @@ It provides a consistent C++ abstraction for working with data that conforms to 
 
 ---
 
-GeoJSON Container
+GeoJSON Root
 -----------------
 
-.. doxygenstruct:: GeoJSON::GeoJSON
-   :project: geojson
+.. doxygenstruct:: O::GeoJSON::Root
    :members:
    :protected-members:
    :undoc-members:
-   :brief:
 
-The :cpp:struct:`GeoJSON::GeoJSON` type acts as a *variant container* that can hold any of the three primary GeoJSON object types:
+The :cpp:struct:`O::GeoJSON::Root` type acts as a *variant container* that can hold any of the three primary GeoJSON object types:
 
-- :cpp:struct:`GeoJSON::Geometry`
-- :cpp:struct:`GeoJSON::Feature`
-- :cpp:struct:`GeoJSON::Feature_Collection`
+- :cpp:struct:`O::GeoJSON::Geometry`
+- :cpp:struct:`O::GeoJSON::Feature`
+- :cpp:struct:`O::GeoJSON::Feature_Collection`
 
 It exposes type introspection helpers (`Is_*`), along with safe getters (`Get_*`) to access the underlying data.
 
@@ -35,7 +33,7 @@ It exposes type introspection helpers (`Is_*`), along with safe getters (`Get_*`
 
 .. code-block:: cpp
 
-   GeoJSON::GeoJSON root;
+   GeoJSON::Root root;
    root.object = GeoJSON::Feature_Collection{};
 
    if (root.Is_Feature_Collection()) {
@@ -52,13 +50,11 @@ The GeoJSON implementation defines two helper enums to categorize object types a
 
 **Object Types**
 
-.. doxygenenum:: GeoJSON::Type
-   :project: geojson:
+.. doxygenenum:: O::GeoJSON::Type
 
 **Object Keys**
 
-.. doxygenenum:: GeoJSON::Key
-   :project: geojson:
+.. doxygenenum:: O::GeoJSON::Key
 
 These enums are useful for constructing or interpreting GeoJSON documents programmatically without relying on raw string comparisons.
 
@@ -67,10 +63,8 @@ These enums are useful for constructing or interpreting GeoJSON documents progra
 String Conversion Utilities
 ----------------------------
 
-.. doxygenfunction:: GeoJSON::String_To_Type
-   :project: geojson:
+.. doxygenfunction:: O::GeoJSON::String_To_Type
 
-.. doxygenfunction:: GeoJSON::String_To_Key
-   :project: geojson:
+.. doxygenfunction:: O::GeoJSON::String_To_Key
 
 These inline functions translate string-based JSON members into the corresponding strongly typed enums for faster and safer parsing logic.

@@ -19,8 +19,6 @@ namespace O::GeoJSON
 	 *
 	 * @see RFC 7946 §3.3 — FeatureCollection Objects
 	 *
-	 * @image html images/geojson_featurecollection.png "GeoJSON FeatureCollection Object" width=450
-	 *
 	 * Example JSON:
 	 * @code
 	 * {

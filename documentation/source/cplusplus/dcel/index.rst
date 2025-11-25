@@ -12,6 +12,6 @@ The DCEL namespace can be use to convert GeoJSON data to DCEL exploitable data V
 	:maxdepth: 2
 
 	dcel
-	Feature_Info
-	Builder
+	feature_info
+	builder
 	exporter

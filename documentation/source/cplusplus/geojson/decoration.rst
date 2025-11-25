@@ -14,27 +14,27 @@ The **GeoJSON Decorations** represent supplementary information that can be atta
 Properties
 ----------
 
-.. doxygenstruct:: GeoJSON::Property
-   :project: geojson
+.. doxygenstruct:: O::GeoJSON::Property
    :members:
    :protected-members:
    :undoc-members:
-   :brief:
 
-The :cpp:struct:`GeoJSON::Property` structure models arbitrary JSON-like key/value data. It is used primarily in :cpp:struct:`GeoJSON::Feature` to store non-spatial attributes such as names, categories, or numerical metadata.
+The :cpp:struct:`O::GeoJSON::Property` structure models arbitrary JSON-like key/value data. It is used primarily in :cpp:struct:`O::GeoJSON::Feature` to store non-spatial attributes such as names, categories, or numerical metadata.
 
 **Example Usage:**
 
 .. code-block:: cpp
 
-   GeoJSON::Property prop;
-   prop = GeoJSON::Property::Object{
+   O::GeoJSON::Property prop;
+   prop = O::GeoJSON::Property::Object
+   {
        {"name", "Central Park"},
        {"area", 3.41},
-       {"tags", GeoJSON::Property::Array{"park", "public"}}
+       {"tags", O::GeoJSON::Property::Array{"park", "public"}}
    };
 
-   if (prop.Is_Object()) {
+   if (prop.Is_Object())
+   {
        const auto& obj = prop.Get_Object();
        std::cout << obj.at("name").Get_String(); // Central Park
    }
@@ -44,14 +44,12 @@ The :cpp:struct:`GeoJSON::Property` structure models arbitrary JSON-like key/val
 Bounding Boxes
 ---------------
 
-.. doxygenstruct:: GeoJSON::Bbox
-   :project: geojson
+.. doxygenstruct:: O::GeoJSON::Bbox
    :members:
    :protected-members:
-   :undoc-members:
-   :brief:
+   :undoc-members:   
 
-A :cpp:struct:`GeoJSON::Bbox` represents the spatial extent of an object. It can contain either 2D (`minX, minY, maxX, maxY`) or 3D (`minX, minY, minZ, maxX, maxY, maxZ`) values depending on the geometry.
+A :cpp:struct:`O::GeoJSON::Bbox` represents the spatial extent of an object. It can contain either 2D (`minX, minY, maxX, maxY`) or 3D (`minX, minY, minZ, maxX, maxY, maxZ`) values depending on the geometry.
 
 Bounding boxes are optional and used primarily for quick spatial filtering, rendering optimizations, or summaries of feature collections.
 
@@ -69,8 +67,8 @@ In GeoJSON, **identifiers** are optional metadata fields used to uniquely identi
 The identifier may hold any unique string (UUID, numeric string, etc.). When absent, the object is considered *anonymous*.
 
 Identifiers are typically found in:
- - :cpp:struct:`GeoJSON::Feature`
- - :cpp:struct:`GeoJSON::Feature_Collection`
+ - :cpp:struct:`O::GeoJSON::Feature`
+ - :cpp:struct:`O::GeoJSON::Feature_Collection`
 
 ---
 

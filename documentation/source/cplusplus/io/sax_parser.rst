@@ -1,9 +1,9 @@
 .. _sax_parser:
 
-GeoJSON::IO::Sax_Parser
-=======================
+O::GeoJSON::IO::Sax_Parser
+==========================
 
-The :cpp:class:`GeoJSON::IO::SAX_Parser` class implements a streaming,
+The :cpp:class:`O::GeoJSON::IO::SAX_Parser` class implements a streaming,
 state-driven parser for GeoJSON using RapidJSON’s SAX interface.
 
 It is designed for **high-performance, low-memory** parsing of large
@@ -19,24 +19,24 @@ internal stack that reflects the reader’s position inside the JSON
 document. Depending on the current state (Feature, Geometry, Coordinates,
 Properties, BBox…), different behaviors are applied.
 
-To use the parser, derive from :cpp:class:`GeoJSON::IO::SAX_Parser` and
+To use the parser, derive from :cpp:class:`O::GeoJSON::IO::SAX_Parser` and
 implement the following three required callback functions:
 
 Required Callback Functions
 ---------------------------
 
-.. cpp:function:: bool On_Geometry(GeoJSON::Geometry&& geometry, std::size_t element_number)
+.. cpp:function:: bool On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t element_number)
 
-   Called whenever a complete :cpp:struct:`GeoJSON::Geometry` has been parsed.
+   Called whenever a complete :cpp:struct:`O::GeoJSON::Geometry` has been parsed.
    The geometry may be a top-level Geometry or an element of a GeometryCollection.
    
    :param geometry: Fully constructed GeoJSON geometry.
    :param element_number: Index if inside a geometry collection.
    :returns: ``true`` to continue parsing, ``false`` to abort.
 
-.. cpp:function:: bool On_Feature(GeoJSON::Feature&& feature)
+.. cpp:function:: bool On_Feature(O::GeoJSON::Feature&& feature)
 
-   Called when a :cpp:struct:`GeoJSON::Feature` object has been completely parsed.
+   Called when a :cpp:struct:`O::GeoJSON::Feature` object has been completely parsed.
    Geometry are always empty.
 
    :param feature: Parsed GeoJSON feature.
@@ -54,7 +54,7 @@ Required Callback Functions
 Internal State Machine
 ----------------------
 
-The parser uses an internal enum :cpp:enum:`GeoJSON::IO::SAX_Parser::Parse_State`
+The parser uses an internal enum :cpp:enum:`O::GeoJSON::IO::SAX_Parser::Parse_State`
 to drive behavior depending on what part of the GeoJSON structure is being processed.
 
 States include:
@@ -74,41 +74,41 @@ The RapidJSON SAX interface triggers callbacks in a non-trivial order.
 To assist developers, the parsing workflow for each handler is documented
 using DOT diagrams:
 
-.. figure:: _static/dot/startObject.png
+.. graphviz:: ../../../diagram/startobject.dot
    :align: center
-   :alt: StartObject flow diagram
-
-   **StartObject() workflow**
-
-.. figure:: _static/dot/endObject.png
+   :caption: **StartObject() workflow**
+   
+.. graphviz:: ../../../diagram/endobject.dot
    :align: center
-   :alt: EndObject flow diagram
+   :caption: **EndObject() workflow**
 
-   **EndObject() workflow**
-
-.. figure:: _static/dot/startArray.png
+.. graphviz:: ../../../diagram/startarray.dot
    :align: center
-   :alt: StartArray flow diagram
+   :caption: **StartArray() workflow**
 
-   **StartArray() workflow**
-
-.. figure:: _static/dot/endArray.png
+.. graphviz:: ../../../diagram/endarray.dot
    :align: center
-   :alt: EndArray flow diagram
+   :caption: **EndArray() workflow**
 
-   **EndArray() workflow**
-
-.. figure:: _static/dot/key.png
+.. graphviz:: ../../../diagram/key.dot
    :align: center
-   :alt: Key workflow
+   :caption: **EndArray() workflow**
 
-   **Key() workflow**
-
-.. figure:: _static/dot/value.png
+.. graphviz:: ../../../diagram/bool.dot
    :align: center
-   :alt: Number/String/Bool workflow
+   :caption: **Bool() workflow**
 
-   **Value parsing workflow**
+.. graphviz:: ../../../diagram/int_double.dot
+   :align: center
+   :caption: **Int() Double() workflow**
+
+.. graphviz:: ../../../diagram/null.dot
+   :align: center
+   :caption: **Null() workflow**
+
+.. graphviz:: ../../../diagram/string.dot
+   :align: center
+   :caption: **String() workflow**
 
 These diagrams show how the parser transitions between states and how
 control flows to different helper functions such as:
@@ -127,23 +127,22 @@ A user wanting to process GeoJSON streams must extend the parser:
 
 .. code-block:: cpp
 
-   class MyParser : public GeoJSON::IO::SAX_Parser<MyParser>
+   class MyParser : public O::GeoJSON::IO::SAX_Parser<MyParser>
    {
    public:
-       bool On_Geometry(GeoJSON::Geometry&& geom, std::size_t index) override
+       bool On_Geometry(O::GeoJSON::Geometry&& geom, std::size_t index) override
        {
            // Handle geometry
            return true;
        }
 
-       bool On_Feature(GeoJSON::Feature&& feature) override
+       bool On_Feature(O::GeoJSON::Feature&& feature) override
        {
            // Handle feature
            return true;
        }
 
-       bool On_Feature_Collection(std::optional<Bbox>&& bbox,
-                                  std::optional<std::string>&& id) override
+       bool On_Feature_Collection(std::optional<Bbox>&& bbox, std::optional<std::string>&& id) override
        {
            // Finalize collection
            return true;
@@ -152,20 +151,19 @@ A user wanting to process GeoJSON streams must extend the parser:
 
    int main()
    {
-   	   rapidjson::StringStream ss("...");
-       rapidjson::Reader reader;
-       MyParser parser;
-       bool ok = reader.Parse(ss, parser);
+   	rapidjson::StringStream ss("...");
+      rapidjson::Reader reader;
+      MyParser parser;
+      bool ok = reader.Parse(ss, parser);
    }
 
 implementation
 --------------
 
-.. doxygenstruct:: GeoJSON::IO::SAX_Parser
+.. doxygenclass:: O::GeoJSON::IO::SAX_Parser
    :members:
    :protected-members:
    :undoc-members:
-   :brief:
 
 See Also
 --------
