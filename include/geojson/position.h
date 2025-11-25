@@ -8,19 +8,8 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents a geographic position in GeoJSON.
 	 *
-	 * A Position defines a single coordinate tuple consisting of longitude, latitude,
-	 * and optionally altitude. According to the GeoJSON specification, the order
+	 * A Position defines a single coordinate tuple consisting of longitude, latitude, and optionally altitude. According to the GeoJSON specification, the order
 	 * of coordinates is `[longitude, latitude, (altitude)]`.
-	 *
-	 * Example JSON:
-	 * @code
-	 * "coordinates": [102.0, 0.5]
-	 * @endcode
-	 *
-	 * Example with altitude:
-	 * @code
-	 * "coordinates": [102.0, 0.5, 120.0]
-	 * @endcode
 	 */
 	struct Position
 	{

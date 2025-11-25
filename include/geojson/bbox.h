@@ -10,13 +10,11 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents a GeoJSON Bounding Box.
 	 *
-	 * The Bbox structure stores the minimum and maximum coordinate extents
-	 * of a geometry, feature, or feature collection.
+	 * The Bbox structure stores the minimum and maximum coordinate extents of a geometry, feature, or feature collection. 
 	 * It can represent either 2D (4-element) or 3D (6-element) bounding boxes.
 	 *
 	 * @details
-	 * - The order of coordinates is `[minX, minY, maxX, maxY]` for 2D,
-	 *   or `[minX, minY, minZ, maxX, maxY, maxZ]` for 3D.
+	 * - The order of coordinates is `[minX, minY, maxX, maxY]` for 2D, or `[minX, minY, minZ, maxX, maxY, maxZ]` for 3D.
 	 * - Accessors are provided for both constant and mutable access.
 	 *
 	 * @see https://datatracker.ietf.org/doc/html/rfc7946#section-5

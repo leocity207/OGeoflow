@@ -15,11 +15,8 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents a GeoJSON Feature object.
 	 *
-	 * A Feature combines a spatial geometry with associated attribute data (properties)
-	 * and optional metadata (identifier, bounding box).
-	 *
-	 * Features are the most common container for representing spatial entities,
-	 * such as roads, buildings, or points of interest.
+	 * A Feature combines a spatial geometry with associated attribute data (properties) and optional metadata (identifier, bounding box).
+	 * Features are the most common container for representing spatial entities, such as roads, buildings, or points of interest.
 	 *
 	 * @see RFC 7946 §3.2 — Feature Objects
 	 *

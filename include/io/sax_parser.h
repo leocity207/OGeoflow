@@ -31,13 +31,10 @@ namespace O::GeoJSON::IO
 	 *
 	 * @brief Streaming SAX parser for GeoJSON documents.
 	 *
-	 * This class consumes JSON through RapidJSON's SAX interface and reconstructs
-	 * GeoJSON objects incrementally. It maintains an internal parsing stack
-	 * representing the current context within the GeoJSON structure (feature,
-	 * geometry, coordinates, properties, etc.).
+	 * This class consumes JSON through RapidJSON's SAX interface and reconstructs GeoJSON objects incrementally. 
+	 * It maintains an internal parsing stack representing the current context within the GeoJSON structure (feature, geometry, coordinates, properties, etc.).
 	 *
-	 * A user who wants to process GeoJSON elements must subclass this parser and
-	 * implement the following callback methods:
+	 * A user who wants to process GeoJSON elements must subclass this parser and implement the following callback methods:
 	 *
 	 *  - **On_Geometry()**  
 	 *    Invoked whenever a standalone `Geometry` object is fully parsed.
@@ -46,11 +43,9 @@ namespace O::GeoJSON::IO
 	 *    Invoked when a GeoJSON `Feature` object is complete.
 	 *
 	 *  - **On_Feature_Collection()**  
-	 *    Invoked at the end of a `FeatureCollection`, after all contained
-	 *    features have been streamed through `On_Feature()`.
+	 *    Invoked at the end of a `FeatureCollection`, after all contained features have been streamed through `On_Feature()`.
 	 *
-	 * These callbacks allow the user to handle GeoJSON elements as they stream
-	 * in, without requiring the entire document to be stored in memory.
+	 * These callbacks allow the user to handle GeoJSON elements as they stream in, without requiring the entire document to be stored in memory.
 	 */
 	template<class Derived = void>
 	class SAX_Parser : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, SAX_Parser<Derived>>
@@ -83,8 +78,7 @@ namespace O::GeoJSON::IO
 		 *
 		 * @return `true` to continue parsing, `false` to abort.
 		 *
-		 * @note Features in the collection are streamed individually through
-		 *       `On_Feature()` before this function is called.
+		 * @note Features in the collection are streamed individually through `On_Feature()` before this function is called.
 		 */
 		bool On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
 
@@ -142,7 +136,6 @@ namespace O::GeoJSON::IO
 		/// @name RapidJSON Event Overrides
 		/// @brief These functions map incoming JSON tokens to internal state.
 		/// @{
-
 		bool StartObject();
 		bool EndObject(rapidjson::SizeType elementCount);
 		bool StartArray();

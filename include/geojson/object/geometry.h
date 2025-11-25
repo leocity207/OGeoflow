@@ -21,12 +21,9 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents the base GeoJSON Geometry object.
 	 *
-	 * A Geometry defines the spatial form of a GeoJSON entity. It encapsulates one of the
-	 * seven supported geometry types (`Point`, `MultiPoint`, `LineString`, `MultiLineString`,
-	 * `Polygon`, `MultiPolygon`, or `GeometryCollection`) inside a variant union.
+	 * A Geometry defines the spatial form of a GeoJSON entity. It encapsulates one of the seven supported geometry types (`Point`, `MultiPoint`, `LineString`, `MultiLineString`, `Polygon`, `MultiPolygon`, or `GeometryCollection`) inside a variant union.
 	 *
-	 * This structure acts as the unified interface for all geometry variants and
-	 * provides utility methods to test and retrieve the active geometry type.
+	 * This structure acts as the unified interface for all geometry variants and provides utility methods to test and retrieve the active geometry type.
 	 *
 	 * @see RFC 7946 §3.1 — Geometry Objects
 	 *

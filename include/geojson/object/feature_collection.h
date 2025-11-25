@@ -12,9 +12,7 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents a GeoJSON FeatureCollection object.
 	 *
-	 * A FeatureCollection contains an array of individual Feature objects,
-	 * optionally including a shared bounding box and collection identifier.
-	 *
+	 * A FeatureCollection contains an array of individual Feature objects, optionally including a shared bounding box and collection identifier.
 	 * This is the top-level object in most GeoJSON files.
 	 *
 	 * @see RFC 7946 §3.3 — FeatureCollection Objects

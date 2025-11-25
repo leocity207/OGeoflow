@@ -10,7 +10,6 @@
 
 namespace O::GeoJSON::IO
 {
-
 	/**
 	 * @brief Parse GeoJSON from a string
 	 * @param json_string Input JSON string

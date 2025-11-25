@@ -13,20 +13,16 @@ namespace O::GeoJSON
 	/**
 	 * @brief Root container representing any valid GeoJSON entity.
 	 *
-	 * The `GeoJSON` structure is the top-level abstraction that can hold
-	 * a single geometry, a feature, or a feature collection — all defined
-	 * by the official GeoJSON specification (RFC 7946).
+	 * The `GeoJSON` structure is the top-level abstraction that can hold a single geometry, a feature, or a feature collection — all defined by the official GeoJSON specification (RFC 7946).
 	 *
 	 * @details
-	 * The internal `std::variant` ensures that at any given time, only one
-	 * of these object types is active:
+	 * The internal `std::variant` ensures that at any given time, only one of these object types is active:
 	 *
 	 * - :cpp:struct:`GeoJSON::Geometry`
 	 * - :cpp:struct:`GeoJSON::Feature`
 	 * - :cpp:struct:`GeoJSON::Feature_Collection`
 	 *
-	 * This unified representation simplifies parsing, storage, and serialization
-	 * by encapsulating all possible root-level GeoJSON objects in a single structure.
+	 * This unified representation simplifies parsing, storage, and serialization by encapsulating all possible root-level GeoJSON objects in a single structure.
 	 */
 	struct Root
 	{
@@ -64,8 +60,7 @@ namespace O::GeoJSON
 	/**
 	 * @brief Enumerates the standard keys found in GeoJSON objects.
 	 *
-	 * Used primarily during parsing or serialization to identify known
-	 * members of a GeoJSON document.
+	 * Used primarily during parsing or serialization to identify known members of a GeoJSON document.
 	 *
 	 * @see String_To_Key
 	 */
@@ -85,9 +80,8 @@ namespace O::GeoJSON
 	/**
 	 * @brief Enumerates all possible GeoJSON object types.
 	 *
-	 * This enumeration maps directly to the `"type"` field found in GeoJSON
-	 * documents. It allows strongly-typed handling of geometry and feature
-	 * variants.
+	 * This enumeration maps directly to the `"type"` field found in GeoJSON documents. 
+	 * It allows strongly-typed handling of geometry and feature variants.
 	 *
 	 * @see String_To_Type
 	 */

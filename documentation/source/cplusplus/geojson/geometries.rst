@@ -4,8 +4,8 @@ GeoJSON Geometry Types
 ======================
 
 .. contents::
-   :local:
-   :depth: 2
+	:local:
+	:depth: 2
 
 Overview
 --------
@@ -16,87 +16,87 @@ Each type is represented by a C++ struct inside the ``GeoJSON`` namespace.
 
 .. note::
 
-   All examples and structures are compliant with the `GeoJSON Specification <https://datatracker.ietf.org/doc/html/rfc7946>`_.
+	All examples and structures are compliant with the `GeoJSON Specification <https://datatracker.ietf.org/doc/html/rfc7946>`_.
 
 Position
 --------
 
 .. doxygenstruct:: O::GeoJSON::Position
-   :members:
-   :undoc-members:
-   :protected-members:
-   :private-members:
+	:members:
+	:undoc-members:
+	:protected-members:
+	:private-members:
 
 Point
 -----
 
 .. figure:: ../../../image/SFA_Point.svg
 
-   Point in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Point in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Point
-   :members:
+	:members:
 
 LineString
 -----------
 
 .. figure:: ../../../image/SFA_LineString.svg
 
-   LineString in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	LineString in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Line_String
-   :members:
+	:members:
 
 MultiPoint
 -----------
 
 .. figure:: ../../../image/SFA_MultiPoint.svg
 
-   Multipoint in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Multipoint in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Multi_Point
-   :members:
+	:members:
 
 MultiLineString
 ---------------
 
 .. figure:: ../../../image/SFA_MultiLineString.svg
 
-   MultiLinestring in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	MultiLinestring in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Multi_Line_String
-   :members:
+	:members:
 
 Polygon
 --------
 
 .. figure:: ../../../image/SFA_Polygon.svg
 
-   Polygon with one ring in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Polygon with one ring in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. figure:: ../../../image/SFA_Polygon_with_hole.svg
 
-   Polygon with two ring creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Polygon with two ring creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Polygon
-   :members:
+	:members:
 
 MultiPolygon
 ------------
 
 .. figure:: ../../../image/SFA_MultiPolygon.svg
 
-   Polygons with one ring each in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Polygons with one ring each in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. figure:: ../../../image/SFA_MultiPolygon_with_hole.svg
 
-   Polygons with multiple rings creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
+	Polygons with multiple rings creating holes in GeoJSON (Mwtoews, CC BY-SA 3.0)
 
 .. doxygenstruct:: O::GeoJSON::Multi_Polygon
-   :members:
+	:members:
 
 GeometryCollection
 ------------------
 
 .. doxygenstruct:: O::GeoJSON::Geometry_Collection
-   :members:
+	:members:

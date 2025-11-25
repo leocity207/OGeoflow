@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <type_traits>
+#include <concepts>
 #include <string_view>
 
 #include "include/geojson/object/feature.h"
@@ -14,58 +15,61 @@ namespace O::GeoJSON::Filter
 
 	/**
 	 * @brief Feature_Filter
-	 *
-	 * Template parameters:
-	 *  - Next_Handler: type of the next handler/sink. Must expose:
-	 *        bool On_Full_Feature(::GeoJSON::Feature&& f);
-	 *        bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
-	 *    (On_Root forwarding is optional but provided.)
-	 *
-	 *  - Predicate: callable with signature bool(const ::GeoJSON::Feature&) or
-	 *        bool(const ::GeoJSON::Feature&) noexcept
-	 *
+	 * 
 	 * Behavior:
 	 *  - When parser invokes On_Full_Feature(feature), the predicate is evaluated.
 	 *  - If predicate returns true, the feature is forwarded (moved) to m_next. If false, it is dropped.
-	 *  - The return value from On_Full_Feature is whatever m_next.On_Full_Feature returns when forwarded,
-	 *    or true (continue parsing) when dropped.
+	 *  - The return value from On_Full_Feature is whatever m_next.On_Full_Feature returns when forwarded, or true (continue parsing) when dropped.
 	 *
-	 * Design notes for low overhead:
-	 *  - The filter stores m_next as a reference (no ownership, no indirection costs beyond reference).
-	 *  - Predicate is stored by value. Prefer stateless small callables (lambdas, function pointers, small functors).
-	 *  - No extra allocations or deep copies of Feature are performed in the matching path: Move semantics are used.
-	 */
+	 * @tparam Next_Handler: type of the next handler/sink. Must expose:
+	 *        bool On_Full_Feature(::GeoJSON::Feature&& f);
+	 *        bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
+	 * 
+	 * @tparam Predicate: callable with signature bool(const ::GeoJSON::Feature&) the predicate can be default or non default constructible
+	 *
 
+	 *
+	 * @note Design notes for low overhead:
+	 *  - The filter use CRTP to Call Next_Handler value.
+	 *  - Predicate is stored by value. Prefer stateless small callables (lambdas, function pointers, small functors).
+	 */
 	template <class Next_Handler, class Predicate>
-	class Feature_Filter : public O::GeoJSON::IO::Feature_Parser<Feature_Filter<Next_Handler, Predicate>>
+	requires std::invocable<Predicate, O::GeoJSON::Feature&>
+	class Feature : public O::GeoJSON::IO::Feature_Parser<Feature<Next_Handler, Predicate>>
 	{
 	public:
-		Feature_Filter(Predicate pred) noexcept(std::is_nothrow_move_constructible_v<Predicate>)
-		: m_pred(std::move(pred)) {}
 
-		// called by Feature_Parser when a full feature is available
-		bool On_Full_Feature(O::GeoJSON::Feature&& feature)
-		{
-			if constexpr (!requires(Next_Handler d) { d.On_Full_Feature(std::move(feature)); })
-				static_assert(false,"Derived must implement:\n    bool On_Full_Feature(Feature&&)");
-			if (!m_pred(feature)) return true;
-			return static_cast<Next_Handler&>(*this).On_Full_Feature(std::move(feature));
-		}
+		/**
+		 * @brief default constructor
+		 * @note only available when m_pred is default constructible
+		 */
+		Feature() requires std::default_initializable<Predicate> : m_pred() {};
 
-		// forward root (bbox/id) if next supports it
-		bool On_Root(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
-		{
-			if constexpr (!requires(Next_Handler d) { d.On_Root(std::move(bbox), std::move(id)); })
-				static_assert(false,"Derived must implement:\n    bool On_Root(optional<Bbox>&&, optional<string>&&)");
-			return static_cast<Next_Handler&>(*this).On_Root(std::move(bbox), std::move(id));
-		}
+		/**
+		 * @brief Constructor with a predicate
+		 * @param pred the predicate to use when evaluating 
+		 */
+		Feature(Predicate pred);
+		
+		/// @brief implementation of the ``O::GeoJSON::IO::Feature_Parser`` functions
+		/// @{
+		bool On_Full_Feature(O::GeoJSON::Feature&& feature);
+		bool On_Root(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
+		/// @}
 
-		const Predicate& Get_Predicator() { return m_pred; };
+		/**
+		 * @brief give the filter predicator
+		 * 
+		 * @return the instance predicator
+		 */
+		const Predicate& Get_Predicator();
 
 	private:
 		Predicate m_pred;
 	};
 
 }
+
+#include "feature.hpp"
 
 #endif // FILTER_FEATURE_H

@@ -11,8 +11,7 @@ namespace O::GeoJSON
 	/**
 	 * @brief Represents a GeoJSON GeometryCollection.
 	 *
-	 * A GeometryCollection is a container of multiple geometry objects
-	 * of any supported type (Point, LineString, Polygon, etc.).
+	 * A GeometryCollection is a container of multiple geometry objects of any supported type (Point, LineString, Polygon, etc.).
 	 *
 	 * Example JSON:
 	 * @code

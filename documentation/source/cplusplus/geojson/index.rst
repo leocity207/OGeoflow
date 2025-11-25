@@ -1,7 +1,7 @@
 .. _geojson:
 
-GeoJSON
-=======
+O::GeoJSON
+==========
 
 The **O::GeoJSON** namespace defines all data structures that describe the content of a GeoJSON file.
 
