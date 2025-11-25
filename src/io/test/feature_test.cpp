@@ -23,7 +23,7 @@ TEST_F(Feature_Test, Feature_Collection_Features_Basic) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed, error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 
@@ -102,7 +102,7 @@ TEST_F(Feature_Test, Feature_Id_As_Number_Should_Be_Stringified) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed, error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 	ASSERT_TRUE(g.Is_Feature_Collection());
@@ -124,7 +124,7 @@ TEST_F(Feature_Test, Feature_Missing_Geometry_Should_Fail) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed, error=" << static_cast<int>(result.Error());
 }
 
@@ -140,7 +140,7 @@ TEST_F(Feature_Test, Feature_Geometry_Null_Behavior) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed, error=" << static_cast<int>(result.Error());
 }
 
@@ -156,7 +156,7 @@ TEST_F(Feature_Test, Feature_Properties_Null_Accepted) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed, error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 	ASSERT_TRUE(g.Is_Feature_Collection());
@@ -183,5 +183,5 @@ TEST_F(Feature_Test, Feature_With_Wrong_Type_In_Features_Array) {
 		]
 	})";
 
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::UNKNOWN_TYPE);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::UNKNOWN_TYPE);
 }

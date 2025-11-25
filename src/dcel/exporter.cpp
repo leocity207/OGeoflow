@@ -3,7 +3,9 @@
 #include <cassert>
 
 
-std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const DCEL& dcel, size_t start_edge)
+using namespace O;
+
+std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel, size_t start_edge)
 {
 	std::vector<GeoJSON::Position> coords;
 	size_t e = start_edge;
@@ -19,7 +21,7 @@ std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const DCEL& dcel, si
 	return coords;
 }
 
-GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const DCEL& dcel, size_t face_idx)
+GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const Storage& dcel, size_t face_idx)
 {
 	const auto& face = dcel.faces[face_idx];
 	std::vector<std::vector<GeoJSON::Position>> rings;
@@ -37,7 +39,7 @@ GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const DCEL& dcel, size_
 	return polygon;
 }
 
-std::vector<GeoJSON::Polygon> DCEL::Exporter::Collect_Polygons_For_Feature(const DCEL& dcel, size_t featureIdx)
+std::vector<GeoJSON::Polygon> DCEL::Exporter::Collect_Polygons_For_Feature(const Storage& dcel, size_t featureIdx)
 {
 	std::vector<GeoJSON::Polygon> polygons;
 
@@ -55,7 +57,7 @@ std::vector<GeoJSON::Polygon> DCEL::Exporter::Collect_Polygons_For_Feature(const
 	return polygons;
 }
 
-GeoJSON::GeoJSON DCEL::Exporter::Convert(const DCEL& dcel, const Feature_Info& info)
+GeoJSON::Root DCEL::Exporter::Convert(const Storage& dcel, const Feature_Info& info)
 {
 	GeoJSON::Feature_Collection featureCollection;
 
@@ -93,7 +95,7 @@ GeoJSON::GeoJSON DCEL::Exporter::Convert(const DCEL& dcel, const Feature_Info& i
 		featureCollection.bbox = info.root_bbox;
 	}
 
-	GeoJSON::GeoJSON result;
+	GeoJSON::Root result;
 	result.object = std::move(featureCollection);
 	return result;
 }

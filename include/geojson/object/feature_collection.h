@@ -4,7 +4,7 @@
 #include <vector>
 #include "feature.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 	struct Feature_Collection
 	{

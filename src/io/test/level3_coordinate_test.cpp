@@ -202,7 +202,7 @@ TEST_F(Level3_Coordinate_Test, Polygon_Not_Enough_Points) {
     })";
 
     // adjust the expected error name if your IO::Error enum differs
-    Expect_Parse_Error(json, GeoJSON::IO::Error::Type::NEED_AT_LEAST_FOUR_POSITION_FOR_POLYGON);
+    Expect_Parse_Error(json, O::GeoJSON::IO::Error::NEED_AT_LEAST_FOUR_POSITION_FOR_POLYGON);
 }
 
 // Polygon : anneau non fermé (dernier point != premier) -> erreur
@@ -219,7 +219,7 @@ TEST_F(Level3_Coordinate_Test, Polygon_Not_Closed) {
         ]
     })";
 
-    Expect_Parse_Error(json, GeoJSON::IO::Error::Type::POLYGON_NEED_TO_BE_CLOSED);
+    Expect_Parse_Error(json, O::GeoJSON::IO::Error::POLYGON_NEED_TO_BE_CLOSED);
 }
 
 TEST_F(Level3_Coordinate_Test, With_Mismatch_Level) {
@@ -237,5 +237,5 @@ TEST_F(Level3_Coordinate_Test, With_Mismatch_Level) {
         ]
     })";
 
-    Expect_Parse_Error(json, GeoJSON::IO::Error::Type::INCONSCISTENT_COORDINATE_LEVEL);
+    Expect_Parse_Error(json, O::GeoJSON::IO::Error::INCONSCISTENT_COORDINATE_LEVEL);
 }

@@ -3,7 +3,7 @@
 
 #include <optional>
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	struct Position

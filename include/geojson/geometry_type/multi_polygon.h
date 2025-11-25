@@ -5,7 +5,7 @@
 
 #include "polygon.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	/**

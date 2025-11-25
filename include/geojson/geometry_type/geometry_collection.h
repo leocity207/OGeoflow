@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 	struct Geometry;
 	/**

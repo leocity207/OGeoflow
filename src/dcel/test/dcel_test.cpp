@@ -3,12 +3,12 @@
 #include "dcel_helper.h"
 
 TEST(DCEL_Builder_Exporter, SimplePolygonRoundTrip) {
-    DCEL::Builder builder;
+    O::DCEL::Builder builder;
 
     // create simple square polygon
-    GeoJSON::Property props;
-    props = GeoJSON::Property::Object{};
-    props = std::move(GeoJSON::Property::Object{{{"name", GeoJSON::Property("square")}}});
+    O::GeoJSON::Property props;
+    props = O::GeoJSON::Property::Object{};
+    props = std::move(O::GeoJSON::Property::Object{{{"name", O::GeoJSON::Property("square")}}});
     // simpler: just assign string property
     props = std::string("square-property");
 
@@ -24,11 +24,11 @@ TEST(DCEL_Builder_Exporter, SimplePolygonRoundTrip) {
     // finalize
     auto dcelOpt = builder.Get_Dcel();
     ASSERT_TRUE(dcelOpt.has_value());
-    DCEL::DCEL dcel = std::move(*dcelOpt);
+    O::DCEL::Storage dcel = std::move(*dcelOpt);
 
     auto infoOpt = builder.Get_Feature_Info();
     ASSERT_TRUE(infoOpt.has_value());
-    DCEL::Feature_Info info = *infoOpt;
+    O::DCEL::Feature_Info info = *infoOpt;
 
     // basic DCEL checks
     EXPECT_GT(dcel.vertices.size(), (size_t)0);
@@ -36,7 +36,7 @@ TEST(DCEL_Builder_Exporter, SimplePolygonRoundTrip) {
     EXPECT_GT(dcel.faces.size(), (size_t)0);
 
     // convert back to GeoJSON
-    GeoJSON::GeoJSON out = DCEL::Exporter::Convert(dcel, info);
+    O::GeoJSON::Root out = O::DCEL::Exporter::Convert(dcel, info);
 
     // compare: one feature expected
     ASSERT_TRUE(out.Is_Feature_Collection());
@@ -44,14 +44,14 @@ TEST(DCEL_Builder_Exporter, SimplePolygonRoundTrip) {
     ASSERT_EQ(fc.features.size(), (size_t)1);
 
     // Build expected feature again to compare
-    GeoJSON::Feature expected = Make_Simple_Polygon_Feature("feature-1", rings, props);
+    O::GeoJSON::Feature expected = Make_Simple_Polygon_Feature("feature-1", rings, props);
     Assert_Features_Equal(expected, fc.features[0]);
 }
 
 TEST(DCEL_Builder_Exporter, PolygonWithHoleRoundTrip) {
-    DCEL::Builder builder;
+    O::DCEL::Builder builder;
 
-    GeoJSON::Property props = std::string("poly-with-hole");
+    O::GeoJSON::Property props = std::string("poly-with-hole");
 
     // square with a small square hole
     std::vector<std::vector<std::pair<double,double>>> rings = {
@@ -65,27 +65,27 @@ TEST(DCEL_Builder_Exporter, PolygonWithHoleRoundTrip) {
 
     auto dcelOpt = builder.Get_Dcel();
     ASSERT_TRUE(dcelOpt.has_value());
-    DCEL::DCEL dcel = std::move(*dcelOpt);
+    O::DCEL::Storage dcel = std::move(*dcelOpt);
 
     auto infoOpt = builder.Get_Feature_Info();
     ASSERT_TRUE(infoOpt.has_value());
-    DCEL::Feature_Info info = *infoOpt;
+    O::DCEL::Feature_Info info = *infoOpt;
 
     EXPECT_GT(dcel.faces.size(), (size_t)0);
 
-    GeoJSON::GeoJSON out = DCEL::Exporter::Convert(dcel, info);
+    O::GeoJSON::Root out = O::DCEL::Exporter::Convert(dcel, info);
     ASSERT_TRUE(out.Is_Feature_Collection());
     const auto& fc = out.Get_Feature_Collection();
     ASSERT_EQ(fc.features.size(), (size_t)1);
 
-    GeoJSON::Feature expected = Make_Simple_Polygon_Feature("feature-hole", rings, props);
+    O::GeoJSON::Feature expected = Make_Simple_Polygon_Feature("feature-hole", rings, props);
     Assert_Features_Equal(expected, fc.features[0]);
 }
 
 TEST(DCEL_Builder_Exporter, MultiPolygonRoundTrip) {
-    DCEL::Builder builder;
+    O::DCEL::Builder builder;
 
-    GeoJSON::Property props = std::string("multipoly");
+    O::GeoJSON::Property props = std::string("multipoly");
 
     // MultiPolygon: two disjoint squares
     std::vector<std::vector<std::vector<std::pair<double,double>>>> mp = {
@@ -103,54 +103,54 @@ TEST(DCEL_Builder_Exporter, MultiPolygonRoundTrip) {
 
     auto dcelOpt = builder.Get_Dcel();
     ASSERT_TRUE(dcelOpt.has_value());
-    DCEL::DCEL dcel = std::move(*dcelOpt);
+    O::DCEL::Storage dcel = std::move(*dcelOpt);
 
     auto infoOpt = builder.Get_Feature_Info();
     ASSERT_TRUE(infoOpt.has_value());
-    DCEL::Feature_Info info = *infoOpt;
+    O::DCEL::Feature_Info info = *infoOpt;
 
     EXPECT_GT(dcel.vertices.size(), (size_t)0);
 
-    GeoJSON::GeoJSON out = DCEL::Exporter::Convert(dcel, info);
+    O::GeoJSON::Root out = O::DCEL::Exporter::Convert(dcel, info);
     ASSERT_TRUE(out.Is_Feature_Collection());
     const auto& fc = out.Get_Feature_Collection();
     ASSERT_EQ(fc.features.size(), (size_t)1);
 
     // expected
-    GeoJSON::Feature expected = Make_Multi_Polygon_Feature("multi-1", mp, props);
+    O::GeoJSON::Feature expected = Make_Multi_Polygon_Feature("multi-1", mp, props);
     Assert_Features_Equal(expected, fc.features[0]);
 }
 
 TEST(DCEL_Builder_Exporter, FeaturePropertiesAndBboxAndIdRoundTrip) {
-    DCEL::Builder builder;
+    O::DCEL::Builder builder;
 
     // properties as an object
-    GeoJSON::Property props;
-    GeoJSON::Property::Object obj;
+    O::GeoJSON::Property props;
+    O::GeoJSON::Property::Object obj;
     obj["type"] = std::string("test");
     obj["value"] = 42;
     props = std::move(obj);
 
-    GeoJSON::Bbox bbox;
+    O::GeoJSON::Bbox bbox;
     bbox.coordinates = std::array<double,4>{-1.0, -1.0, 2.0, 2.0};
 
     std::vector<std::vector<std::pair<double,double>>> rings = {
         { {0.0,0.0}, {0.0,1.0}, {1.0,1.0}, {1.0,0.0} }
     };
 
-    GeoJSON::Feature f = Make_Simple_Polygon_Feature("id-123", rings, props, bbox);
+    O::GeoJSON::Feature f = Make_Simple_Polygon_Feature("id-123", rings, props, bbox);
 
     EXPECT_TRUE(builder.On_Full_Feature(std::move(f)));
 
     auto dcelOpt = builder.Get_Dcel();
     ASSERT_TRUE(dcelOpt.has_value());
-    DCEL::DCEL dcel = std::move(*dcelOpt);
+    O::DCEL::Storage dcel = std::move(*dcelOpt);
 
     auto infoOpt = builder.Get_Feature_Info();
     ASSERT_TRUE(infoOpt.has_value());
-    DCEL::Feature_Info info = *infoOpt;
+    O::DCEL::Feature_Info info = *infoOpt;
 
-    GeoJSON::GeoJSON out = DCEL::Exporter::Convert(dcel, info);
+    O::GeoJSON::Root out = O::DCEL::Exporter::Convert(dcel, info);
     ASSERT_TRUE(out.Is_Feature_Collection());
     const auto& fc = out.Get_Feature_Collection();
     ASSERT_EQ(fc.features.size(), (size_t)1);

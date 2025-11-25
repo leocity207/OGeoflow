@@ -7,7 +7,7 @@
 #include <string>
 #include <functional>
 
-namespace GeoJSON 
+namespace O::GeoJSON 
 {
 	struct Property {
 		using Array = std::vector<Property>;

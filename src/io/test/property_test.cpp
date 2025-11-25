@@ -16,7 +16,7 @@ TEST_F(Property_Test, Properties_Primitives_And_Null) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed: error=" << static_cast<int>(result.Error());
 	const auto& f = result.Value().Get_Feature();
 
@@ -60,7 +60,7 @@ TEST_F(Property_Test, Properties_Array_Of_Primitives) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value());
 	const auto& f = result.Value().Get_Feature();
 
@@ -97,7 +97,7 @@ TEST_F(Property_Test, Properties_Nested_Object) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value());
 	const auto& f = result.Value().Get_Feature();
 
@@ -127,7 +127,7 @@ TEST_F(Property_Test, Properties_Complex_Mix_Object_Array_Object) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value());
 	const auto& f = result.Value().Get_Feature();
 
@@ -195,7 +195,7 @@ TEST_F(Property_Test, Properties_Explicitly_Null) {
 		"properties": null
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parse failed: error=" << static_cast<int>(result.Error());
 	const auto& f = result.Value().Get_Feature();
 
@@ -218,7 +218,7 @@ TEST_F(Property_Test, Properties_Keys_Preservation) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value());
 	const auto& f = result.Value().Get_Feature();
 
@@ -242,7 +242,7 @@ TEST_F(Property_Test, Properties_Malformed_Inconsistent_Array_Object) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
-	EXPECT_EQ(result.Error(), GeoJSON::IO::Error::Type::PROPERTY_KEY_ALREADY_EXIST);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
+	EXPECT_EQ(result.Error(), O::GeoJSON::IO::Error::PROPERTY_KEY_ALREADY_EXIST);
 
 }

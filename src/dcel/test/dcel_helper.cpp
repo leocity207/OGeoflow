@@ -12,7 +12,7 @@ bool Nearly_Equal(double a, double b, double eps = 1e-9)
 }
 
 // Compare Positions
-bool Positions_Equal(const GeoJSON::Position& a, const GeoJSON::Position& b)
+bool Positions_Equal(const O::GeoJSON::Position& a, const O::GeoJSON::Position& b)
 {
     if (!Nearly_Equal(a.longitude, b.longitude)) return false;
     if (!Nearly_Equal(a.latitude, b.latitude)) return false;
@@ -24,7 +24,7 @@ bool Positions_Equal(const GeoJSON::Position& a, const GeoJSON::Position& b)
 }
 
 // Compare rings: vector<Position> with optional closing repeated vertex
-bool Ring_Equal(const std::vector<GeoJSON::Position>& r1, const std::vector<GeoJSON::Position>& r2)
+bool Ring_Equal(const std::vector<O::GeoJSON::Position>& r1, const std::vector<O::GeoJSON::Position>& r2)
 {
     if (r1.size() != r2.size()) return false;
     for (size_t i = 0; i < r1.size(); ++i) {
@@ -34,7 +34,7 @@ bool Ring_Equal(const std::vector<GeoJSON::Position>& r1, const std::vector<GeoJ
 }
 
 // Compare Polygons (rings)
-bool Polygon_Equal(const GeoJSON::Polygon& p1, const GeoJSON::Polygon& p2)
+bool Polygon_Equal(const O::GeoJSON::Polygon& p1, const O::GeoJSON::Polygon& p2)
 {
     if (p1.rings.size() != p2.rings.size()) return false;
     for (size_t i = 0; i < p1.rings.size(); ++i)
@@ -43,7 +43,7 @@ bool Polygon_Equal(const GeoJSON::Polygon& p1, const GeoJSON::Polygon& p2)
 }
 
 // Compare MultiPolygon
-bool Multi_Polygon_Equal(const GeoJSON::Multi_Polygon& m1, const GeoJSON::Multi_Polygon& m2)
+bool Multi_Polygon_Equal(const O::GeoJSON::Multi_Polygon& m1, const O::GeoJSON::Multi_Polygon& m2)
 {
     if (m1.polygons.size() != m2.polygons.size()) return false;
     for (size_t i = 0; i < m1.polygons.size(); ++i)
@@ -52,7 +52,7 @@ bool Multi_Polygon_Equal(const GeoJSON::Multi_Polygon& m1, const GeoJSON::Multi_
 }
 
 // Compare Property (simple deep-equality for common scalar cases used in tests)
-bool Property_Equal(const GeoJSON::Property& a, const GeoJSON::Property& b)
+bool Property_Equal(const O::GeoJSON::Property& a, const O::GeoJSON::Property& b)
 {
     if (a.Is_Null() && b.Is_Null()) return true;
     if (a.Is_Bool() && b.Is_Bool()) return a.Get_Bool() == b.Get_Bool();
@@ -81,7 +81,7 @@ bool Property_Equal(const GeoJSON::Property& a, const GeoJSON::Property& b)
 }
 
 // Compare Feature's properties, id and bbox and geometry
-void Assert_Features_Equal(const GeoJSON::Feature& expected, const GeoJSON::Feature& actual)
+void Assert_Features_Equal(const O::GeoJSON::Feature& expected, const O::GeoJSON::Feature& actual)
 {
     ASSERT_TRUE(expected.geometry.has_value() && actual.geometry.has_value());
 
@@ -116,16 +116,16 @@ void Assert_Features_Equal(const GeoJSON::Feature& expected, const GeoJSON::Feat
     }
 }
 
-GeoJSON::Feature Make_Simple_Polygon_Feature(const std::string& id, const std::vector<std::vector<std::pair<double,double>>>& ringsCoords, const GeoJSON::Property& properties, std::optional<GeoJSON::Bbox> bbox = std::nullopt)
+O::GeoJSON::Feature Make_Simple_Polygon_Feature(const std::string& id, const std::vector<std::vector<std::pair<double,double>>>& ringsCoords, const O::GeoJSON::Property& properties, std::optional<O::GeoJSON::Bbox> bbox = std::nullopt)
 {
-    GeoJSON::Feature f;
-    GeoJSON::Geometry g;
-    GeoJSON::Polygon poly;
+    O::GeoJSON::Feature f;
+    O::GeoJSON::Geometry g;
+    O::GeoJSON::Polygon poly;
 
     for (const auto& ring : ringsCoords) {
-        std::vector<GeoJSON::Position> r;
+        std::vector<O::GeoJSON::Position> r;
         for (const auto& p : ring) {
-            GeoJSON::Position pos;
+            O::GeoJSON::Position pos;
             pos.longitude = p.first;
             pos.latitude = p.second;
             r.push_back(pos);
@@ -145,18 +145,18 @@ GeoJSON::Feature Make_Simple_Polygon_Feature(const std::string& id, const std::v
     return f;
 }
 
-GeoJSON::Feature Make_Multi_Polygon_Feature(const std::string& id, const std::vector<std::vector<std::vector<std::pair<double,double>>>>& polygonsRings, const GeoJSON::Property& properties, std::optional<GeoJSON::Bbox> bbox = std::nullopt)
+O::GeoJSON::Feature Make_Multi_Polygon_Feature(const std::string& id, const std::vector<std::vector<std::vector<std::pair<double,double>>>>& polygonsRings, const O::GeoJSON::Property& properties, std::optional<O::GeoJSON::Bbox> bbox = std::nullopt)
 {
-    GeoJSON::Feature f;
-    GeoJSON::Geometry g;
-    GeoJSON::Multi_Polygon mp;
+    O::GeoJSON::Feature f;
+    O::GeoJSON::Geometry g;
+    O::GeoJSON::Multi_Polygon mp;
 
     for (const auto& polygonRings : polygonsRings) {
-        GeoJSON::Polygon poly;
+        O::GeoJSON::Polygon poly;
         for (const auto& ring : polygonRings) {
-            std::vector<GeoJSON::Position> r;
+            std::vector<O::GeoJSON::Position> r;
             for (const auto& p : ring) {
-                GeoJSON::Position pos; pos.longitude = p.first; pos.latitude = p.second;
+                O::GeoJSON::Position pos; pos.longitude = p.first; pos.latitude = p.second;
                 r.push_back(pos);
             }
             // close

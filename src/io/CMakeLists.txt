@@ -10,6 +10,7 @@ target_include_directories(io
 
 target_link_libraries(io
 	PUBLIC RapidJSON::rapidjson
+	PUBLIC OConfigurator::configuration
 )
 
 add_library(${PROJECT_NAME}::io ALIAS io)

@@ -1,8 +1,9 @@
 #include "include/dcel/builder.h"
 #include <cassert>
 
+using namespace O;
 
-bool DCEL::Builder::Parse_GeoJSON(GeoJSON::GeoJSON&& geojson)
+bool DCEL::Builder::Parse_GeoJSON(GeoJSON::Root&& geojson)
 {
 	return std::visit([&](auto&& val) {
 		using T = std::decay_t<decltype(val)>;
@@ -21,7 +22,7 @@ bool DCEL::Builder::Parse_GeoJSON(GeoJSON::GeoJSON&& geojson)
 
 }
 
-bool DCEL::Builder::On_Full_Feature(::GeoJSON::Feature&& feature)
+bool DCEL::Builder::On_Full_Feature(GeoJSON::Feature&& feature)
 {
 	if (!feature.geometry) return true;
 	m_feature_info.feature_properties.emplace_back(std::move(feature.properties));
@@ -36,7 +37,7 @@ bool DCEL::Builder::On_Full_Feature(::GeoJSON::Feature&& feature)
 	return true;
 }
 
-bool  DCEL::Builder::On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+bool  DCEL::Builder::On_Root(std::optional<GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 {
 	m_feature_info.root_bbox = std::move(bbox);
 	m_feature_info.root_id = std::move(id);
@@ -44,12 +45,12 @@ bool  DCEL::Builder::On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optiona
 	return true;
 }
 
-std::optional<DCEL::DCEL> DCEL::Builder::Get_Dcel()
+std::optional<DCEL::Storage> DCEL::Builder::Get_Dcel()
 {
 	if(m_valid_dcel)
 	{
 		m_valid_dcel = false;
-		return static_cast<DCEL>(std::move(m_dcel));
+		return static_cast<Storage>(std::move(m_dcel));
 	}
 	return std::nullopt;
 }
@@ -64,21 +65,21 @@ std::optional<DCEL::Feature_Info> DCEL::Builder::Get_Feature_Info()
 	return std::nullopt;
 }
 
-bool DCEL::Builder::On_Polygon(const ::GeoJSON::Polygon& poly, size_t feature_id)
+bool DCEL::Builder::On_Polygon(const GeoJSON::Polygon& poly, size_t feature_id)
 {
     if (poly.rings.empty()) return true;
     Build_Face_From_Rings(poly.rings, feature_id);
     return true;
 }
 
-bool DCEL::Builder::On_MultiPolygon(const ::GeoJSON::Multi_Polygon& mp, size_t feature_id)
+bool DCEL::Builder::On_MultiPolygon(const GeoJSON::Multi_Polygon& mp, size_t feature_id)
 {
     for (auto const& poly : mp.polygons)
         On_Polygon(poly, feature_id);
     return true;
 }
 
-std::vector<size_t> DCEL::Builder::Create_Vertex(const std::vector<::GeoJSON::Position>& ring)
+std::vector<size_t> DCEL::Builder::Create_Vertex(const std::vector<GeoJSON::Position>& ring)
 {
 	std::vector<size_t> ring_vertex_indices; 
 	ring_vertex_indices.reserve(ring.size());
@@ -142,7 +143,7 @@ size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices,siz
 		return m_dcel.faces.size() - 1;
 }
 
-void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<::GeoJSON::Position>>& rings, size_t feature_id)
+void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON::Position>>& rings, size_t feature_id)
 {
 	assert(!rings.empty());
 

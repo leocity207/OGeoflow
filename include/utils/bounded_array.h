@@ -10,15 +10,14 @@
 #include <stdexcept>
 #include <iterator>
 #include <algorithm>
-#include "exception.h"
 
-namespace Util
+namespace O
 {
 	template<typename T, std::size_t N>
 	class Bounded_Vector 
 	{
 	public:
-		struct Exception : Util::Exception
+		struct Exception
 		{
 			enum class Type
 			{
@@ -27,7 +26,6 @@ namespace Util
 				NO_MORE_ELEMENT_TO_POP,
 				NO_MORE_PLACE_TO_EMPLACE
 			};
-			explicit Exception(Type t) : type(t) {}
 			Type type;
 		};
 	private:
@@ -37,10 +35,12 @@ namespace Util
 		std::size_t m_size = 0;
 
 		// helper: pointeur vers un emplacement i
-		T* Ptr_At(std::size_t i) noexcept {
+		T* Ptr_At(std::size_t i) noexcept
+		{
 			return reinterpret_cast<T*>(&buffer_[i]);
 		}
-		const T* Ptr_At(std::size_t i) const noexcept {
+		const T* Ptr_At(std::size_t i) const noexcept
+		{
 			return reinterpret_cast<const T*>(&buffer_[i]);
 		}
 
@@ -51,14 +51,15 @@ namespace Util
 		~Bounded_Vector() noexcept {Clear();}
 
 		// copy constructor
-		Bounded_Vector(const Bounded_Vector& other) {
-			for (std::size_t i = 0; i < other.m_size; ++i) {
+		Bounded_Vector(const Bounded_Vector& other)
+		{
+			for (std::size_t i = 0; i < other.m_size; ++i)
 				new (&buffer_[i]) T(*other.Ptr_At(i));
-			}
 			m_size = other.m_size;
 		}
 		// move constructor
-		Bounded_Vector(Bounded_Vector&& other) noexcept(std::is_nothrow_move_constructible<T>::value) {
+		Bounded_Vector(Bounded_Vector&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
+		{
 			for (std::size_t i = 0; i < other.m_size; ++i) {
 				new (&buffer_[i]) T(std::move(*other.Ptr_At(i)));
 				other.Ptr_At(i)->~T();
@@ -68,7 +69,8 @@ namespace Util
 		}
 
 		// copy assign
-		Bounded_Vector& operator=(const Bounded_Vector& other) {
+		Bounded_Vector& operator=(const Bounded_Vector& other)
+		{
 			if (this == &other) return *this;
 			Clear();
 			for (std::size_t i = 0; i < other.m_size; ++i)
@@ -77,10 +79,12 @@ namespace Util
 			return *this;
 		}
 		// move assign
-		Bounded_Vector& operator=(Bounded_Vector&& other) noexcept(std::is_nothrow_move_constructible<T>::value) {
+		Bounded_Vector& operator=(Bounded_Vector&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
+		{
 			if (this == &other) return *this;
 			Clear();
-			for (std::size_t i = 0; i < other.m_size; ++i) {
+			for (std::size_t i = 0; i < other.m_size; ++i)
+			{
 				new (&buffer_[i]) T(std::move(*other.Ptr_At(i)));
 				other.Ptr_At(i)->~T();
 			}
@@ -99,12 +103,14 @@ namespace Util
 		T& operator[](std::size_t i) noexcept { return *Ptr_At(i); }
 		const T& operator[](std::size_t i) const noexcept { return *Ptr_At(i); }
 
-		T& At(std::size_t i) {
-			Ensure<Exception>(i < m_size, Exception::Type::OUT_OF_RANGE);
+		T& At(std::size_t i)
+		{
+			if (i >= m_size) throw Exception{Exception::Type::OUT_OF_RANGE};
 			return *Ptr_At(i);
 		}
-		const T& At(std::size_t i) const {
-			Ensure<Exception>(i < m_size, Exception::Type::OUT_OF_RANGE);
+		const T& At(std::size_t i) const
+		{
+			if(i >= m_size)  throw Exception{Exception::Type::OUT_OF_RANGE};
 			return *Ptr_At(i);
 		}
 
@@ -113,8 +119,9 @@ namespace Util
 
 		// modifiers
 		template<class... Args>
-		void Emplace_Back(Args&&... args) {
-			Ensure<Exception>(!Full(), Exception::Type::NO_MORE_PLACE_TO_EMPLACE);
+		void Emplace_Back(Args&&... args)
+		{
+			if(Full()) throw  Exception{Exception::Type::NO_MORE_PLACE_TO_EMPLACE};
 			new (&buffer_[m_size]) T(std::forward<Args>(args)...);
 			++m_size;
 		}
@@ -122,13 +129,15 @@ namespace Util
 		void Push_Back(const T& v) { Emplace_Back(v); }
 		void Push_Back(T&& v) { Emplace_Back(std::move(v)); }
 
-		void Pop_Back() {
-			Ensure(!Empty(), Exception::Type::NO_MORE_ELEMENT_TO_POP);
+		void Pop_Back()
+		{
+			if(Empty()) throw Exception{Exception::Type::NO_MORE_ELEMENT_TO_POP};
 			--m_size;
 			Ptr_At(m_size)->~T();
 		}
 
-		void Clear() noexcept {
+		void Clear() noexcept
+		{
 			while (m_size > 0) {
 				--m_size;
 				Ptr_At(m_size)->~T();

@@ -32,7 +32,7 @@
 #include "include/geojson/object/geometry.h"
 #include "include/geojson/properties.h"
 
-using namespace GeoJSON;
+using namespace O::GeoJSON;
 
 
 
@@ -42,7 +42,7 @@ struct PredCountAndMatch
 {
     int calls = 0;
 
-    bool operator()(const ::GeoJSON::Feature& f) noexcept
+    bool operator()(const Feature& f) noexcept
     {
         ++calls;
         if (!f.properties.Is_Object()) return false;
@@ -56,20 +56,20 @@ struct PredCountAndMatch
 
 // Simple collector used as downstream: stores all received features and counts calls.
 template<class Pred>
-struct FeatureCollector : public ::GeoJSON::Filter::Feature_Filter<FeatureCollector<Pred>, Pred >
+struct FeatureCollector : public Filter::Feature_Filter<FeatureCollector<Pred>, Pred >
 {
-    std::vector<::GeoJSON::Feature> features;
-    std::optional<::GeoJSON::Bbox> root_bbox;
+    std::vector<Feature> features;
+    std::optional<Bbox> root_bbox;
     std::optional<std::string> root_id;
     int root_calls = 0;
 
-    bool On_Full_Feature(::GeoJSON::Feature&& f)
+    bool On_Full_Feature(Feature&& f)
     {
         features.push_back(std::move(f));
         return true; // continue parsing
     }
 
-    bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+    bool On_Root(std::optional<Bbox>&& bbox, std::optional<std::string>&& id)
     {
         ++root_calls;
         root_bbox = std::move(bbox);
@@ -149,7 +149,7 @@ TEST(Feature_Filter_Test, DropsAllWhenPredicateFalse)
     rapidjson::Reader reader;
 
     // predicate that always returns false but still counts
-    struct PredAlwaysFalse { int calls = 0; bool operator()(const ::GeoJSON::Feature&){ ++calls; return false; } } pred;
+    struct PredAlwaysFalse { int calls = 0; bool operator()(const Feature&){ ++calls; return false; } } pred;
 
     FeatureCollector<PredAlwaysFalse> filter( pred);
 

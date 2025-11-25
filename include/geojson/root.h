@@ -9,12 +9,12 @@
 #include "object/geometry.h"
 #include "bbox.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 	/**
 	 * @brief Main GeoJSON container
 	 */
-	struct GeoJSON
+	struct Root
 	{
 		std::variant<Feature, Feature_Collection, Geometry> object;
 

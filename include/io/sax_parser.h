@@ -9,20 +9,20 @@
 #include "include/geojson/geometry_type/polygon.h"
 #include "include/geojson/position.h"
 #include "include/geojson/bbox.h"
-#include "include/geojson/geojson.h"
+#include "include/geojson/root.h"
 #include "include/io/error.h"
 #include "include/utils/bounded_array.h"
 
-namespace GeoJSON::IO
+namespace O::GeoJSON::IO
 {
-	inline ::GeoJSON::Property PROPERTY_STUB;
+	inline O::GeoJSON::Property PROPERTY_STUB;
 
 	template<class Derived = void>
 	class SAX_Parser : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, SAX_Parser<Derived>>
 	{
 	public:
-		bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number);
-		bool On_Feature(::GeoJSON::Feature&& feature);
+		bool On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t element_number);
+		bool On_Feature(O::GeoJSON::Feature&& feature);
 		bool On_Feature_Collection(std::optional<Bbox>&& bbox, std::optional<std::string>&& id);
 
 	public:
@@ -49,14 +49,14 @@ namespace GeoJSON::IO
 
 		struct Parse_Context
 		{
-			std::reference_wrapper<::GeoJSON::Property> property;
+			std::reference_wrapper<O::GeoJSON::Property> property;
 			Parse_State state;
 			std::string key_str;
-			::GeoJSON::Key key;
-			::GeoJSON::Type type; 	
-			std::optional<::GeoJSON::Geometry> geometry;
+			O::GeoJSON::Key key;
+			O::GeoJSON::Type type; 	
+			std::optional<O::GeoJSON::Geometry> geometry;
 			std::size_t geometry_count;
-			std::optional<::GeoJSON::Bbox> bbox;
+			std::optional<O::GeoJSON::Bbox> bbox;
 		};
 
 	// CTOR
@@ -86,47 +86,47 @@ namespace GeoJSON::IO
 		 * @brief Get the parsed GeoJSON object
 		 * @return Parsed GeoJSON structure
 		 */
-		Error::Type Get_Error() const {return m_current_error;}
+		O::GeoJSON::IO::Error Get_Error() const { return m_current_error; }
 
 	private:
 
 		// Helper methods to help handle the context we are in within the sax handler
-		bool Push_Context(Parse_State state, ::GeoJSON::Property& ref_property = PROPERTY_STUB, std::string_view key = "");
+		bool Push_Context(Parse_State state, O::GeoJSON::Property& ref_property = PROPERTY_STUB, std::string_view key = "");
 		bool Reset_State(Parse_State state);
 		Parse_Context Pop_Context();
 		Parse_State Current_State() const;
-		::GeoJSON::Key Set_Current_Key(std::string_view key);
+		O::GeoJSON::Key Set_Current_Key(std::string_view key);
 		Parse_Context& Current_Context();
 		bool In_Array();
 		
 
 		// Create object from the given parsed data
-		std::optional<::GeoJSON::Feature> Create_Feature();
-		std::optional<::GeoJSON::Geometry> Create_Geometry();
+		std::optional<O::GeoJSON::Feature> Create_Feature();
+		std::optional<O::GeoJSON::Geometry> Create_Geometry();
 		
 		// Coordinate processing
 		bool Process_Coordinate_Number(double value);
 		bool Finalize_Coordinates();
 	protected:
-		bool Push_Error(Error::Type error) { m_current_error = error; return false; };
+		bool Push_Error(O::GeoJSON::IO::Error error) { m_current_error = error; return false; };
 
 	// ATTRIBUTE
 	private:
 		std::vector<Parse_Context> m_context_stack;
-		::GeoJSON::Property m_property;
-		Util::Bounded_Vector<double,6> m_positions;
+		O::GeoJSON::Property m_property;
+		O::Bounded_Vector<double,6> m_positions;
 		std::optional<std::string> m_id;
 		std::variant<
-			::GeoJSON::Position, //level 1
-			std::vector<::GeoJSON::Position>, //level 2
-			std::vector<std::vector<::GeoJSON::Position>>, //level 3
-			std::vector<::GeoJSON::Polygon> //// level 4
+			O::GeoJSON::Position, //level 1
+			std::vector<O::GeoJSON::Position>, //level 2
+			std::vector<std::vector<O::GeoJSON::Position>>, //level 3
+			std::vector<O::GeoJSON::Polygon> //// level 4
 		> m_coordinate;
 
 		char m_level;
 		char m_max_level;
 		char m_add_level = 0;
-		Error::Type m_current_error;	
+		O::GeoJSON::IO::Error m_current_error;
 	};
 
 	

@@ -3,22 +3,22 @@
 
 #include "sax_parser.h"
 
-namespace GeoJSON::IO
+namespace O::GeoJSON::IO
 {
 	template <class Derived>
 	class Feature_Parser : public SAX_Parser<Feature_Parser<Derived>>
 	{
 	public:
-		bool On_Full_Feature(::GeoJSON::Feature&& feature);
-		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
+		bool On_Full_Feature(O::GeoJSON::Feature&& feature);
+		bool On_Root(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
 
 
-		bool On_Geometry(::GeoJSON::Geometry&& geometry, std::size_t element_number);
-		bool On_Feature(::GeoJSON::Feature&& feature);
-		bool On_Feature_Collection(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id) {return On_Root(std::move(bbox),std::move(id));};
+		bool On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t element_number);
+		bool On_Feature(O::GeoJSON::Feature&& feature);
+		bool On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id) {return On_Root(std::move(bbox),std::move(id));};
 
 	private:
-		std::vector<::GeoJSON::Geometry> m_geometries;
+		std::vector<O::GeoJSON::Geometry> m_geometries;
 		bool m_is_feature_collection = false;
 		bool m_valid = true;
 	};

@@ -5,7 +5,7 @@
 #include <variant>
 
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 	struct Bbox
 	{

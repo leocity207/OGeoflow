@@ -5,7 +5,7 @@
 
 #include "line_string.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	/**

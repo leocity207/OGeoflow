@@ -9,7 +9,7 @@
 #include "include/geojson/properties.h"
 #include "include/io/feature_parser.h"
 
-namespace GeoJSON::Filter
+namespace O::GeoJSON::Filter
 {
 
 	/**
@@ -37,14 +37,14 @@ namespace GeoJSON::Filter
 	 */
 
 	template <class Next_Handler, class Predicate>
-	class Feature_Filter : public ::GeoJSON::IO::Feature_Parser<Feature_Filter<Next_Handler, Predicate>>
+	class Feature_Filter : public O::GeoJSON::IO::Feature_Parser<Feature_Filter<Next_Handler, Predicate>>
 	{
 	public:
 		Feature_Filter(Predicate pred) noexcept(std::is_nothrow_move_constructible_v<Predicate>)
 		: m_pred(std::move(pred)) {}
 
 		// called by Feature_Parser when a full feature is available
-		bool On_Full_Feature(::GeoJSON::Feature&& feature)
+		bool On_Full_Feature(O::GeoJSON::Feature&& feature)
 		{
 			if constexpr (!requires(Next_Handler d) { d.On_Full_Feature(std::move(feature)); })
 				static_assert(false,"Derived must implement:\n    bool On_Full_Feature(Feature&&)");
@@ -53,7 +53,7 @@ namespace GeoJSON::Filter
 		}
 
 		// forward root (bbox/id) if next supports it
-		bool On_Root(std::optional<::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+		bool On_Root(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 		{
 			if constexpr (!requires(Next_Handler d) { d.On_Root(std::move(bbox), std::move(id)); })
 				static_assert(false,"Derived must implement:\n    bool On_Root(optional<Bbox>&&, optional<string>&&)");

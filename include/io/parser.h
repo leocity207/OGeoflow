@@ -4,13 +4,11 @@
 
 #include <filesystem>
 
-#include "include/geojson/geojson.h"
-#include "include/utils/expected.h"
-#include "include/io/error.h"
+#include "include/geojson/root.h"
+#include <include/utils/expected.h>
+#include "error.h"
 
-
-
-namespace GeoJSON::IO
+namespace O::GeoJSON::IO
 {
 
 	/**
@@ -19,7 +17,7 @@ namespace GeoJSON::IO
 	 * @return Parsed GeoJSON structure
 	 * @throws Parse_Exception if parsing fails
 	 */
-	Util::Expected<::GeoJSON::GeoJSON, Error::Type> Parse_Geojson_String(const std::string& json_string);
+	O::Expected<O::GeoJSON::Root, Error> Parse_Geojson_String(const std::string& json_string);
 
 	/**
 	 * @brief Parse GeoJSON from a file
@@ -27,7 +25,7 @@ namespace GeoJSON::IO
 	 * @return Parsed GeoJSON structure
 	 * @throws Parse_Exception if file cannot be read or parsing fails
 	 */
-	Util::Expected<::GeoJSON::GeoJSON, Error::Type> Parse_Geojson_File(const std::filesystem::path& filename);
+	O::Expected<O::GeoJSON::Root, Error> Parse_Geojson_File(const std::filesystem::path& filename);
 
 } // namespace GeoJSON
 

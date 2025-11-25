@@ -5,7 +5,7 @@
 
 #include "include/geojson/position.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	/**

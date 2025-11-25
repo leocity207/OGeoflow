@@ -17,7 +17,7 @@
 
 
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	/**

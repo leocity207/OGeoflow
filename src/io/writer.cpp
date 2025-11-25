@@ -9,15 +9,17 @@
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/filewritestream.h>
 
+using namespace O::GeoJSON::IO;
+
 template <class Out_Stream>
-GeoJSON::IO::Writer<Out_Stream>::Writer(Out_Stream& out) :
+Writer<Out_Stream>::Writer(Out_Stream& out) :
 	rapidjson::Writer<Out_Stream>(out)
 {
 
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Position(const Position& p)
+void Writer<Out_Stream>::Write_Position(const O::GeoJSON::Position& p)
 {
 	this->StartArray();
 	this->Double(p.longitude);
@@ -28,7 +30,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Position(const Position& p)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Bbox(const Bbox& bbox)
+void Writer<Out_Stream>::Write_Bbox(const O::GeoJSON::Bbox& bbox)
 {
 	this->Key("bbox");
 	this->StartArray();
@@ -46,7 +48,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Bbox(const Bbox& bbox)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Property_Value(const Property& prop)
+void Writer<Out_Stream>::Write_Property_Value(const O::GeoJSON::Property& prop)
 {
 	const auto& var = prop.m_value;
 	std::visit([&](auto const& val) {
@@ -61,14 +63,14 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Property_Value(const Property& prop)
 			this->Double(val);
 		else if constexpr (std::is_same_v<T, std::string>)
 			this->String(val.c_str(), static_cast<rapidjson::SizeType>(val.size()));
-		else if constexpr (std::is_same_v<T, Property::Array>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Property::Array>)
 		{
 			this->StartArray();
 			for (const auto& elem : val)
 				Write_Property_Value(elem);
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Property::Object>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Property::Object>)
 		{
 			this->StartObject();
 			for (const auto& kv : val)
@@ -87,7 +89,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Property_Value(const Property& prop)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Properties(const Property& props)
+void Writer<Out_Stream>::Write_Properties(const O::GeoJSON::Property& props)
 {
 	// If properties is an object, write its fields; otherwise, write as null or primitive
 	if (props.Is_Object())
@@ -111,7 +113,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Properties(const Property& props)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Feature(const Feature& f)
+void Writer<Out_Stream>::Write_Feature(const O::GeoJSON::Feature& f)
 {
 	this->Key("type");
 	this->String("Feature");
@@ -141,25 +143,25 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Feature(const Feature& f)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
+void Writer<Out_Stream>::Write_Geometry_Value(const O::GeoJSON::Geometry& g)
 {
 	std::visit([&](auto const& geom) {
 		using T = std::decay_t<decltype(geom)>;
 
 		this->Key("type");
-		if constexpr (std::is_same_v<T, Point>)
+		if constexpr (std::is_same_v<T, O::GeoJSON::Point>)
 			this->String("Point");
-		else if constexpr (std::is_same_v<T, Multi_Point>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Point>)
 			this->String("MultiPoint");
-		else if constexpr (std::is_same_v<T, Line_String>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Line_String>)
 			this->String("LineString");
-		else if constexpr (std::is_same_v<T, Multi_Line_String>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Line_String>)
 			this->String("MultiLineString");
-		else if constexpr (std::is_same_v<T, Polygon>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Polygon>)
 			this->String("Polygon");
-		else if constexpr (std::is_same_v<T, Multi_Polygon>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Polygon>)
 			this->String("MultiPolygon");
-		else if constexpr (std::is_same_v<T, Geometry_Collection>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Geometry_Collection>)
 			this->String("GeometryCollection");
 		else
 			this->String("Unknown");
@@ -167,26 +169,26 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
 		if (g.bbox.has_value())
 			Write_Bbox(*g.bbox);
 
-		if constexpr (std::is_same_v<T, Point>)
+		if constexpr (std::is_same_v<T, O::GeoJSON::Point>)
 		{
 			this->Key("coordinates");
 			Write_Position(geom.position);
 		}
-		else if constexpr (std::is_same_v<T, Multi_Point>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Point>)
 		{
 			this->Key("coordinates");
 			this->StartArray();
 			for (auto const& p : geom.points) Write_Position(p);
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Line_String>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Line_String>)
 		{
 			this->Key("coordinates");
 			this->StartArray();
 			for (auto const& p : geom.positions) Write_Position(p);
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Multi_Line_String>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Line_String>)
 		{
 			this->Key("coordinates");
 			this->StartArray();
@@ -198,7 +200,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
 			}
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Polygon>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Polygon>)
 		{
 			this->Key("coordinates");
 			this->StartArray();
@@ -210,7 +212,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
 			}
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Multi_Polygon>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Multi_Polygon>)
 		{
 			this->Key("coordinates");
 			this->StartArray();
@@ -227,7 +229,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
 			}
 			this->EndArray();
 		}
-		else if constexpr (std::is_same_v<T, Geometry_Collection>)
+		else if constexpr (std::is_same_v<T, O::GeoJSON::Geometry_Collection>)
 		{
 			this->Key("geometries");
 			this->StartArray();
@@ -249,7 +251,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Geometry_Value(const Geometry& g)
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_Feature_Collection(const Feature_Collection& fc)
+void Writer<Out_Stream>::Write_Feature_Collection(const O::GeoJSON::Feature_Collection& fc)
 {
 	this->Key("type");
 	this->String("FeatureCollection");
@@ -274,7 +276,7 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_Feature_Collection(const Feature_Col
 }
 
 template <class Out_Stream>
-void GeoJSON::IO::Writer<Out_Stream>::Write_GeoJSON_Object(const ::GeoJSON::GeoJSON& g)
+void Writer<Out_Stream>::Write_GeoJSON_Object(const O::GeoJSON::Root& g)
 {
 	this->StartObject();
 	if (g.Is_Feature())
@@ -293,5 +295,5 @@ void GeoJSON::IO::Writer<Out_Stream>::Write_GeoJSON_Object(const ::GeoJSON::GeoJ
 }
 
 
-template class GeoJSON::IO::Writer<rapidjson::OStreamWrapper>;
-template class GeoJSON::IO::Writer<rapidjson::FileWriteStream>;
+template class Writer<rapidjson::OStreamWrapper>;
+template class Writer<rapidjson::FileWriteStream>;

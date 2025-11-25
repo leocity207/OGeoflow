@@ -16,9 +16,9 @@ struct ExpectedPos
     std::optional<double> alt;
 };
 
-inline GeoJSON::Geometry Parse_To_Geometry(const std::string& json)
+inline O::GeoJSON::Geometry Parse_To_Geometry(const std::string& json)
 {
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	EXPECT_TRUE(result.Has_Value()) << "Parse failed: error = " << static_cast<int>(result.Error());
 	auto& g = result.Value();
 	EXPECT_TRUE(g.Is_Geometry());
@@ -26,15 +26,15 @@ inline GeoJSON::Geometry Parse_To_Geometry(const std::string& json)
 }
 
 // assert parse error
-inline void Expect_Parse_Error(const std::string& json, GeoJSON::IO::Error::Type expected_error)
+inline void Expect_Parse_Error(const std::string& json, O::GeoJSON::IO::Error expected_error)
 {
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	EXPECT_FALSE(result.Has_Value());
 	EXPECT_EQ(result.Error(), expected_error);
 }
 
 // compare one Position to ExpectedPos (use double eq)
-inline void AssertPositionEquals(const GeoJSON::Position& p, const ExpectedPos& e)
+inline void AssertPositionEquals(const O::GeoJSON::Position& p, const ExpectedPos& e)
 {
 	EXPECT_DOUBLE_EQ(p.longitude, e.lon);
 	EXPECT_DOUBLE_EQ(p.latitude, e.lat);
@@ -57,7 +57,7 @@ inline void AssertPositionsEquals(const Container& positions, const std::vector<
 }
 
 // helper pour récupérer une clé d'objet et échouer si absente / pas objet
-inline const GeoJSON::Property& GetObjectMemberOrFail(const GeoJSON::Property& objProp, const std::string& key)
+inline const O::GeoJSON::Property& GetObjectMemberOrFail(const O::GeoJSON::Property& objProp, const std::string& key)
 {
 	EXPECT_TRUE(objProp.Is_Object()) << "Expected object property";
     const auto& m = objProp.Get_Object();
@@ -67,7 +67,7 @@ inline const GeoJSON::Property& GetObjectMemberOrFail(const GeoJSON::Property& o
 }
 
 // helper pour récupérer un élément de tableau et échouer si pas tableau
-inline const GeoJSON::Property& GetArrayElementOrFail(const GeoJSON::Property& arrProp, std::size_t idx)
+inline const O::GeoJSON::Property& GetArrayElementOrFail(const O::GeoJSON::Property& arrProp, std::size_t idx)
 {
 	EXPECT_TRUE(arrProp.Is_Array()) << "Expected array property";
     const auto& a = arrProp.Get_Array();
@@ -75,7 +75,7 @@ inline const GeoJSON::Property& GetArrayElementOrFail(const GeoJSON::Property& a
     return a[idx];
 }
 
-inline const GeoJSON::Feature& FirstFeatureOrFail(const GeoJSON::GeoJSON& g)
+inline const O::GeoJSON::Feature& FirstFeatureOrFail(const O::GeoJSON::Root& g)
 {
 	EXPECT_TRUE(g.Is_Feature_Collection()) << "Expected FeatureCollection";
     const auto& fc = g.Get_Feature_Collection();

@@ -5,7 +5,7 @@
 
 #include "include/geojson/position.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 	/**
 	 * @brief LineString geometry - array of positions forming a line

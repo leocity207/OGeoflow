@@ -1,12 +1,12 @@
 #ifndef DCEL_DCEL_BUILDER_H
 #define DCEL_DCEL_BUILDER_H
 
-#include "dcel.h"
+#include "storage.h"
 
-namespace DCEL
+namespace O::DCEL
 {
 
-    struct DCEL_Builder : public DCEL
+    struct Storage_Builder_Helper : public Storage
     {
         /// @brief Create-or-get vertex, returns index
         size_t Get_Or_Create_Vertex(double x, double y);

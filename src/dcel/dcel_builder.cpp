@@ -1,8 +1,8 @@
-#include "include/dcel/dcel_builder.h"
+#include "include/dcel/storage_builder_helper.h"
 
+using namespace O;
 
-
-size_t DCEL::DCEL_Builder::Get_Or_Create_Vertex(double x, double y)
+size_t DCEL::Storage_Builder_Helper::Get_Or_Create_Vertex(double x, double y)
 {
 	uint64_t key = Vertex::Hash(x,y);
 	auto it = vertex_lookup.find(key);
@@ -15,13 +15,13 @@ size_t DCEL::DCEL_Builder::Get_Or_Create_Vertex(double x, double y)
 	return idx;
 }
 
-uint64_t DCEL::DCEL_Builder::EdgeKey(size_t originIdx, size_t headIdx) noexcept
+uint64_t DCEL::Storage_Builder_Helper::EdgeKey(size_t originIdx, size_t headIdx) noexcept
 {
 	return ( (uint64_t)originIdx << 32 ) | (uint64_t)headIdx;
 }
 
 
-size_t DCEL::DCEL_Builder::Get_Or_Create_Half_Edge_Index(size_t origin_id, size_t head_id)
+size_t DCEL::Storage_Builder_Helper::Get_Or_Create_Half_Edge_Index(size_t origin_id, size_t head_id)
 {
 	uint64_t key = EdgeKey(origin_id, head_id);
 	auto it = edge_lookup.find(key);
@@ -35,7 +35,7 @@ size_t DCEL::DCEL_Builder::Get_Or_Create_Half_Edge_Index(size_t origin_id, size_
 	return e_idx;
 }
 
-void DCEL::DCEL_Builder::Links_twins(size_t edge, size_t twin)
+void DCEL::Storage_Builder_Helper::Links_twins(size_t edge, size_t twin)
 {
 	auto& edge_ref = halfedges[edge];
 	auto& twin_ref = halfedges[twin];
@@ -45,7 +45,7 @@ void DCEL::DCEL_Builder::Links_twins(size_t edge, size_t twin)
 }
 
 
-void DCEL::DCEL_Builder::Insert_Edge_Sorted(size_t vertex_id, size_t edge_id)
+void DCEL::Storage_Builder_Helper::Insert_Edge_Sorted(size_t vertex_id, size_t edge_id)
 {
 	const Half_Edge& eNew = halfedges[edge_id];
 	size_t head_id = halfedges[eNew.twin].origin;
@@ -70,7 +70,7 @@ void DCEL::DCEL_Builder::Insert_Edge_Sorted(size_t vertex_id, size_t edge_id)
 	tail.outgoing_edges.insert(pos, edge_id);
 }
 
-void DCEL::DCEL_Builder::Update_Around_Vertex(size_t vertexIdx)
+void DCEL::Storage_Builder_Helper::Update_Around_Vertex(size_t vertexIdx)
 {
 	Vertex& v = vertices[vertexIdx];
 	if (v.outgoing_edges.size() < 2) return;

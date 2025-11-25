@@ -6,7 +6,7 @@
 #include "include/geojson/properties.h"
 #include "include/geojson/bbox.h"
 
-namespace GeoJSON
+namespace O::GeoJSON
 {
 
 	/**

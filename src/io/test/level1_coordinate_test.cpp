@@ -34,7 +34,7 @@ TEST_F(Level1_Coordinate_Test, Point_Too_Many_Values) {
 		"type": "Point",
 		"coordinates": [100.0, 9.02, -1200, 0.0]
 	})";
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::COORDINATE_OVERSIZED);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::COORDINATE_OVERSIZED);
 }
 
 TEST_F(Level1_Coordinate_Test, Point_Not_Enough_Values) {
@@ -42,5 +42,5 @@ TEST_F(Level1_Coordinate_Test, Point_Not_Enough_Values) {
 		"type": "Point",
 		"coordinates": [100]
 	})";
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::COORDINATE_UNDERSIZED);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::COORDINATE_UNDERSIZED);
 }

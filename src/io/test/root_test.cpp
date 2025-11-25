@@ -9,7 +9,7 @@ TEST_F(Root_Test, Root_Is_Geometry_Point) {
 		"coordinates": [12.34, 56.78]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parsing failed: error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 
@@ -37,7 +37,7 @@ TEST_F(Root_Test, Root_Is_Feature_Basic) {
 		}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parsing failed: error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 
@@ -66,7 +66,7 @@ TEST_F(Root_Test, Feature_With_Id_And_BBox) {
 		"properties": {}
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parsing failed: error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 
@@ -105,7 +105,7 @@ TEST_F(Root_Test, Feature_Collection_With_BBox) {
 		]
 	})";
 
-	auto result = GeoJSON::IO::Parse_Geojson_String(json);
+	auto result = O::GeoJSON::IO::Parse_Geojson_String(json);
 	ASSERT_TRUE(result.Has_Value()) << "Parsing failed: error=" << static_cast<int>(result.Error());
 	auto& g = result.Value();
 
@@ -137,5 +137,5 @@ TEST_F(Root_Test, Root_With_Wrong_Type_String_Fails) {
 		"type": "NotARealGeoJSONType"
 	})";
 
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::UNKNOWN_TYPE);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::UNKNOWN_TYPE);
 }

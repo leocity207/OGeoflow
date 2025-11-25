@@ -222,7 +222,7 @@ TEST_F(Level4_Coordinate_Test, Multi_Polygon_Ring_Too_Small) {
 		]
 	})";
 
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::NEED_AT_LEAST_FOUR_POSITION_FOR_POLYGON);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::NEED_AT_LEAST_FOUR_POSITION_FOR_POLYGON);
 }
 
 TEST_F(Level4_Coordinate_Test, Multi_Polygon_Ring_Not_Closed) {
@@ -240,7 +240,7 @@ TEST_F(Level4_Coordinate_Test, Multi_Polygon_Ring_Not_Closed) {
 		]
 	})";
 
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::POLYGON_NEED_TO_BE_CLOSED);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::POLYGON_NEED_TO_BE_CLOSED);
 }
 
 TEST_F(Level4_Coordinate_Test, Multi_Polygon_Mismatch_Level) {
@@ -264,5 +264,5 @@ TEST_F(Level4_Coordinate_Test, Multi_Polygon_Mismatch_Level) {
 		]
 	})";
 
-	Expect_Parse_Error(json, GeoJSON::IO::Error::Type::INCONSCISTENT_COORDINATE_LEVEL);
+	Expect_Parse_Error(json, O::GeoJSON::IO::Error::INCONSCISTENT_COORDINATE_LEVEL);
 }
