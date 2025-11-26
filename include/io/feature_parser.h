@@ -7,16 +7,12 @@ namespace O::GeoJSON::IO
 {
 	/**
 	 * @brief CRTP-based base class for handling GeoJSON Feature-related SAX events.
-	 *
-	 * This class defines callback hooks invoked by SAX_Parser when specific GeoJSON objects are fully parsed:
-	 *
-	 * - Geometry objects
-	 * - Feature objects
-	 * - FeatureCollection objects
-	 * - Root entry point with optional bbox/id
-	 *
+	 *        This class defines callback hooks invoked by SAX_Parser when specific GeoJSON objects are fully parsed:
+	 *          - Geometry objects
+	 *          - Feature objects
+	 *          - FeatureCollection objects
+	 *          - Root entry point with optional bbox/id
 	 * Derived classes can override these methods to implement custom business logic (indexing, validation, transformation, storage, etc).
-	 *
 	 * @tparam Derived The CRTP derived class that implements the handlers.
 	 */
 	template <class Derived>
@@ -26,10 +22,7 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Called when a complete Feature has been parsed.
-		 *
-		 * This is the main entry point when parsing a standalone Feature,
-		 * or when encountering a Feature inside a FeatureCollection.
-		 *
+		 *        This is the main entry point when parsing a standalone Feature, or when encountering a Feature inside a FeatureCollection.
 		 * @param feature Fully materialized GeoJSON Feature.
 		 * @return true if parsing should continue, false to abort.
 		 */
@@ -37,9 +30,7 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Called when the root-level metadata (bbox, id) is parsed.
-		 *
-		 * This is invoked for both Feature and FeatureCollection root objects.
-		 *
+		 *        This is invoked for both Feature and FeatureCollection root objects.
 		 * @param bbox Optional bounding box.
 		 * @param id Optional identifier string.
 		 * @return true if parsing should continue, false to abort.

@@ -54,3 +54,7 @@ Release/
 # Log files
 *.log
 *.geojson
+
+#utility
+*merge_file.py
+*out.txt

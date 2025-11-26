@@ -12,8 +12,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Root container representing any valid GeoJSON entity.
-	 *
-	 * The `GeoJSON` structure is the top-level abstraction that can hold a single geometry, a feature, or a feature collection — all defined by the official GeoJSON specification (RFC 7946).
+	 *        The `GeoJSON` structure is the top-level abstraction that can hold a single geometry, a feature, or a feature collection — all defined by the official GeoJSON specification (RFC 7946).
 	 *
 	 * @details
 	 * The internal `std::variant` ensures that at any given time, only one of these object types is active:

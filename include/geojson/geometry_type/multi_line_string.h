@@ -8,8 +8,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON MultiLineString geometry.
-	 *
-	 * A MultiLineString contains an array of LineString geometries.
+	 *        A MultiLineString contains an array of LineString geometries.
 	 *
 	 * Example JSON:
 	 * @code

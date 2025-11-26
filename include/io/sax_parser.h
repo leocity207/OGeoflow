@@ -28,23 +28,13 @@ namespace O::GeoJSON::IO
 	/**
 	 * @class SAX_Parser
 	 * @tparam Derived Optional CRTP parameter used when extending parser behavior.
-	 *
 	 * @brief Streaming SAX parser for GeoJSON documents.
-	 *
-	 * This class consumes JSON through RapidJSON's SAX interface and reconstructs GeoJSON objects incrementally. 
-	 * It maintains an internal parsing stack representing the current context within the GeoJSON structure (feature, geometry, coordinates, properties, etc.).
-	 *
-	 * A user who wants to process GeoJSON elements must subclass this parser and implement the following callback methods:
-	 *
-	 *  - **On_Geometry()**  
-	 *    Invoked whenever a standalone `Geometry` object is fully parsed.
-	 *
-	 *  - **On_Feature()**  
-	 *    Invoked when a GeoJSON `Feature` object is complete.
-	 *
-	 *  - **On_Feature_Collection()**  
-	 *    Invoked at the end of a `FeatureCollection`, after all contained features have been streamed through `On_Feature()`.
-	 *
+	 *        This class consumes JSON through RapidJSON's SAX interface and reconstructs GeoJSON objects incrementally. 
+	 *        It maintains an internal parsing stack representing the current context within the GeoJSON structure (feature, geometry, coordinates, properties, etc.).
+	 *        A user who wants to process GeoJSON elements must subclass this parser and implement the following callback methods:
+	 *          - **On_Geometry()**  Invoked whenever a standalone `Geometry` object is fully parsed.
+	 *          - **On_Feature()**   Invoked when a GeoJSON `Feature` object is complete.
+	 *          - **On_Feature_Collection()**   Invoked at the end of a `FeatureCollection`, after all contained features have been streamed through `On_Feature()`.
 	 * These callbacks allow the user to handle GeoJSON elements as they stream in, without requiring the entire document to be stored in memory.
 	 */
 	template<class Derived = void>
@@ -53,39 +43,31 @@ namespace O::GeoJSON::IO
 	public:
 		/**
 		 * @brief Callback invoked when a complete Geometry has been parsed.
-		 *
 		 * @param geometry Parsed geometry object (rvalue reference for efficiency).
 		 * @param element_number Index of the geometry if part of a collection.
-		 *
 		 * @return `true` to continue parsing, `false` to abort.
 		 */
 		bool On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t element_number);
 
 		/**
 		 * @brief Callback invoked when a complete Feature has been parsed.
-		 *
 		 * @param feature Parsed GeoJSON Feature.
-		 *
 		 * @return `true` to continue parsing, `false` to abort.
 		 */
 		bool On_Feature(O::GeoJSON::Feature&& feature);
 
 		/**
 		 * @brief Callback invoked at the end of a FeatureCollection.
-		 *
 		 * @param bbox Optional bounding box for the entire collection.
 		 * @param id Optional identifier for the FeatureCollection.
-		 *
 		 * @return `true` to continue parsing, `false` to abort.
-		 *
 		 * @note Features in the collection are streamed individually through `On_Feature()` before this function is called.
 		 */
 		bool On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id);
 
 		/**
 		 * @brief Parsing state machine used to interpret JSON tokens.
-		 *
-		 * Each state represents a specific context inside the GeoJSON structure.
+		 *        Each state represents a specific context inside the GeoJSON structure.
 		 */
 		enum class Parse_State {
 			TYPE, 
@@ -109,14 +91,13 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Stack element storing the current parsing context.
-		 *
-		 * This structure tracks:
-		 * - the current `Parse_State`
-		 * - the last key encountered
-		 * - the inferred GeoJSON type
-		 * - optional in-progress Geometry
-		 * - optional bounding box
-		 * - reference to a property structure when parsing Feature properties
+		 *        This structure tracks:
+		 *          - the current `Parse_State`
+		 *          - the last key encountered
+		 *          - the inferred GeoJSON type
+		 *          - optional in-progress Geometry
+		 *          - optional bounding box
+		 *          - reference to a property structure when parsing Feature properties
 		 */
 		struct Parse_Context
 		{
@@ -154,7 +135,6 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Get the last recorded parsing error.
-		 *
 		 * @return One of the error codes defined in `GeoJSON::Error::Type`.
 		 */
 		O::GeoJSON::IO::Error Get_Error() const { return m_current_error; }
@@ -163,7 +143,6 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Record an error and stop parsing.
-		 *
 		 * @param error Error code describing the failure.
 		 * @return Always returns false to abort RapidJSON parsing.
 		 */
@@ -218,12 +197,11 @@ namespace O::GeoJSON::IO
 
 		/**
 		 * @brief Coordinate accumulator used to construct Position, LineString, Polygon, or MultiPolygon structures depending on nesting level.
-		 *
-		 * Level interpretation:
-		 *  - level 1 : Position
-		 *  - level 2 : vector<Position>
-		 *  - level 3 : vector<vector<Position>>
-		 *  - level 4 : vector<Polygon>
+		 *        Level interpretation:
+		 *          - level 1 : Position
+		 *          - level 2 : vector<Position>
+		 *          - level 3 : vector<vector<Position>>
+		 *          - level 4 : vector<Polygon>
 		 */
 		std::variant<
 			O::GeoJSON::Position,

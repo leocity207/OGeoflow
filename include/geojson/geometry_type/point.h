@@ -7,8 +7,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON Point geometry.
-	 *
-	 * A Point holds a single Position, describing a single location in space.
+	 *        A Point holds a single Position, describing a single location in space.
 	 *
 	 * Example JSON:
 	 * @code

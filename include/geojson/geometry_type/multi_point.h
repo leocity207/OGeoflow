@@ -8,8 +8,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON MultiPoint geometry.
-	 *
-	 * A MultiPoint contains an array of individual Positions.
+	 *        A MultiPoint contains an array of individual Positions.
 	 *
 	 * Example JSON:
 	 * @code

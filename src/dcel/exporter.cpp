@@ -10,9 +10,9 @@ std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel,
 	std::vector<GeoJSON::Position> coords;
 	size_t e = start_edge;
 	do {
-		const auto& v = dcel.vertices[dcel.halfedges[e].origin];
+		const auto& v = dcel.vertices[dcel.half_edges[e].origin];
 		coords.emplace_back(v.x, v.y);
-		e = dcel.halfedges[e].next;
+		e = dcel.half_edges[e].next;
 	} while (e != start_edge && e != NO_IDX);
 
 	if (!coords.empty() && ((coords.front().altitude != coords.back().altitude) || (coords.front().latitude != coords.back().latitude) || (coords.front().longitude != coords.back().longitude)))

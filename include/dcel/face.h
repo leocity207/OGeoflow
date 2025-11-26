@@ -11,13 +11,17 @@
 
 namespace O::DCEL
 {
+	/**
+	 * @brief A face is way to create half_edge cycle inside the DCEL gaph.
+	 *        In our case face are tightly linked to Polygone of the GeoJSON
+	 * 
+	 */
 	struct Face
 	{
-		size_t edge = NO_IDX; // a representative halfedge belonging to this face
-		size_t associated_feature = NO_IDX; // indices of features that reference this face
-		std::vector<size_t> inner_edges; // representative edges for holes (if any)
-
-		size_t outer_face = NO_IDX;
+		size_t edge = NO_IDX;               ///< a representative halfedge belonging to this face
+		size_t associated_feature = NO_IDX; ///< indices of GeoJSON features that reference this face
+		std::vector<size_t> inner_edges;    ///< representative edges for holes (if any)
+		size_t outer_face = NO_IDX;         ///< represent the oposit face
 	};
 
 } // namespace DCEL

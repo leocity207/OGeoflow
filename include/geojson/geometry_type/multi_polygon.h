@@ -8,8 +8,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON MultiPolygon geometry.
-	 *
-	 * A MultiPolygon contains multiple Polygon geometries.
+	 *        A MultiPolygon contains multiple Polygon geometries.
 	 *
 	 * Example JSON:
 	 * @code

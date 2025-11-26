@@ -32,7 +32,7 @@ TEST(DCEL_Builder_Exporter, SimplePolygonRoundTrip) {
 
     // basic DCEL checks
     EXPECT_GT(dcel.vertices.size(), (size_t)0);
-    EXPECT_GT(dcel.halfedges.size(), (size_t)0);
+    EXPECT_GT(dcel.half_edges.size(), (size_t)0);
     EXPECT_GT(dcel.faces.size(), (size_t)0);
 
     // convert back to GeoJSON

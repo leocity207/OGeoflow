@@ -8,8 +8,7 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON LineString geometry.
-	 *
-	 * A LineString is an ordered array of two or more Positions forming a continuous line.
+	 *        A LineString is an ordered array of two or more Positions forming a continuous line.
 	 *
 	 * Example JSON:
 	 * @code

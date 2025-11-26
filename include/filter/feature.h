@@ -1,17 +1,17 @@
 #ifndef FILTER_FEATURE_H
 #define FILTER_FEATURE_H
 
-#include <utility>
-#include <type_traits>
 #include <concepts>
-#include <string_view>
 
 #include "include/geojson/object/feature.h"
-#include "include/geojson/properties.h"
 #include "include/io/feature_parser.h"
 
 namespace O::GeoJSON::Filter
 {
+	/**
+	* @brief a default predicate that always return true
+	*/
+	struct Default_Predicate { constexpr bool operator()(O::GeoJSON::Feature&) const noexcept {return true;}};
 
 	/**
 	 * @brief Feature_Filter
@@ -33,7 +33,7 @@ namespace O::GeoJSON::Filter
 	 *  - The filter use CRTP to Call Next_Handler value.
 	 *  - Predicate is stored by value. Prefer stateless small callables (lambdas, function pointers, small functors).
 	 */
-	template <class Next_Handler, class Predicate>
+	template <class Next_Handler, class Predicate = Default_Predicate>
 	requires std::invocable<Predicate, O::GeoJSON::Feature&>
 	class Feature : public O::GeoJSON::IO::Feature_Parser<Feature<Next_Handler, Predicate>>
 	{
@@ -51,6 +51,7 @@ namespace O::GeoJSON::Filter
 		 */
 		Feature(Predicate pred);
 		
+		/// @name overrides
 		/// @brief implementation of the ``O::GeoJSON::IO::Feature_Parser`` functions
 		/// @{
 		bool On_Full_Feature(O::GeoJSON::Feature&& feature);
@@ -59,7 +60,6 @@ namespace O::GeoJSON::Filter
 
 		/**
 		 * @brief give the filter predicator
-		 * 
 		 * @return the instance predicator
 		 */
 		const Predicate& Get_Predicator();

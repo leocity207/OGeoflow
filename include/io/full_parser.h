@@ -18,9 +18,7 @@ namespace O::GeoJSON::IO
 	public:
 		/**
 		 * @brief retirve the fully parsed GeoJSON::Root Object if parsing went well
-		 * 
 		 * @return std::nullopt if the parsing went bad (``Get_Error``) or if it has been already called function can help the user retrieve what error append
-		 * 
 		 * @warning this function must only be called once since the O::GeoJSON::Root is moved to the caller
 		 */
 		std::optional<O::GeoJSON::Root> Get_Geojson();

@@ -11,10 +11,8 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a flexible JSON-like property container in GeoJSON.
-	 *
-	 * The Property structure provides a strongly-typed abstraction for representing arbitrary key–value data as found in GeoJSON feature properties.
-	 * It supports all JSON primitive types (null, boolean, integer, double, string) as well as composite types (array, object).
-	 *
+	 *        The Property structure provides a strongly-typed abstraction for representing arbitrary key–value data as found in GeoJSON feature properties.
+	 *        It supports all JSON primitive types (null, boolean, integer, double, string) as well as composite types (array, object).
 	 * @details
 	 * - This class allows nesting (arrays of objects, objects of arrays, etc.).
 	 * - It is implemented using `std::variant`, ensuring type safety.

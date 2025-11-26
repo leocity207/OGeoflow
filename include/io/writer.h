@@ -15,20 +15,20 @@
 namespace O::GeoJSON::IO 
 {
 	/**
-	 * @brief this class can be used to write down ``O::GeoJSON`` object to an outstream
-	 * 
-	 * @tparam Out_Stream outputing stream type from ``rapidjson`` (ex: rapidjson::OStreamWrapper, rapidjson::FileWriteStream)
+	 * @brief this class can be used to write down ``O::GeoJSON`` object to an outstream.
+	 * @tparam Out_Stream outputing stream type from ``rapidjson`` (ex: rapidjson::OStreamWrapper, rapidjson::FileWriteStream).
 	 */
 	template <class Out_Stream>
 	class Writer : public rapidjson::Writer<Out_Stream>
 	{
 	public:
 		/**
-		 * @param out outsream outputing stream sink from ``rapidjson`` (ex: rapidjson::OStreamWrapper, rapidjson::FileWriteStream)
+		 * @param out outsream outputing stream sink from ``rapidjson`` (ex: rapidjson::OStreamWrapper, rapidjson::FileWriteStream).
 		 */
 		Writer(Out_Stream& out);
 
-		/// @brief Implementation for every type to sink a GeoJSON object to the Out_Stream. in practice only Write_GeoJSON_Object should be used
+		/// @name Write functions
+		/// @brief Implementation for every type to sink a GeoJSON object to the Out_Stream. in practice only Write_GeoJSON_Object should be used.
 		/// @{
 		void Write_Position          (const O::GeoJSON::Position& p);
 		void Write_Bbox              (const O::GeoJSON::Bbox& bbox);

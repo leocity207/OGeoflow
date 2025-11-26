@@ -8,10 +8,9 @@ namespace O::GeoJSON
 {
 	/**
 	 * @brief Represents a GeoJSON Polygon geometry.
-	 *
-	 * A Polygon is an array of linear rings, where:
-	 * - The first ring defines the outer boundary (exterior).
-	 * - Subsequent rings define interior holes (if any).
+	 *        A Polygon is an array of linear rings, where:
+	 *          - The first ring defines the outer boundary (exterior).
+	 *          - Subsequent rings define interior holes (if any).
 	 *
 	 * Example JSON:
 	 * @code
