@@ -1,13 +1,15 @@
 O::GeoJSON::IO
 ==============
 
-GeoJSON::IO namespace concern everything about Input and output. 
-This implementation. choose to create:
-	* two sax Parser 
-		* Sax Parser with Geometry Feature Feature_Collection
-		* Sax Parser with Feature Only
-	* one full Parser
-	* one writer
+The ``O::GeoJSON::IO`` namespace concerns everything related to input and output.
+
+This implementation provides:
+
+* Two SAX parsers:
+  * A SAX parser handling Geometry, Feature, and FeatureCollection
+  * A SAX parser handling Feature only
+* One full parser
+* One writer
 
 .. toctree::
 	:maxdepth: 2
