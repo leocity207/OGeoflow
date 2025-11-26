@@ -4,4 +4,8 @@ Utils
 Bounded_Array
 -------------
 
-some kind of std::arra<> with std::vector<>
+.. doxygenclass:: O::Bounded_Vector
+	:members:
+	:protected-members:
+	:private-members:
+	:undoc-members:
