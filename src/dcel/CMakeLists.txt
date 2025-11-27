@@ -4,7 +4,7 @@ add_library(dcel STATIC ${DCEL_SRC})
 
 target_include_directories(dcel
 	PUBLIC
-		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
 )
 
