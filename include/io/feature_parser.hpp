@@ -1,3 +1,6 @@
+#ifndef IO_FEATURE_PARSER_HPP
+#define IO_FEATURE_PARSER_HPP
+
 #include "include/io/feature_parser.h"
 
 #include <span>
@@ -44,3 +47,11 @@ bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Feature(O::GeoJSON::Feature&& f
 	On_Full_Feature(std::move(feature));
 	return true;
 }
+
+template <class Derived>
+bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+{ 
+	return On_Root(std::move(bbox), std::move(id));
+};
+
+#endif //IO_FEATURE_PARSER_HPP

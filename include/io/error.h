@@ -3,6 +3,9 @@
 
 namespace O::GeoJSON::IO
 {
+	/**
+	 * @brief This Enume define all the error one can encounter during parsing of the GeoJSON
+	 */
 	enum class  Error
 	{
 		NO_ERROR = 0,

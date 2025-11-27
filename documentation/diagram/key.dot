@@ -1,0 +1,175 @@
+digraph G {
+
+  KEY [shape=circle label="Key()"];
+  SWITCH1 [shape=box label="switch(Current_State())"];
+  FOREIGN_OBJECT [shape=diamond]
+  PROPERTIES_OBJECT [shape=diamond]
+  GEOMETRY [shape=diamond]
+  FEATURE [shape=diamond]
+  ROOT [shape=diamond]
+  FALSE [shape=circle]
+  TRUE [shape=circle]
+  
+  FOREIGN_PUSH_KEY [shape=box label="Push_Context(FOREIGN_KEY)"];
+  PROPERTY_PUSH_KEY [shape=box label="Push_Context(PROPERTIES_SUB_KEY)"];
+  
+  FOREIGN_OBJECT -> FOREIGN_PUSH_KEY;
+  PROPERTIES_OBJECT -> PROPERTY_PUSH_KEY;
+  
+  {rank=same; FOREIGN_OBJECT; FOREIGN_PUSH_KEY}
+  {rank=same; PROPERTIES_OBJECT; PROPERTY_PUSH_KEY}
+  
+  SWITCH_GEOEMTRY_KEY [shape=box label="switch(key)"]
+  GEOEMTRY_TYPE [shape=diamond label="TYPE"]
+  GEOEMTRY_COORDINATES [shape=diamond label="COORDINATES"]
+  GEOEMTRY_BBOX [shape=diamond label="BBOX"]
+  GEOEMTRY_FOREIGN [shape=diamond label="FOREIGN"] 
+  GEOMETRY_COLLECTION [shape=diamond label="GEOMETRY_COLLECTION"]
+  
+  GEOMETRY_PUSH_TYPE [shape=box label="Push_Context(TYPE)"]
+  GEOMETRY_PUSH_COORDINATE [shape=box label="Push_Context(COORDINATE)"]
+  GEOMETRY_PUSH_BBOX [shape=box label="Push_Context(BBOX)"]
+  GEOMETRY_PUSH_FOREIGN [shape=box label="Push_Context(FOREIGN)"]
+  GEOMETRY_PUSH_COLLECTION [shape=box label="Push_Context(GEOMETRY_COLLECTION)"]
+  
+  GEOEMTRY_TYPE -> GEOMETRY_PUSH_TYPE;
+  GEOEMTRY_COORDINATES ->GEOMETRY_PUSH_COORDINATE;
+  GEOEMTRY_BBOX -> GEOMETRY_PUSH_BBOX;
+  GEOEMTRY_FOREIGN -> GEOMETRY_PUSH_FOREIGN;
+  GEOMETRY_COLLECTION -> GEOMETRY_PUSH_COLLECTION;
+  
+  {rank=same; GEOEMTRY_TYPE; GEOMETRY_PUSH_TYPE}
+  {rank=same; GEOEMTRY_COORDINATES; GEOMETRY_PUSH_COORDINATE}
+  {rank=same; GEOEMTRY_BBOX; GEOMETRY_PUSH_BBOX}
+  {rank=same; GEOEMTRY_FOREIGN; GEOMETRY_PUSH_FOREIGN}
+  {rank=same; GEOMETRY_COLLECTION; GEOMETRY_PUSH_COLLECTION}
+  
+  SWITCH_GEOEMTRY_KEY -> GEOEMTRY_TYPE;
+  GEOEMTRY_TYPE -> GEOEMTRY_COORDINATES [arrowtail=dot dir=both];
+  GEOEMTRY_COORDINATES -> GEOEMTRY_BBOX [arrowtail=dot dir=both];
+  GEOEMTRY_BBOX -> GEOEMTRY_FOREIGN [arrowtail=dot dir=both];
+  GEOEMTRY_FOREIGN -> GEOMETRY_COLLECTION [arrowtail=dot dir=both];
+  
+  SWITCH_FEATURE_KEY [shape=box label="switch(key)"]
+  FEATURE_TYPE [shape=diamond label="TYPE"]
+  FEATURE_ID [shape=diamond label="ID"]
+  FEATURER_BBOX [shape=diamond label="BBOX"]
+  FEATURE_FOREIGN [shape=diamond label="FOREIGN"] 
+  FEATURE_PROPERTIES [shape=diamond label="PROPERTIES"] 
+  FEATURE_GEOMETRY [shape=diamond label="GEOMETRY"]
+  
+  FEATURE_PUSH_TYPE [shape=box label="Push_Context(TYPE)"]
+  FEATURE_PUSH_ID [shape=box label="Push_Context(ID)"]
+  FEATURE_PUSH_BBOX [shape=box label="Push_Context(BBOX)"]
+  FEATURE_PUSH_FOREIGN [shape=box label="Push_Context(FOREIGN)"]
+  FEATURE_PUSH_PROPERTIES [shape=box label="Push_Context(PROPERTIES)"]
+  FEATURE_PUSH_GEOMETRY [shape=box label="Push_Context(GEOMETRY)"]
+  
+  FEATURE_TYPE -> FEATURE_PUSH_TYPE;
+  FEATURE_ID -> FEATURE_PUSH_ID;
+  FEATURER_BBOX -> FEATURE_PUSH_BBOX;
+  FEATURE_FOREIGN -> FEATURE_PUSH_FOREIGN;
+  FEATURE_PROPERTIES -> FEATURE_PUSH_PROPERTIES;
+  FEATURE_GEOMETRY -> FEATURE_PUSH_GEOMETRY;
+  
+  {rank=same; FEATURE_TYPE; FEATURE_PUSH_TYPE}
+  {rank=same; FEATURE_ID; FEATURE_PUSH_ID}
+  {rank=same; FEATURER_BBOX; FEATURE_PUSH_BBOX}
+  {rank=same; FEATURE_FOREIGN; FEATURE_PUSH_FOREIGN}
+  {rank=same; FEATURE_PROPERTIES; FEATURE_PUSH_PROPERTIES}
+  {rank=same; FEATURE_GEOMETRY; FEATURE_PUSH_GEOMETRY}
+  
+  SWITCH_FEATURE_KEY -> FEATURE_TYPE;
+  FEATURE_TYPE -> FEATURE_ID [arrowtail=dot dir=both];
+  FEATURE_ID -> FEATURER_BBOX [arrowtail=dot dir=both];
+  FEATURER_BBOX -> FEATURE_FOREIGN [arrowtail=dot dir=both];
+  FEATURE_FOREIGN -> FEATURE_PROPERTIES[arrowtail=dot dir=both];
+  FEATURE_PROPERTIES -> FEATURE_GEOMETRY [arrowtail=dot dir=both];
+  
+  SWITCH_ROOT_KEY [shape=box label="switch(key)"]
+  ROOT_TYPE [shape=diamond label="TYPE"]
+  ROOT_ID [shape=diamond label="ID"]
+  ROOT_BBOX [shape=diamond label="BBOX"]
+  ROOT_FOREIGN [shape=diamond label="FOREIGN"] 
+  ROOT_PROPERTIES [shape=diamond label="PROPERTIES"] 
+  ROOT_GEOMETRY [shape=diamond label="GEOMETRY"]
+  ROOT_FOREIGN [shape=diamond label="FOREIGN"] 
+  ROOT_GEOMETRY_COLLECTION [shape=diamond label="GEOMETRY_COLLECTION"]
+  ROOT_COORDINATES [shape=diamond label="COORDINATES"]
+  ROOT_FEATURE_COLLECTION [shape=diamond label="FEATURE_COLLECTION"]
+  
+  ROOT_PUSH_TYPE [shape=box label="Push_Context(TYPE)"]
+  ROOT_PUSH_ID [shape=box label="Push_Context(ID)"]
+  ROOT_PUSH_BBOX [shape=box label="Push_Context(BBOX)"]
+  ROOT_PUSH_FOREIGN [shape=box label="Push_Context(FOREIGN)"] 
+  ROOT_PUSH_PROPERTIES [shape=box label="Push_Context(PROPERTIES)"] 
+  ROOT_PUSH_GEOMETRY [shape=box label="Push_Context(GEOMETRY)"]
+  ROOT_PUSH_FOREIGN [shape=box label="Push_Context(FOREIGN)"] 
+  ROOT_PUSH_GEOMETRY_COLLECTION [shape=box label="Push_Context(GEOMETRY_COLLECTION)"]
+  ROOT_PUSH_COORDINATES [shape=box label="Push_Context(COORDINATES)"]
+  ROOT_PUSH_FEATURE_COLLECTION [shape=box label="Push_Context(FEATURE_COLLECTION)"]
+  
+  ROOT_TYPE -> ROOT_PUSH_TYPE
+  ROOT_ID -> ROOT_PUSH_ID ;
+  ROOT_BBOX -> ROOT_PUSH_BBOX;
+  ROOT_FOREIGN -> ROOT_PUSH_FOREIGN;
+  ROOT_PROPERTIES -> ROOT_PUSH_PROPERTIES;
+  ROOT_GEOMETRY -> ROOT_PUSH_GEOMETRY;
+  ROOT_GEOMETRY_COLLECTION -> ROOT_PUSH_GEOMETRY_COLLECTION;
+  ROOT_COORDINATES -> ROOT_PUSH_COORDINATES;
+  ROOT_FEATURE_COLLECTION -> ROOT_PUSH_FEATURE_COLLECTION;
+  
+  SWITCH_ROOT_KEY -> ROOT_TYPE;
+  ROOT_TYPE -> ROOT_ID [arrowtail=dot dir=both];
+  ROOT_ID -> ROOT_BBOX [arrowtail=dot dir=both];
+  ROOT_BBOX -> ROOT_FOREIGN [arrowtail=dot dir=both];
+  ROOT_FOREIGN -> ROOT_PROPERTIES [arrowtail=dot dir=both];
+  ROOT_PROPERTIES -> ROOT_GEOMETRY [arrowtail=dot dir=both];
+  ROOT_GEOMETRY -> ROOT_GEOMETRY_COLLECTION [arrowtail=dot dir=both];
+  ROOT_GEOMETRY_COLLECTION -> ROOT_COORDINATES [arrowtail=dot dir=both];
+  ROOT_COORDINATES -> ROOT_FEATURE_COLLECTION [arrowtail=dot dir=both];
+  
+  
+  KEY -> SWITCH1;
+  SWITCH1 -> FOREIGN_OBJECT;
+  FOREIGN_OBJECT -> PROPERTIES_OBJECT;
+  PROPERTIES_OBJECT -> GEOMETRY;
+  GEOMETRY -> FEATURE
+  FEATURE -> ROOT
+  ROOT -> FALSE
+  
+  GEOMETRY -> SWITCH_GEOEMTRY_KEY
+  FEATURE -> SWITCH_FEATURE_KEY
+  ROOT -> SWITCH_ROOT_KEY
+  
+  {FOREIGN_PUSH_KEY
+  FEATURE_PUSH_TYPE
+  FEATURE_PUSH_ID
+  FEATURE_PUSH_BBOX
+  FEATURE_PUSH_FOREIGN
+  FEATURE_PUSH_PROPERTIES
+  FEATURE_PUSH_GEOMETRY
+  GEOMETRY_PUSH_TYPE
+  GEOMETRY_PUSH_COORDINATE
+  GEOMETRY_PUSH_BBOX
+  GEOMETRY_PUSH_FOREIGN
+  GEOMETRY_PUSH_COLLECTION
+  ROOT_PUSH_TYPE
+  ROOT_PUSH_ID
+  ROOT_PUSH_BBOX
+  ROOT_PUSH_FOREIGN
+  ROOT_PUSH_PROPERTIES
+  ROOT_PUSH_GEOMETRY
+  ROOT_PUSH_FOREIGN
+  ROOT_PUSH_GEOMETRY_COLLECTION
+  ROOT_PUSH_COORDINATES
+  ROOT_PUSH_FEATURE_COLLECTION
+  PROPERTIES_OBJECT} -> TRUE
+  
+  // Ordering
+  
+  
+  GEOMETRY_COLLECTION -> FEATURE [style=invis]
+  FEATURE_GEOMETRY -> ROOT [style=invis]
+  
+}

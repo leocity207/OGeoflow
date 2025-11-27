@@ -1,0 +1,238 @@
+digraph Project {
+  graph [splines=true, overlap=false, rankdir=LR];
+  node [shape=box, style=filled, fontname="Helvetica"];
+  edge [fontname="Helvetica", penwidth=5];
+
+  // --- Nodes with types (colors) ---
+  // classes (red)
+  "O::Bounded_Vector" [fillcolor="#e84141", fontcolor="white"];
+  "O::GeoJSON::IO::Feature_Parser" [fillcolor="#e84141", fontcolor="white"];
+  "O::GeoJSON::IO::Full_Parser" [fillcolor="#e84141", fontcolor="white"];
+  "O::GeoJSON::IO::SAX_Parser" [fillcolor="#e84141", fontcolor="white"];
+  "O::GeoJSON::IO::Writer" [fillcolor="#e84141", fontcolor="white"];
+
+  // enum (blue)
+  "O::GeoJSON::IO::Error" [fillcolor="#3498db", fontcolor="white"];
+
+  // structs (green)
+  "O::GeoJSON::Geometry_Collection" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Line_String" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Multi_Line_String" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Multi_Point" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Multi_Polygon" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Point" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Polygon" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Feature_Collection" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Feature" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Geometry" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Bbox" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Position" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Property" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Root" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::GeoJSON::Filter::Feature" [fillcolor="#2ecc71", fontcolor="black"];
+
+  "O::DCEL::Vertex" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Half_Edge" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Face" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Storage" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Builder" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Exporter" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Storage_Builder_Helper" [fillcolor="#2ecc71", fontcolor="black"];
+  "O::DCEL::Feature_Info" [fillcolor="#2ecc71", fontcolor="black"];
+
+  // --- Clusters (matrioshka) ---
+  subgraph cluster_O {
+    label="O";
+    color="#555555";
+    style="rounded,filled";
+    fillcolor="#f7f7f7";
+
+    // top-level node(s) in O
+    "O::Bounded_Vector";
+
+    // GeoJSON cluster
+    subgraph cluster_O_GeoJSON {
+      label="O::GeoJSON";
+      color="#2b7fbf";
+      style="rounded,filled";
+      fillcolor="#eef6fb";
+
+      // IO cluster inside GeoJSON
+      subgraph cluster_O_GeoJSON_IO {
+        label="O::GeoJSON::IO";
+        color="#2b9f4f";
+        style="rounded,filled";
+        fillcolor="#f3fbef";
+
+        "O::GeoJSON::IO::Feature_Parser";
+        "O::GeoJSON::IO::Full_Parser";
+        "O::GeoJSON::IO::SAX_Parser";
+        "O::GeoJSON::IO::Writer";
+        "O::GeoJSON::IO::Error";
+      }
+
+      // Filter cluster inside GeoJSON
+      subgraph cluster_O_GeoJSON_Filter {
+        label="O::GeoJSON::Filter";
+        color="#b45f9a";
+        style="rounded,filled";
+        fillcolor="#fbf0fb";
+
+        "O::GeoJSON::Filter::Feature";
+      }
+
+      // geometry & feature nodes
+      "O::GeoJSON::Geometry_Collection";
+      "O::GeoJSON::Line_String";
+      "O::GeoJSON::Multi_Line_String";
+      "O::GeoJSON::Multi_Point";
+      "O::GeoJSON::Multi_Polygon";
+      "O::GeoJSON::Point";
+      "O::GeoJSON::Polygon";
+      "O::GeoJSON::Feature_Collection";
+      "O::GeoJSON::Feature";
+      "O::GeoJSON::Geometry";
+      "O::GeoJSON::Bbox";
+      "O::GeoJSON::Position";
+      "O::GeoJSON::Property";
+      "O::GeoJSON::Root";
+    }
+
+    // DCEL cluster
+    subgraph cluster_O_DCEL {
+      label="O::DCEL";
+      color="#a0522d";
+      style="rounded,filled";
+      fillcolor="#fbf6ef";
+
+      "O::DCEL::Vertex";
+      "O::DCEL::Half_Edge";
+      "O::DCEL::Face";
+      "O::DCEL::Storage";
+      "O::DCEL::Builder";
+      "O::DCEL::Exporter";
+      "O::DCEL::Storage_Builder_Helper";
+      "O::DCEL::Feature_Info";
+    }
+  }
+
+  // --- Inheritance edges (red) Base -> Derived ---
+  "O::DCEL::Builder" -> "O::DCEL::Storage_Builder_Helper" [color="#e84141"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::IO::Feature_Parser" [color="#e84141"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::IO::Full_Parser" [color="#e84141"];
+  "O::GeoJSON::IO::Feature_Parser" -> "O::GeoJSON::Filter::Feature" [color="#e84141"];
+
+  // --- Contain edges (blue) Container -> Containee ---
+  "O::GeoJSON::Geometry_Collection" -> "O::GeoJSON::Geometry" [color="#3498db"];
+  "O::GeoJSON::Line_String" -> "O::GeoJSON::Position" [color="#3498db"];
+  "O::GeoJSON::Multi_Line_String" -> "O::GeoJSON::Line_String" [color="#3498db"];
+  "O::GeoJSON::Point" -> "O::GeoJSON::Position" [color="#3498db"];
+  "O::GeoJSON::Multi_Point" -> "O::GeoJSON::Point" [color="#3498db"];
+  "O::GeoJSON::Polygon" -> "O::GeoJSON::Position" [color="#3498db"];
+  "O::GeoJSON::Multi_Polygon" -> "O::GeoJSON::Polygon" [color="#3498db"];
+
+  // Geometry union containment (Geometry can be any of these specific geometry structs)
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Geometry_Collection" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Line_String" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Multi_Line_String" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Multi_Point" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Multi_Polygon" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Point" [color="#3498db"];
+  "O::GeoJSON::Geometry" -> "O::GeoJSON::Polygon" [color="#3498db"];
+
+  "O::GeoJSON::Feature" -> "O::GeoJSON::Bbox" [color="#3498db"];
+  "O::GeoJSON::Feature" -> "O::GeoJSON::Geometry" [color="#3498db"];
+  "O::GeoJSON::Feature" -> "O::GeoJSON::Property" [color="#3498db"];
+
+  // property contains itself (from your data) - represent as self-loop
+  "O::GeoJSON::Property" -> "O::GeoJSON::Property" [color="#3498db"];
+
+  "O::GeoJSON::Feature_Collection" -> "O::GeoJSON::Feature" [color="#3498db"];
+  "O::GeoJSON::Root" -> "O::GeoJSON::Feature" [color="#3498db"];
+  "O::GeoJSON::Root" -> "O::GeoJSON::Feature_Collection" [color="#3498db"];
+  "O::GeoJSON::Root" -> "O::GeoJSON::Geometry" [color="#3498db"];
+
+  // SAX parser contains / works with many GeoJSON pieces (as per your data)
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Geometry_Collection" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Line_String" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Line_String" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Point" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Polygon" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Point" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Polygon" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Feature_Collection" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Feature" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Geometry" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Bbox" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Position" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Property" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Root" [color="#3498db"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::Bounded_Vector" [color="#3498db"];
+
+  "O::DCEL::Feature_Info" -> "O::GeoJSON::Property" [color="#3498db"];
+  "O::DCEL::Feature_Info" -> "O::GeoJSON::Bbox" [color="#3498db"];
+
+  // --- Use edges (green) User -> Usee ---
+  // O::GeoJSON::IO::Writer uses many GeoJSON types
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Geometry_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Line_String" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Multi_Line_String" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Multi_Point" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Multi_Polygon" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Point" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Polygon" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Feature_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Geometry" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Bbox" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Position" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Property" [color="#2ecc71"];
+  "O::GeoJSON::IO::Writer" -> "O::GeoJSON::Root" [color="#2ecc71"];
+
+  // Feature_Parser uses Feature / Feature_Collection / Geometry
+  "O::GeoJSON::IO::Feature_Parser" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::GeoJSON::IO::Feature_Parser" -> "O::GeoJSON::Feature_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::Feature_Parser" -> "O::GeoJSON::Geometry" [color="#2ecc71"];
+
+  // Filter::Feature uses Feature / Feature_Collection / Geometry
+  "O::GeoJSON::Filter::Feature" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::GeoJSON::Filter::Feature" -> "O::GeoJSON::Feature_Collection" [color="#2ecc71"];
+  "O::GeoJSON::Filter::Feature" -> "O::GeoJSON::Geometry" [color="#2ecc71"];
+
+  // Full_Parser uses Feature / Feature_Collection / Geometry
+  "O::GeoJSON::IO::Full_Parser" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::GeoJSON::IO::Full_Parser" -> "O::GeoJSON::Feature_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::Full_Parser" -> "O::GeoJSON::Geometry" [color="#2ecc71"];
+
+  // SAX parser usage (also listed in contain/handles above)
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Geometry_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Line_String" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Line_String" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Point" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Multi_Polygon" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Point" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Polygon" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Feature_Collection" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Geometry" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Bbox" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Position" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Property" [color="#2ecc71"];
+  "O::GeoJSON::IO::SAX_Parser" -> "O::GeoJSON::Root" [color="#2ecc71"];
+
+  // DCEL builder & exporter usage of GeoJSON and DCEL pieces
+  "O::DCEL::Builder" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::DCEL::Builder" -> "O::GeoJSON::Bbox" [color="#2ecc71"];
+  "O::DCEL::Builder" -> "O::GeoJSON::Polygon" [color="#2ecc71"];
+  "O::DCEL::Builder" -> "O::GeoJSON::Multi_Polygon" [color="#2ecc71"];
+  "O::DCEL::Builder" -> "O::DCEL::Feature_Info" [color="#2ecc71"];
+  "O::DCEL::Builder" -> "O::DCEL::Storage" [color="#2ecc71"];
+
+  "O::DCEL::Exporter" -> "O::GeoJSON::Feature" [color="#2ecc71"];
+  "O::DCEL::Exporter" -> "O::GeoJSON::Bbox" [color="#2ecc71"];
+  "O::DCEL::Exporter" -> "O::GeoJSON::Polygon" [color="#2ecc71"];
+  "O::DCEL::Exporter" -> "O::GeoJSON::Multi_Polygon" [color="#2ecc71"];
+  "O::DCEL::Exporter" -> "O::DCEL::Feature_Info" [color="#2ecc71"];
+
+  // --- end
+}

@@ -5,7 +5,7 @@
 
 namespace O::DCEL
 {
-	inline constexpr size_t NO_IDX = std::numeric_limits<size_t>::max();
+	inline constexpr size_t NO_IDX = std::numeric_limits<size_t>::max(); ///< help defined undefined index reference for Half_Edge and Face.
 
 } // namespace O::DCEL
 

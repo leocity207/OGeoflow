@@ -10,12 +10,10 @@
 
 namespace O::GeoJSON::IO
 {
-
 	/**
 	 * @brief Parse GeoJSON from a string
 	 * @param json_string Input JSON string
 	 * @return Parsed GeoJSON structure
-	 * @throws Parse_Exception if parsing fails
 	 */
 	O::Expected<O::GeoJSON::Root, Error> Parse_Geojson_String(const std::string& json_string);
 
@@ -23,7 +21,6 @@ namespace O::GeoJSON::IO
 	 * @brief Parse GeoJSON from a file
 	 * @param filename Path to GeoJSON file
 	 * @return Parsed GeoJSON structure
-	 * @throws Parse_Exception if file cannot be read or parsing fails
 	 */
 	O::Expected<O::GeoJSON::Root, Error> Parse_Geojson_File(const std::filesystem::path& filename);
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(OGeoFlow VERSION 0.1.0)
+project(OGeoFlow VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -22,4 +22,9 @@ add_subdirectory(src/dcel)
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
 	include(cmake/testing.cmake)
+endif()
+
+option(BUILD_DOC "Build doc" ON)
+if(BUILD_DOC)
+	add_subdirectory(documentation)
 endif()

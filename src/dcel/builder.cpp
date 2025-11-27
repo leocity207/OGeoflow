@@ -105,8 +105,8 @@ std::vector<size_t> DCEL::Builder::Create_Forward_Half_Edge(const std::vector<si
 		size_t origin = ring_vertex_indices[i];
 		size_t head = ring_vertex_indices[(i + 1) % ring_vertex_indices.size()];
 		// ensure halfedge origin->head exists
-		size_t e_idxf = m_dcel.Get_Or_Create_Half_Edge_Index(origin, head);
-		size_t e_idxb = m_dcel.Get_Or_Create_Half_Edge_Index(head, origin);
+		size_t e_idxf = m_dcel.Get_Or_Create_Half_Edge(origin, head);
+		size_t e_idxb = m_dcel.Get_Or_Create_Half_Edge(head, origin);
 		m_dcel.Links_twins(e_idxf, e_idxb);
 		m_dcel.Insert_Edge_Sorted(origin, e_idxf);
 		m_dcel.Insert_Edge_Sorted(head, e_idxb);
@@ -123,8 +123,8 @@ void DCEL::Builder::Link_Next_Prev(const std::vector<size_t>& ring_edge_indices)
 		size_t e = ring_edge_indices[i];
 		size_t e_next = ring_edge_indices[(i + 1) % ring_edge_indices.size()];
 		size_t e_prev = ring_edge_indices[(i + ring_edge_indices.size() - 1) % ring_edge_indices.size()];
-		m_dcel.halfedges[e].next = e_next;
-		m_dcel.halfedges[e].prev = e_prev;
+		m_dcel.half_edges[e].next = e_next;
+		m_dcel.half_edges[e].prev = e_prev;
 		// (face will be assigned below)
 	}
 }
@@ -133,7 +133,7 @@ size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices,siz
 {
 		m_dcel.faces.emplace_back(ring_edge_indices[0], feature_id);
 		for (size_t e : ring_edge_indices) 
-			m_dcel.halfedges[e].face = m_dcel.faces.size() - 1;
+			m_dcel.half_edges[e].face = m_dcel.faces.size() - 1;
 		m_dcel.feature_to_faces[feature_id].push_back(m_dcel.faces.size() - 1);
 		if (isHole && outer_Face_Idx != NO_IDX) 
 		{
@@ -152,7 +152,7 @@ void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON:
 	size_t addEdgeSegments = 0;
 	for (auto const& r : rings) { addVerticesEstimate += r.size(); addEdgeSegments += r.size(); }
 	m_dcel.vertices.reserve(m_dcel.vertices.size() + addVerticesEstimate);
-	m_dcel.halfedges.reserve(m_dcel.halfedges.size() + addEdgeSegments * 2);
+	m_dcel.half_edges.reserve(m_dcel.half_edges.size() + addEdgeSegments * 2);
 	m_dcel.faces.reserve(m_dcel.faces.size() + rings.size());
 
 	// For each ring, create or reuse vertices and halfedges (origin->head)

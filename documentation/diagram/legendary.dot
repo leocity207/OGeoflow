@@ -1,0 +1,50 @@
+digraph Legend {
+  graph [splines=true, overlap=false, rankdir=TB, bgcolor="transparent"];
+  node [fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+
+  /* HTML table showing node color mapping */
+  legend_table [shape=none, margin=0, label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="4" CELLPADDING="6">
+      <TR><TD COLSPAN="2" BALIGN="CENTER"><B>Legend</B></TD></TR>
+
+      <TR>
+        <TD BGCOLOR="#e84141" WIDTH="48" HEIGHT="18"></TD>
+        <TD ALIGN="LEFT">Class (red)</TD>
+      </TR>
+
+      <TR>
+        <TD BGCOLOR="#3498db" WIDTH="48" HEIGHT="18"></TD>
+        <TD ALIGN="LEFT">Enum (blue)</TD>
+      </TR>
+
+      <TR>
+        <TD BGCOLOR="#2ecc71" WIDTH="48" HEIGHT="18"></TD>
+        <TD ALIGN="LEFT">Struct (green)</TD>
+      </TR>
+
+      <TR><TD COLSPAN="2" HEIGHT="6"></TD></TR>
+
+      <TR>
+        <TD COLSPAN="2" ALIGN="CENTER"><B>Edges</B></TD>
+      </TR>
+
+      <TR>
+        <TD><FONT POINT-SIZE="10" COLOR="#e84141">&#8213;&#8213;&#8213;</FONT></TD>
+        <TD ALIGN="LEFT">Inheritance (red)</TD>
+      </TR>
+
+      <TR>
+        <TD><FONT POINT-SIZE="10" COLOR="#3498db">&#8213;&#8213;&#8213;</FONT></TD>
+        <TD ALIGN="LEFT">Contain (blue)</TD>
+      </TR>
+
+      <TR>
+        <TD><FONT POINT-SIZE="10" COLOR="#2ecc71">&#8213;&#8213;&#8213;</FONT></TD>
+        <TD ALIGN="LEFT">Use (green)</TD>
+      </TR>
+    </TABLE>
+  >];
+
+
+}

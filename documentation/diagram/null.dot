@@ -1,0 +1,90 @@
+digraph  {
+	graph [compound=true   newrank=true]
+	rankdir="LR"
+	splines=ortho
+
+	subgraph {
+		rank=same
+		NULL [shape=circle label="Null()"]
+		SWITCH_STATE [shape=box label="switch(Current_State())"]
+		
+		PROPERTIES_SUB_KEY [shape=diamond]
+		PROPERTIES_SUB_ARRAY [shape=diamond]
+        PROPERTIES_OBJECT [shape=diamond]
+        GEOMETRY [shape=diamond]
+        FOREIGN_ARRAY [shape=diamond]
+        FOREIGN_KEY [shape=diamond]
+
+		NULL -> SWITCH_STATE ->PROPERTIES_SUB_KEY;
+		PROPERTIES_SUB_KEY -> PROPERTIES_SUB_ARRAY -> GEOMETRY -> FOREIGN_ARRAY -> FOREIGN_KEY -> PROPERTIES_OBJECT -> FALSE [arrowtail=dot dir=both]
+	}
+
+    subgraph PORPERTY_SUBKEY_GRAPH{
+        subgraph {
+            rank=same;
+            CHECK_SUBKEY_IS_OBJECT [shape=diamond label="current_property.Is_Object()"]
+            CHECK_SUBKEY_KEY_DUPLICATION [shape=diamond label="current_property.contains(\"current_key\")"]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_UNEXPECTED_PROPERTY_STATE [shape=circle label="False"]
+            FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [shape=none, label="UNEXPECTED_PROPERTY_STATE"];
+            FALSE_UNEXPECTED_PROPERTY_STATE -> FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [style=invis]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_PROPERTY_KEY_ALREADY_EXIST [shape=circle label="False"]
+            FALSE_PROPERTY_KEY_ALREADY_EXIST_NOTE [shape=none, label="PROPERTY_KEY_ALREADY_EXIST"];
+            FALSE_PROPERTY_KEY_ALREADY_EXIST -> FALSE_PROPERTY_KEY_ALREADY_EXIST_NOTE [style=invis]
+        }
+
+        CHECK_SUBKEY_IS_OBJECT -> FALSE_UNEXPECTED_PROPERTY_STATE [arrowtail=dot dir=both]
+        CHECK_SUBKEY_KEY_DUPLICATION -> FALSE_PROPERTY_KEY_ALREADY_EXIST [arrowtail=dot dir=both]
+        CHECK_SUBKEY_IS_OBJECT -> CHECK_SUBKEY_KEY_DUPLICATION
+        {PROPERTIES_SUB_KEY} ->  CHECK_SUBKEY_IS_OBJECT
+        CHECK_SUBKEY_KEY_DUPLICATION -> IN_ARRAY
+    }
+
+    subgraph PROPERTIES_SUB_ARRAY_GRAPH{
+        subgraph {
+            rank=same;
+            CHECK_SUBARRAY_IS_ARRAY [shape=diamond label="current_property.Is_Array()"]
+        }
+
+        subgraph {
+            rank=same
+            FALSE_UNEXPECTED_PROPERTY_STATE2 [shape=circle label="False"]
+            FALSE_UNEXPECTED_PROPERTY_STATE_NOTE2 [shape=none, label="UNEXPECTED_PROPERTY_STATE"];
+            FALSE_UNEXPECTED_PROPERTY_STATE2 -> FALSE_UNEXPECTED_PROPERTY_STATE_NOTE [style=invis]
+        }
+
+        CHECK_SUBARRAY_IS_ARRAY -> FALSE_UNEXPECTED_PROPERTY_STATE2 [arrowtail=dot dir=both]
+        {PROPERTIES_SUB_ARRAY} ->  CHECK_SUBARRAY_IS_ARRAY
+        CHECK_SUBARRAY_IS_ARRAY -> IN_ARRAY
+    }
+
+    subgraph {
+        IN_ARRAY [shape=diamond label="In_Array()"]
+    }
+
+    subgraph {
+        POP_CONTEXT [shape=box label="Pop_Context()"]
+    }
+
+    {CHECK_SUBKEY_IS_OBJECT -> CHECK_SUBKEY_KEY_DUPLICATION -> CHECK_SUBARRAY_IS_ARRAY [style=invis] rank=same }
+
+    IN_ARRAY -> POP_CONTEXT -> TRUE
+    IN_ARRAY -> TRUE [arrowtail=dot dir=both]
+    {GEOMETRY FOREIGN_ARRAY FOREIGN_KEY PROPERTIES_OBJECT} -> IN_ARRAY
+
+	TRUE  [shape=circle label="True"]
+	subgraph {
+		FALSE [shape=circle label="False"]
+		FALSE_NOTE [shape=none, label="UNEXPECTED_STATE_VALUE"];
+		FALSE -> FALSE_NOTE [style=invis]
+		rank=same
+	}
+
+}
