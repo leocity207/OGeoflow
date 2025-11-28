@@ -6,7 +6,7 @@ set(BUILD_DOC OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     OConfigurator
     GIT_REPOSITORY https://github.com/leocity207/OConfigurator.git
-    GIT_TAG V0.0.2
+    GIT_TAG V0.0.3
 )
 
 FetchContent_MakeAvailable(OConfigurator)
