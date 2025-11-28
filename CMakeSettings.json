@@ -30,7 +30,7 @@
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "-DBUILD_TESTS=ON"
     },
     {
       "name": "x64-Release",
