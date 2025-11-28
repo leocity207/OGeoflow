@@ -6,6 +6,8 @@ target_include_directories(dcel
 	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
+	PRIVATE
+		${PROJECT_SOURCE_DIR}
 )
 
 target_link_libraries(dcel
