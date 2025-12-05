@@ -5,7 +5,7 @@
 #include <optional>
 #include <string>
 #include "feature.h"
-#include "include/geojson/bbox.h"
+#include "geojson/bbox.h"
 
 namespace O::GeoJSON
 {

@@ -4,10 +4,10 @@
 
 #include "storage_builder_helper.h"
 
-#include "include/geojson/root.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/geometry_type/polygon.h"
-#include "include/geojson/geometry_type/multi_polygon.h"
+#include "geojson/root.h"
+#include "geojson/object/feature.h"
+#include "geojson/geometry_type/polygon.h"
+#include "geojson/geometry_type/multi_polygon.h"
 #include "feature_info.h"
 
 namespace O::DCEL

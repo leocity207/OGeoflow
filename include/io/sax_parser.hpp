@@ -6,13 +6,13 @@
 #include <format>
 #include <ranges>
 
-#include "include/io/sax_parser.h"
-#include "include/io/error.h"
+#include "io/sax_parser.h"
+#include "io/error.h"
 
-#include "include/geojson/properties.h"
-#include "include/geojson/position.h"
+#include "geojson/properties.h"
+#include "geojson/position.h"
 #include <optional>
-#include "include/geojson/geometry_type/geometry_collection.h"
+#include "geojson/geometry_type/geometry_collection.h"
 
 using Level1 = O::GeoJSON::Position;
 using Level2 = std::vector<O::GeoJSON::Position>;

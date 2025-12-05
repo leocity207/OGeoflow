@@ -5,14 +5,14 @@
 #include <memory>
 #include <string>
 
-#include "include/geojson/geometry_type/line_string.h"
-#include "include/geojson/geometry_type/multi_line_string.h"
-#include "include/geojson/geometry_type/multi_point.h"
-#include "include/geojson/geometry_type/multi_polygon.h"
-#include "include/geojson/geometry_type/point.h"
-#include "include/geojson/geometry_type/polygon.h"
-#include "include/geojson/geometry_type/geometry_collection.h"
-#include "include/geojson/bbox.h"
+#include "geojson/geometry_type/line_string.h"
+#include "geojson/geometry_type/multi_line_string.h"
+#include "geojson/geometry_type/multi_point.h"
+#include "geojson/geometry_type/multi_polygon.h"
+#include "geojson/geometry_type/point.h"
+#include "geojson/geometry_type/polygon.h"
+#include "geojson/geometry_type/geometry_collection.h"
+#include "geojson/bbox.h"
 
 
 namespace O::GeoJSON

@@ -1,7 +1,7 @@
 #ifndef IO_FEATURE_PARSER_HPP
 #define IO_FEATURE_PARSER_HPP
 
-#include "include/io/feature_parser.h"
+#include "io/feature_parser.h"
 
 #include <span>
 #include <memory>

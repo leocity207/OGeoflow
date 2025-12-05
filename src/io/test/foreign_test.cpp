@@ -1,6 +1,6 @@
 #include "foreign_test.h"
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Foreign_Test, Root_Foreign_Primitives_And_Null_Do_Not_Break_Parse) {

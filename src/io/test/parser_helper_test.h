@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 
 struct ExpectedPos
 {

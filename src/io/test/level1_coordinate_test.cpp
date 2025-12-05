@@ -1,6 +1,6 @@
 #include "level1_coordinate_test.h"
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Level1_Coordinate_Test, Point_Without_Altitude) {

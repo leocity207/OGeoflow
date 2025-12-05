@@ -1,6 +1,6 @@
 #include "feature_test.h"
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Feature_Test, Feature_Collection_Features_Basic) {

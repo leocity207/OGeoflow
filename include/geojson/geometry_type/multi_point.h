@@ -2,7 +2,7 @@
 #define GEOJSON_GEOMETRY_MULTI_POINT_H
 
 #include <vector>
-#include "include/geojson/position.h"
+#include "geojson/position.h"
 
 namespace O::GeoJSON
 {

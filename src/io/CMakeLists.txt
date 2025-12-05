@@ -4,4 +4,5 @@ Add_Simple_Library(io
 	
 	RapidJSON::rapidjson 
 	OConfigurator::configuration
+	OUtils::utils
 )

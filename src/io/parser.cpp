@@ -2,8 +2,8 @@
 #include <rapidjson/filereadstream.h>
 
 
-#include "include/io/parser.h"
-#include "include/io/full_parser.h"
+#include "io/parser.h"
+#include "io/full_parser.h"
 
 
 O::Expected<O::GeoJSON::Root, O::GeoJSON::IO::Error> O::GeoJSON::IO::Parse_Geojson_String(const std::string& json_string)

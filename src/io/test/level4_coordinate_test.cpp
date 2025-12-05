@@ -1,7 +1,7 @@
 #include "level4_coordinate_test.h"
 
 #include <ranges>
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Level4_Coordinate_Test, Multi_Polygon_Single_Polygon_No_Altitude) {

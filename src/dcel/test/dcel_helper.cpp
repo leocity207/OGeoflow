@@ -1,4 +1,4 @@
-#include "include/dcel/builder.h"
+#include "dcel/builder.h"
 #include <gtest/gtest.h>
 
 #include <cmath>

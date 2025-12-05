@@ -26,11 +26,11 @@
 #include <optional>
 #include <sstream>
 
-#include "include/filter/feature.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/object/feature_collection.h"
-#include "include/geojson/object/geometry.h"
-#include "include/geojson/properties.h"
+#include "filter/feature.h"
+#include "geojson/object/feature.h"
+#include "geojson/object/feature_collection.h"
+#include "geojson/object/geometry.h"
+#include "geojson/properties.h"
 
 using namespace O::GeoJSON;
 

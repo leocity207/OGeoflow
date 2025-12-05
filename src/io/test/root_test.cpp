@@ -1,6 +1,6 @@
 #include "root_test.h"
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Root_Test, Root_Is_Geometry_Point) {

@@ -1,4 +1,4 @@
-#include "include/dcel/exporter.h"
+#include "dcel/exporter.h"
 #include <unordered_map>
 #include <cassert>
 
