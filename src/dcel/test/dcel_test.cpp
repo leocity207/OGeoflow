@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "dcel_test.h"
 
 #include "dcel_helper.h"
