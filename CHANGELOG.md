@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.3] - 2025-11-28
+
+### fix
+
+ * `cmake`: reworked cmake include path
+
 ## [0.0.2] - 2025-11-28
 
 ### fix
