@@ -1,17 +1,17 @@
 #ifndef SRC_DCEL_TEST_DECEL_TEST_TEST_H
 #define SRC_DCEL_TEST_DECEL_TEST_TEST_H
 
-#include "include/dcel/builder.h"            // DCEL::Builder
-#include "include/dcel/storage.h"            // DCEL::Storage, types
-#include "include/dcel/feature_info.h"       // DCEL::FeatureInfo (see earlier design)
-#include "include/dcel/exporter.h"           // DCEL::GeoJSON_Exporter
-#include "include/geojson/root.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/geometry_type/polygon.h"
-#include "include/geojson/geometry_type/multi_polygon.h"
-#include "include/geojson/position.h"
-#include "include/geojson/properties.h"
-#include "include/geojson/bbox.h"
+#include "dcel/builder.h"            // DCEL::Builder
+#include "dcel/storage.h"            // DCEL::Storage, types
+#include "dcel/feature_info.h"       // DCEL::FeatureInfo (see earlier design)
+#include "dcel/exporter.h"           // DCEL::GeoJSON_Exporter
+#include "geojson/root.h"
+#include "geojson/object/feature.h"
+#include "geojson/geometry_type/polygon.h"
+#include "geojson/geometry_type/multi_polygon.h"
+#include "geojson/position.h"
+#include "geojson/properties.h"
+#include "geojson/bbox.h"
 
 bool Nearly_Equal(double a, double b, double eps = 1e-9);
 bool Positions_Equal(const O::GeoJSON::Position& a, const O::GeoJSON::Position& b);

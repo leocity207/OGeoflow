@@ -1,13 +1,13 @@
 #ifndef IO_WRITER_H
 #define IO_WRITER_H
 
-#include "include/geojson/root.h"
-#include "include/geojson/properties.h"
-#include "include/geojson/position.h"
-#include "include/geojson/bbox.h"
-#include "include/geojson/object/geometry.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/object/feature_collection.h"
+#include "geojson/root.h"
+#include "geojson/properties.h"
+#include "geojson/position.h"
+#include "geojson/bbox.h"
+#include "geojson/object/geometry.h"
+#include "geojson/object/feature.h"
+#include "geojson/object/feature_collection.h"
 
 // RapidJSON headers (assumed in include path)
 #include <rapidjson/writer.h>

@@ -1,7 +1,7 @@
 #include "level2_coordinate_test.h"
 
 #include <ranges>
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Level2_Coordinate_Test, Line_String_Without_Altitude) {

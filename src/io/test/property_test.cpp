@@ -1,6 +1,6 @@
 #include "property_test.h"
 
-#include "include/io/parser.h"
+#include "io/parser.h"
 #include "parser_helper_test.h"
 
 TEST_F(Property_Test, Properties_Primitives_And_Null) {

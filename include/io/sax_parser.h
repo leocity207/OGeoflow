@@ -5,18 +5,18 @@
 #include <rapidjson/reader.h>
 
 // GeoJSON
-#include "include/geojson/object/geometry.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/geometry_type/polygon.h"
-#include "include/geojson/position.h"
-#include "include/geojson/bbox.h"
-#include "include/geojson/root.h"
+#include "geojson/object/geometry.h"
+#include "geojson/object/feature.h"
+#include "geojson/geometry_type/polygon.h"
+#include "geojson/position.h"
+#include "geojson/bbox.h"
+#include "geojson/root.h"
 
 // IO
-#include "include/io/error.h"
+#include "io/error.h"
 
 // UTILS
-#include "include/utils/bounded_array.h"
+#include "utils/bounded_array.h"
 
 namespace O::GeoJSON::IO
 {

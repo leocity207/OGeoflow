@@ -5,8 +5,8 @@
 #include <optional>
 #include <string>
 
-#include "include/geojson/properties.h"
-#include "include/geojson/bbox.h"
+#include "geojson/properties.h"
+#include "geojson/bbox.h"
 
 namespace O::DCEL
 {

@@ -8,13 +8,13 @@
 
 #include <rapidjson/ostreamwrapper.h>
 
-#include "include/io/writer.h"
-#include "include/geojson/root.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/object/feature_collection.h"
-#include "include/geojson/object/geometry.h"
-#include "include/geojson/position.h"
-#include "include/geojson/properties.h"
+#include "io/writer.h"
+#include "geojson/root.h"
+#include "geojson/object/feature.h"
+#include "geojson/object/feature_collection.h"
+#include "geojson/object/geometry.h"
+#include "geojson/position.h"
+#include "geojson/properties.h"
 
 
 static std::string SerializeToString(const O::GeoJSON::Root& obj)

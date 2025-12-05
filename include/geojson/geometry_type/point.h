@@ -1,7 +1,7 @@
 #ifndef GEOJSON_GEOMETRY_POINT_H
 #define GEOJSON_GEOMETRY_POINT_H
 
-#include "include/geojson/position.h"
+#include "geojson/position.h"
 
 namespace O::GeoJSON
 {

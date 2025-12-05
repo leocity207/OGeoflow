@@ -3,11 +3,11 @@
 
 #include "storage.h"
 #include "feature_info.h"
-#include "include/geojson/root.h"
-#include "include/geojson/geometry_type/polygon.h"
-#include "include/geojson/geometry_type/multi_polygon.h"
-#include "include/geojson/object/feature.h"
-#include "include/geojson/object/feature_collection.h"
+#include "geojson/root.h"
+#include "geojson/geometry_type/polygon.h"
+#include "geojson/geometry_type/multi_polygon.h"
+#include "geojson/object/feature.h"
+#include "geojson/object/feature_collection.h"
 
 namespace O::DCEL
 {
