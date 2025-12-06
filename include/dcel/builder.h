@@ -93,6 +93,13 @@ namespace O::DCEL
 		 */
 		size_t Link_Face(const std::vector<size_t>& ring_edge_indices, size_t feature_id, bool is_hole, size_t outer_face_id);
 
+		/**
+		 * @brief give back the index of half edge in the current ring starting at  ``start_edge_idx``
+		 * @param start_edge_idx edge of the starting ring
+		 * @return list of helf edge index in order
+		 */
+		std::vector<size_t> Get_Cycle(size_t start_edge_idx);
+
 
 	private:
 

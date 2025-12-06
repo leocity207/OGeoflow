@@ -76,10 +76,10 @@ void DCEL::Storage_Builder_Helper::Update_Around_Vertex(size_t vertexIdx)
 		size_t e_i    = v.outgoing_edges[i];
 		size_t e_next = v.outgoing_edges[(i + 1) % v.outgoing_edges.size()];
 
-		size_t twin_i = half_edges[e_i].twin;
-		if (twin_i == NO_IDX) continue;
+		size_t twin_next = half_edges[e_next].twin;
+		if (twin_next == NO_IDX) continue;
 
-		half_edges[twin_i].next = e_next;
-		half_edges[e_next].prev = twin_i;
+		half_edges[twin_next].next = e_i;
+		half_edges[e_i].prev = twin_next;
 	}
 }

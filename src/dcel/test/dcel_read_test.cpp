@@ -203,16 +203,16 @@ TEST(DCEL_Test, Half_Edge_Equality)
 
 	for (auto&& [half_edge, twin] : O::Zip(dcel.half_edges, twins))
 	{
-		EXPECT_EQ(half_edge.origin, twin);
+		EXPECT_EQ(half_edge.twin, twin);
 	}
 
 	for (auto&& [half_edge, prev] : O::Zip(dcel.half_edges, prevs))
 	{
-		EXPECT_EQ(half_edge.origin, prev);
+		EXPECT_EQ(half_edge.prev, prev);
 	}
 
 	for (auto&& [half_edge, next] : O::Zip(dcel.half_edges, nexts))
 	{
-		EXPECT_EQ(half_edge.origin, next);
+		EXPECT_EQ(half_edge.next, next);
 	}
 }
