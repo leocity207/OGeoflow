@@ -1,5 +1,8 @@
 #include "dcel/builder.h"
 #include <cassert>
+#include <algorithm>
+
+#include <utils/zip.h>
 
 using namespace O;
 
@@ -47,15 +50,16 @@ bool  DCEL::Builder::On_Root(std::optional<GeoJSON::Bbox>&& bbox, std::optional<
 
 std::optional<DCEL::Storage> DCEL::Builder::Get_Dcel()
 {
-	m_dcel.faces.emplace_back(NO_IDX);
-	size_t unboundedIdx = m_dcel.faces.size() - 1;
 
+	// finish face for outer bound
 	for (size_t i = 0; i < m_dcel.half_edges.size(); ++i) {
 		if (m_dcel.half_edges[i].face == NO_IDX) {
+			size_t unbounded_index = m_dcel.faces.size();
+			m_dcel.faces.emplace_back(i, NO_IDX, unbounded_index);
 			size_t start = i;
 			size_t e = start;
 			do {
-				m_dcel.half_edges[e].face = unboundedIdx;
+				m_dcel.half_edges[e].face = unbounded_index;
 				e = m_dcel.half_edges[e].next;
 				if (e == NO_IDX) break;
 			} while (e != start);
@@ -100,15 +104,20 @@ std::vector<size_t> DCEL::Builder::Create_Vertex(const std::vector<GeoJSON::Posi
 	ring_vertex_indices.reserve(ring.size());
 
 	// create/get vertices
-	for (size_t i = 0; i < ring.size() - 1; ++i)
+	double area = 0;
+	for (auto&& [ring_i, ring_i_1] : O::Zip_Adjacent(ring))
 	{
-		double lon = ring[i].longitude;
-		double lat = ring[i].latitude;
+		double lon = ring_i.longitude;
+		double lat = ring_i.latitude;
 		size_t vid = m_dcel.Get_Or_Create_Vertex(lon, lat);
 		ring_vertex_indices.push_back(vid);
+		area = ring_i.longitude * ring_i_1.latitude - ring_i.latitude + ring_i_1.longitude;
 	}
 	// test the closed loop, the last vertex always exist and should be the same as the first one
 	assert(m_dcel.Get_Or_Create_Vertex(ring[ring.size() - 1].longitude, ring[ring.size() - 1].latitude) == m_dcel.Get_Or_Create_Vertex(ring[0].longitude, ring[0].latitude));
+
+	if (area > 0) // reverse so ring circle are always counter clock wise
+		std::ranges::reverse(ring_vertex_indices);
 	return ring_vertex_indices;
 }
 
@@ -142,19 +151,6 @@ void DCEL::Builder::Link_Next_Prev(const std::vector<size_t>& ring_edge_indices)
 		m_dcel.half_edges[e].prev = e_prev;
 		// (face will be assigned below)
 	}
-}
-
-
-std::vector<size_t> DCEL::Builder::Get_Cycle(size_t start_edge_idx)
-{
-	std::vector<size_t> cycle;
-	if (start_edge_idx == NO_IDX) return cycle;
-	size_t cur = start_edge_idx;
-	do {
-		cycle.push_back(cur);
-		cur = m_dcel.half_edges[cur].next;
-	} while (cur != start_edge_idx && cycle.size() <= m_dcel.half_edges.size());
-	return cycle;
 }
 
 size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices,size_t feature_id, bool isHole, size_t outer_Face_Idx )

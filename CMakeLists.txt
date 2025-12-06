@@ -19,7 +19,7 @@ Simple_Fetch_Populate(
 Simple_Fetch_Repository(
 	OUtils
 	https://github.com/leocity207/OUtils.git
-	V0.0.1
+	V0.0.2
 )
 Simple_Fetch_Repository(
 	OConfigurator

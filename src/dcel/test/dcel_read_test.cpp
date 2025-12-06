@@ -71,13 +71,13 @@ TEST(DCEL_Test, Vertex_Equality)
 	}
 
 	const auto expected_out_edges = std::vector<std::vector<int>>{
-		{17,0, 5},
-		{9, 2, 1},
-		{4, 3, 6},
-		{7, 8, 10},
-		{11,12},
-		{13,14},
-		{15,16}
+		{16,0, 5},
+		{8, 2, 1},
+		{4, 3, 7},
+		{6, 9, 15},
+		{14,13},
+		{12,11},
+		{10,17}
 	};
 
 	for (auto&& [vertex, expected_out_edge] : O::Zip(dcel.vertices, expected_out_edges))
@@ -108,18 +108,18 @@ TEST(DCEL_Test, Half_Edge_Equality)
 		2,
 		2,
 		0,
+		3,
 		2,
-		3,
-		3,
 		1,
 		3,
-		4,
-		4,
+		6,
 		5,
 		5,
-		6,
-		6,
-		0
+		4,
+		4,
+		3,
+		0,
+		6
 	};
 
 	const auto twins = std::vector<int>{
@@ -135,54 +135,54 @@ TEST(DCEL_Test, Half_Edge_Equality)
 	};
 
 	const auto prevs = std::vector<int>{
-		16,
-		3,
+		4,
+		9,
+		0,
+		6,
+		2,
+		17,
 		8,
 		5,
-		7,
-		1,
-		2,
-		11,
-		6,
-		0,
-		9,
+		3,
+		14,
+		16,
 		13,
 		10,
 		15,
 		12,
-		17,
-		14,
-		4
+		7,
+		1,
+		11,
 	};
 
 	const auto nexts = std::vector<int>{
-		9,
-		5,
+		2,
+		16,
+		4,
+		8,
+		0,
+		7,
+		3,
+		15,
 		6,
 		1,
-		17,
-		3,
-		8,
-		4,
-		2,
-		10,
 		12,
-		7,
+		17,
 		14,
 		11,
-		16,
+		9,
 		13,
-		0,
-		15
+		10,
+		5
 	};
 
 	const auto faces = std::vector<int>{
+		0,
 		2,
 		0,
 		1,
 		0,
 		3,
-		0,
 		1,
 		3,
 		1,
@@ -194,6 +194,7 @@ TEST(DCEL_Test, Half_Edge_Equality)
 		2,
 		3,
 		2,
+		3
 	};
 
 	for (auto&& [half_edge, origin] : O::Zip(dcel.half_edges, origins))
@@ -214,5 +215,10 @@ TEST(DCEL_Test, Half_Edge_Equality)
 	for (auto&& [half_edge, next] : O::Zip(dcel.half_edges, nexts))
 	{
 		EXPECT_EQ(half_edge.next, next);
+	}
+
+	for (auto&& [half_edge, face] : O::Zip(dcel.half_edges, faces))
+	{
+		EXPECT_EQ(half_edge.face, face);
 	}
 }

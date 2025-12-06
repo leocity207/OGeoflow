@@ -21,6 +21,7 @@ std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel,
 	return coords;
 }
 
+
 GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const Storage& dcel, size_t face_idx)
 {
 	const auto& face = dcel.faces[face_idx];
@@ -29,10 +30,6 @@ GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const Storage& dcel, si
 	// Exterior ring
 	if (face.edge != NO_IDX)
 		rings.push_back(Extract_Ring(dcel, face.edge));
-
-	// Holes
-	for (size_t innerEdge : face.inner_edges)
-		rings.push_back(Extract_Ring(dcel, innerEdge));
 
 	GeoJSON::Polygon polygon;
 	polygon.rings = std::move(rings);
