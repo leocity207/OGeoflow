@@ -20,7 +20,7 @@ namespace O::DCEL
 	{
 		size_t edge = NO_IDX;               ///< a representative halfedge belonging to this face
 		size_t associated_feature = NO_IDX; ///< indices of GeoJSON features that reference this face
-		size_t outer_face = NO_IDX;         ///< represent the oposit face
+		size_t outer_face = NO_IDX;
 	};
 
 } // namespace DCEL

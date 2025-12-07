@@ -47,7 +47,7 @@ std::vector<GeoJSON::Polygon> DCEL::Exporter::Collect_Polygons_For_Feature(const
 		if (face.associated_feature == NO_IDX) continue;
 
 		// skip holes themselves, we only export outer faces
-		if (face.outer_face == NO_IDX && face.associated_feature == featureIdx)
+		if (face.associated_feature == featureIdx)
 			polygons.push_back(Build_Polygon_From_Face(dcel, f));
 	}
 

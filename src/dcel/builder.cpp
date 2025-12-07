@@ -55,7 +55,7 @@ std::optional<DCEL::Storage> DCEL::Builder::Get_Dcel()
 	for (size_t i = 0; i < m_dcel.half_edges.size(); ++i) {
 		if (m_dcel.half_edges[i].face == NO_IDX) {
 			size_t unbounded_index = m_dcel.faces.size();
-			m_dcel.faces.emplace_back(i, NO_IDX, unbounded_index);
+			m_dcel.faces.emplace_back(i, NO_IDX, NO_IDX);
 			size_t start = i;
 			size_t e = start;
 			do {
@@ -153,15 +153,9 @@ void DCEL::Builder::Link_Next_Prev(const std::vector<size_t>& ring_edge_indices)
 	}
 }
 
-size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices,size_t feature_id, bool isHole, size_t outer_Face_Idx )
+size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices, size_t feature_id, size_t outer_face_id)
 {
-	size_t valid_start_index = NO_IDX;
-	for(auto ring_index : ring_edge_indices)
-		if(m_dcel.half_edges[ring_index].face == NO_IDX)
-		{
-			valid_start_index = ring_index;
-			break;
-		}
+	size_t valid_start_index = outer_face_id == NO_IDX ? ring_edge_indices[0] : ring_edge_indices[1];
 	bool has_hit_another_face = false;
 	size_t other_face_id;
 	size_t current_index = valid_start_index;
@@ -176,7 +170,7 @@ size_t DCEL::Builder::Link_Face(const std::vector<size_t>& ring_edge_indices,siz
 		current_index = current_edge.next;
 	}
 	while(current_index != valid_start_index);
-	m_dcel.faces.emplace_back(ring_edge_indices[0], feature_id);
+	m_dcel.faces.emplace_back(valid_start_index, feature_id, outer_face_id);
 	return feature_id;
 }
 
@@ -195,8 +189,7 @@ void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON:
 	// For each ring, create or reuse vertices and halfedges (origin->head)
 	// We'll record forward edge indices for the ring in the same order for face assignment.
 	std::vector<size_t> created_vertices; created_vertices.reserve(addVerticesEstimate);
-	size_t outer_face_idx = NO_IDX;
-
+	size_t outer_face_id = NO_IDX;
 	for (size_t ringIndex = 0; ringIndex < rings.size(); ++ringIndex)
 	{
 		const auto& ring = rings[ringIndex];
@@ -208,14 +201,10 @@ void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON:
 		Link_Next_Prev(ring_edge_indices);
 		for (size_t vid : ring_vertex_indices)
 			m_dcel.Update_Around_Vertex(vid);
-
-		if (!(ringIndex > 0)) 
-			outer_face_idx = Link_Face(ring_edge_indices, feature_id, false, NO_IDX);
+		
+		if(ringIndex > 0)
+			Link_Face(ring_edge_indices, feature_id, outer_face_id);
 		else
-			Link_Face(ring_edge_indices, feature_id, true, outer_face_idx);
-
-		// For each vertex touched by this ring, update around-vertex ordering and link twin->next / prev
-		// We'll update only the vertices in this ring to limit per-feature work.
-
+			outer_face_id = Link_Face(ring_edge_indices, feature_id, NO_IDX );
 	} // end for each ring
 };
