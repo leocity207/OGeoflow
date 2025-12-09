@@ -42,7 +42,7 @@ std::unordered_map<size_t, GeoJSON::Polygon> DCEL::Exporter::Create_Polygones(co
 		{
 			if (polygons[face_id].rings.size())
 			{
-				auto tmps = std::move(polygons[face_id]);
+				GeoJSON::Polygon tmps = std::move(polygons[face_id]);
 				polygons[face_id] = GeoJSON::Polygon{};
 				polygons[face_id].rings.emplace_back(std::move(ring));
 				for (auto&& tmp : tmps.rings)
@@ -62,7 +62,7 @@ GeoJSON::Root DCEL::Exporter::Convert(const Storage& dcel, const Feature_Info& i
 {
 	GeoJSON::Feature_Collection featureCollection;
 
-	for (size_t i = 0; i < info.feature_properties.size(); ++i)
+	for ( size_t i : std::views::iota(0ul, info.feature_properties.size()))
 	{
 		GeoJSON::Geometry geometry;
 		auto faces_id = Collect_Face_From_Feature_ID(dcel, i);

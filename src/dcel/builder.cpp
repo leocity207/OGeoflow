@@ -1,7 +1,11 @@
 #include "dcel/builder.h"
+
+// STD
 #include <cassert>
 #include <algorithm>
+#include <ranges>
 
+// UTILS
 #include <utils/zip.h>
 
 using namespace O;
@@ -52,7 +56,7 @@ std::optional<DCEL::Storage> DCEL::Builder::Get_Dcel()
 {
 
 	// finish face for outer bound
-	for (size_t i = 0; i < m_dcel.half_edges.size(); ++i) {
+	for (size_t i : std::views::iota(0ul, m_dcel.half_edges.size())) {
 		if (m_dcel.half_edges[i].face == NO_IDX) {
 			size_t unbounded_index = m_dcel.faces.size();
 			m_dcel.faces.emplace_back(i, NO_IDX, NO_IDX);
@@ -124,10 +128,8 @@ std::vector<size_t> DCEL::Builder::Create_Vertex(const std::vector<GeoJSON::Posi
 std::vector<size_t> DCEL::Builder::Create_Forward_Half_Edge(const std::vector<size_t>& ring_vertex_indices)
 {
 	std::vector<size_t> ring_edge_indices; ring_edge_indices.reserve(ring_vertex_indices.size());
-	for (size_t i = 0; i < ring_vertex_indices.size(); ++i)
+	for (auto&& [origin, head] : O::Zip_Adjacent_Circular(ring_vertex_indices))
 	{
-		size_t origin = ring_vertex_indices[i];
-		size_t head = ring_vertex_indices[(i + 1) % ring_vertex_indices.size()];
 		// ensure halfedge origin->head exists
 		size_t e_idxf = m_dcel.Get_Or_Create_Half_Edge(origin, head);
 		size_t e_idxb = m_dcel.Get_Or_Create_Half_Edge(head, origin);
@@ -142,7 +144,7 @@ std::vector<size_t> DCEL::Builder::Create_Forward_Half_Edge(const std::vector<si
 
 void DCEL::Builder::Link_Next_Prev(const std::vector<size_t>& ring_edge_indices)
 {
-	for (size_t i = 0; i < ring_edge_indices.size(); ++i)
+	for (size_t i : std::views::iota(0ul, ring_edge_indices.size()))
 	{
 		size_t e = ring_edge_indices[i];
 		size_t e_next = ring_edge_indices[(i + 1) % ring_edge_indices.size()];
@@ -190,11 +192,9 @@ void DCEL::Builder::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON:
 	// We'll record forward edge indices for the ring in the same order for face assignment.
 	std::vector<size_t> created_vertices; created_vertices.reserve(addVerticesEstimate);
 	size_t outer_face_id = NO_IDX;
-	for (size_t ringIndex = 0; ringIndex < rings.size(); ++ringIndex)
+	for (auto&& [ring, ringIndex] : O::Zip_Index(rings))
 	{
-		const auto& ring = rings[ringIndex];
 		assert(ring.size() >= 4);
-
 
 		std::vector<size_t> ring_vertex_indices = Create_Vertex(ring);
 		std::vector<size_t> ring_edge_indices = Create_Forward_Half_Edge(ring_vertex_indices);
