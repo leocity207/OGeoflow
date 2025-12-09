@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.4] - 2025-12-09
+
+### fix
+
+ * `DCEL`: fix DCEL build and write and add better test
+
 ## [0.0.3] - 2025-11-28
 
 ### fix
