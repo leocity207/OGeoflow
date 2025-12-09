@@ -91,7 +91,7 @@ namespace O::DCEL
 		 * @param outer_face_id      ID of the outer face that contains this ring.
 		 * @return The index of the newly created face.
 		 */
-		size_t Link_Face(const std::vector<size_t>& ring_edge_indices, size_t feature_id, bool is_hole, size_t outer_face_id);
+		size_t Link_Face(const std::vector<size_t>& ring_edge_indices, size_t feature_id, size_t outer_face_id);
 
 
 	private:

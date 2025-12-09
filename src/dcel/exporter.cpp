@@ -1,19 +1,21 @@
 #include "dcel/exporter.h"
 #include <unordered_map>
 #include <cassert>
+#include <map>
 
+#include <utils/zip.h>
 
 using namespace O;
 
-std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel, size_t start_edge)
+std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel, size_t face_id)
 {
 	std::vector<GeoJSON::Position> coords;
-	size_t e = start_edge;
+	size_t e = dcel.faces[face_id].edge;
 	do {
 		const auto& v = dcel.vertices[dcel.half_edges[e].origin];
 		coords.emplace_back(v.x, v.y);
 		e = dcel.half_edges[e].next;
-	} while (e != start_edge && e != NO_IDX);
+	} while (e != dcel.faces[face_id].edge && e != NO_IDX);
 
 	if (!coords.empty() && ((coords.front().altitude != coords.back().altitude) || (coords.front().latitude != coords.back().latitude) || (coords.front().longitude != coords.back().longitude)))
 		coords.push_back(coords.front());
@@ -21,39 +23,38 @@ std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel,
 	return coords;
 }
 
-GeoJSON::Polygon DCEL::Exporter::Build_Polygon_From_Face(const Storage& dcel, size_t face_idx)
+std::vector<size_t> DCEL::Exporter::Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id)
 {
-	const auto& face = dcel.faces[face_idx];
-	std::vector<std::vector<GeoJSON::Position>> rings;
-
-	// Exterior ring
-	if (face.edge != NO_IDX)
-		rings.push_back(Extract_Ring(dcel, face.edge));
-
-	// Holes
-	for (size_t innerEdge : face.inner_edges)
-		rings.push_back(Extract_Ring(dcel, innerEdge));
-
-	GeoJSON::Polygon polygon;
-	polygon.rings = std::move(rings);
-	return polygon;
+	std::vector<size_t> indices;
+	for (auto&& [face, index] : O::Zip_Index(dcel.faces))
+    	if (face.associated_feature == feature_id)
+        	indices.push_back(index);
+	return indices;
 }
 
-std::vector<GeoJSON::Polygon> DCEL::Exporter::Collect_Polygons_For_Feature(const Storage& dcel, size_t featureIdx)
+std::unordered_map<size_t, GeoJSON::Polygon> DCEL::Exporter::Create_Polygones(const Storage& dcel, const std::vector<size_t>& faces_id)
 {
-	std::vector<GeoJSON::Polygon> polygons;
-
-	for (size_t f = 0; f < dcel.faces.size(); ++f)
+	std::unordered_map<size_t, GeoJSON::Polygon> polygons;
+	for (auto face_id : faces_id)
 	{
-		const auto& face = dcel.faces[f];
-		// Suppose the builder filled some mapping from featureIdx -> faces (or you can deduce it)
-		if (face.associated_feature == NO_IDX) continue;
-
-		// skip holes themselves, we only export outer faces
-		if (face.outer_face == NO_IDX && face.associated_feature == featureIdx)
-			polygons.push_back(Build_Polygon_From_Face(dcel, f));
+		auto ring = Extract_Ring(dcel, face_id);
+		if (dcel.faces[face_id].outer_face == NO_IDX)
+		{
+			if (polygons[face_id].rings.size())
+			{
+				GeoJSON::Polygon tmps = std::move(polygons[face_id]);
+				polygons[face_id] = GeoJSON::Polygon{};
+				polygons[face_id].rings.emplace_back(std::move(ring));
+				for (auto&& tmp : tmps.rings)
+					polygons[face_id].rings.emplace_back(std::move(tmp));
+			}
+			else
+				polygons[face_id].rings.emplace_back(ring);
+		}
+		else
+			polygons[dcel.faces[face_id].outer_face].rings.emplace_back(ring);
 	}
-
+	assert(polygons.size());
 	return polygons;
 }
 
@@ -61,22 +62,24 @@ GeoJSON::Root DCEL::Exporter::Convert(const Storage& dcel, const Feature_Info& i
 {
 	GeoJSON::Feature_Collection featureCollection;
 
-	for (size_t i = 0; i < info.feature_properties.size(); ++i)
+	for ( size_t i : std::views::iota(0ul, info.feature_properties.size()))
 	{
-		auto polygons = Collect_Polygons_For_Feature(dcel, i);
-
-		if (polygons.empty()) continue;
-
 		GeoJSON::Geometry geometry;
-		if (polygons.size() == 1)
-			geometry.value = std::move(polygons[0]);
+		auto faces_id = Collect_Face_From_Feature_ID(dcel, i);
+		std::unordered_map<size_t, GeoJSON::Polygon> polygons = Create_Polygones(dcel, faces_id);
+
+		// Create the Geometry (Polygon or multiPolygon)
+		if(polygons.size() == 1)
+			geometry.value = std::move(polygons.begin()->second);
 		else
 		{
-			GeoJSON::Multi_Polygon mp;
-			mp.polygons = std::move(polygons);
-			geometry.value = std::move(mp);
+			GeoJSON::Multi_Polygon multipolygon;
+			for(auto& polygon_kv : polygons)
+				multipolygon.polygons.emplace_back(polygon_kv.second);
+			geometry.value = std::move(multipolygon);
 		}
 
+		// Create the feature
 		GeoJSON::Feature feature;
 		feature.geometry = std::move(geometry);
 		feature.properties = info.feature_properties[i];

@@ -52,6 +52,8 @@ void DCEL::Storage_Builder_Helper::Insert_Edge_Sorted(size_t vertex_id, size_t e
 	for (; pos != tail.outgoing_edges.end(); ++pos)
 	{
 		size_t old_edge_id = *pos;
+		if (edge_id == old_edge_id)
+			return; // we already inserted this half edge in vertex
 		size_t old_edge_head = half_edges[half_edges[old_edge_id].twin].origin;
 		const Vertex& oldHead = vertices[old_edge_head];
 		double ox = oldHead.x - tail.x;
@@ -74,10 +76,10 @@ void DCEL::Storage_Builder_Helper::Update_Around_Vertex(size_t vertexIdx)
 		size_t e_i    = v.outgoing_edges[i];
 		size_t e_next = v.outgoing_edges[(i + 1) % v.outgoing_edges.size()];
 
-		size_t twin_i = half_edges[e_i].twin;
-		if (twin_i == NO_IDX) continue;
+		size_t twin_next = half_edges[e_next].twin;
+		if (twin_next == NO_IDX) continue;
 
-		half_edges[twin_i].next = e_next;
-		half_edges[e_next].prev = twin_i;
+		half_edges[twin_next].next = e_i;
+		half_edges[e_i].prev = twin_next;
 	}
 }
