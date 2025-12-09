@@ -3,12 +3,8 @@
 
 #include <gtest/gtest.h>
 
-
-// ---------- Fixture ----------
 template<typename T>
-class DCEL_Builder_Test : public ::testing::Test
-{
-};
+class DCEL_Builder_Test : public ::testing::Test {};
 
 
 

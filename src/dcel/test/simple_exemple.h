@@ -38,6 +38,8 @@ struct Simple_Exemple
 			]
 	})";
 
+	static inline const std::string expected_write = R"({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0.0,0.0],[1.0,0.0],[1.0,1.0],[0.0,0.0]]]},"properties":{}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[2.0,0.0],[1.0,1.0],[1.0,0.0],[2.0,0.0]]]},"properties":{}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0.0,-2.0],[2.0,-2.0],[3.0,-1.0],[2.0,0.0],[1.0,0.0],[0.0,0.0],[0.0,-2.0]]]},"properties":{}}]})";
+
 	static inline const auto expected_coords = std::to_array<std::pair<double, double>>({
 		{0,0},
 		{1,0},

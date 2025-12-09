@@ -1,16 +1,19 @@
 ﻿#include <gtest/gtest.h>
 
-
+// DCEL
 #include "dcel_builder_test.h"
-
 #include "dcel/builder.h"
+
+// IO
 #include "io/feature_parser.h"
 
+// EXEMPLE
 #include "hole_exemple.h"
 #include "multi_polygon_exemple.h"
 #include "reverse_exemple.h"
 #include "simple_exemple.h"
 
+// UTILS
 #include <utils/zip.h>
 
 class Auto_Builder : public O::DCEL::Builder, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {

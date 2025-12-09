@@ -30,26 +30,28 @@ namespace O::DCEL
 		/**
 		 * @brief Extract Ring from the Storage with a given starting Edge
 		 * @param dcel the DCEL::Storage for reconstruction
-		 * @param start_edge a starting edge for a ring
+		 * @param face_id the index of the face
 		 * @return std::vector<O::GeoJSON::Position> a newly created ring
 		 */
-		static std::vector<O::GeoJSON::Position> Extract_Ring(const Storage& dcel, size_t start_edge);
+		static std::vector<O::GeoJSON::Position> Extract_Ring(const Storage& dcel, size_t face_id);
+
 
 		/**
-		 * @brief Given a DCEL::Face Object Recreate the Polygon associated to it
-		 * @param dcel the DCEL::Storage for reconstruction
-		 * @param face_id the face_id to be found inside the Storage list
-		 * @return O::GeoJSON::Polygon the reconstructed Polygon
-		 */
-		static O::GeoJSON::Polygon Build_Polygon_From_Face(const Storage& dcel, size_t face_id);
-
-		/**
-		 * @brief Given a feature id reconstruct all the polygon associated to it
+		 * @brief Collect all the face index for a given feature
 		 * @param dcel the DCEL::Storage for reconstruction
 		 * @param feature_id feature index that can be found inside the ``Feature_Info``
-		 * @return std::vector<O::GeoJSON::Polygon> 
+		 * @return std::vector<size_t> containing index of the feature
 		 */
-		static std::vector<O::GeoJSON::Polygon> Collect_Polygons_For_Feature(const Storage& dcel, size_t feature_id);
+		static std::vector<size_t> Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id);
+
+
+		/**
+		 * @brief create a dictionary from face/outer_face to polygone
+		 * @param dcel the DCEL::Storage for reconstruction
+		 * @param faces_id the list of face id_ to sort in polygone
+		 * @return O::GeoJSON::Polygon the reconstructed Polygon
+		 */
+		static std::unordered_map<size_t, GeoJSON::Polygon> Create_Polygones(const Storage& dcel, const std::vector<size_t>& faces_id);
 	};
 }
 
