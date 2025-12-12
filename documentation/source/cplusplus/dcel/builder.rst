@@ -1,15 +1,6 @@
 DCEL::Builder
 =============
 
-O::DCEL::Storage_Builder_Helper
--------------------------------
-
-.. doxygenstruct:: O::DCEL::Storage_Builder_Helper
-	:members:
-	:protected-members:
-	:private-members:
-	:undoc-members:
-
 
 O::DCEL::Builder
 ----------------

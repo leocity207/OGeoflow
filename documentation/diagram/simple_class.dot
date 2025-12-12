@@ -37,7 +37,6 @@ digraph Project {
   "O::DCEL::Storage" [fillcolor="#2ecc71", fontcolor="black"];
   "O::DCEL::Builder" [fillcolor="#2ecc71", fontcolor="black"];
   "O::DCEL::Exporter" [fillcolor="#2ecc71", fontcolor="black"];
-  "O::DCEL::Storage_Builder_Helper" [fillcolor="#2ecc71", fontcolor="black"];
   "O::DCEL::Feature_Info" [fillcolor="#2ecc71", fontcolor="black"];
 
   // --- Clusters (matrioshka) ---
@@ -111,7 +110,6 @@ digraph Project {
       "O::DCEL::Storage";
       "O::DCEL::Builder";
       "O::DCEL::Exporter";
-      "O::DCEL::Storage_Builder_Helper";
       "O::DCEL::Feature_Info";
     }
   }
