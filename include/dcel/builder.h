@@ -2,7 +2,7 @@
 #define DCEL_BUILDER_H
 
 
-#include "storage_builder_helper.h"
+#include "storage.h"
 
 #include "geojson/root.h"
 #include "geojson/object/feature.h"
@@ -96,7 +96,7 @@ namespace O::DCEL
 
 	private:
 
-		Storage_Builder_Helper m_dcel;    ///< Storage for the DCEL
+		Storage m_dcel;    ///< Storage for the DCEL
 		bool m_valid_dcel = true;         ///< runonce for the Get_Dcel() function
 		bool m_valid_feature_info = true; ///< runonce for the Get_Feature_Info function
 		Feature_Info m_feature_info;      ///< Feature_Info to retain the parsed GeoJSON meta data

@@ -29,7 +29,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DBUILD_TESTS=ON",
+      "cmakeCommandArgs": "-DBUILD_TESTS=ON -DBUILD_DOC=ON",
       "ctestCommandArgs": "-DBUILD_TESTS"
     },
     {
