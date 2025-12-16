@@ -29,7 +29,6 @@ This documentation is aimed for developper that want to contribute to the projec
 	cplusplus/filter/index
 	cplusplus/geojson/index
 	cplusplus/io/index
-	cplusplus/utils/index
 
 
 .. toctree::
