@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(OGeoFlow VERSION 0.0.1)
+project(OGeoFlow VERSION 0.0.6)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -19,7 +19,7 @@ Simple_Fetch_Populate(
 Simple_Fetch_Repository(
 	OUtils
 	https://github.com/leocity207/OUtils.git
-	V0.0.2
+	V0.0.3
 )
 Simple_Fetch_Repository(
 	OConfigurator
