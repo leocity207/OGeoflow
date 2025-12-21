@@ -1,21 +1,25 @@
 #ifndef DCEL_BUILDER_H
 #define DCEL_BUILDER_H
 
-
+// DCEL
 #include "storage.h"
+#include "feature_info.h"
 
+// GEOJSON
 #include "geojson/root.h"
 #include "geojson/object/feature.h"
 #include "geojson/geometry_type/polygon.h"
 #include "geojson/geometry_type/multi_polygon.h"
-#include "feature_info.h"
 
-namespace O::DCEL
+// UTILS
+#include <utils/unowned_ptr.h>
+
+namespace O::DCEL::Builder
 {
 	/**
 	 * @brief Builder is a GeoJSON reciever (from ``IO::Full_Parser``or ``IO::Feature_Parser``) that build a DCEL Structure from the input GeoJSON data
 	 */
-	class Builder
+	class From_GeoJSON
 	{
 	public:
 		/**
@@ -23,7 +27,7 @@ namespace O::DCEL
 		 * @param geojson the full GeoJSON to parse from
 		 * @return true or false wether parsing is sucessfull
 		 */
-		bool Parse_GeoJSON(O::GeoJSON::Root&& geojson);
+		bool Parse(O::GeoJSON::Root&& geojson);
 
 
 		/// @name overrides
@@ -67,31 +71,33 @@ namespace O::DCEL
 		 * @param ring a list of vertex
 		 * @return std::vector<size_t> list of index of the created vertex
 		 */
-		std::vector<size_t> Create_Vertex(const std::vector<O::GeoJSON::Position>& ring);
+		std::vector<O::Unowned_Ptr<Vertex>> Create_Vertex(const std::vector<O::GeoJSON::Position>& ring);
 
 		/**
 		 * @brief Create (or Get) the Half_Edge from a given list of ordered linked vertex 
-		 * @param ring_vertex_indices list of linked vertex (i-1 is linked with i)
+		 * @param ring_vertex list of linked vertex (i-1 is linked with i)
 		 * @return std::vector<size_t>  list of index of the created half edges
 		 */
-		std::vector<size_t> Create_Forward_Half_Edge(const std::vector<size_t>& ring_vertex_indices);
+		std::vector<O::Unowned_Ptr<Half_Edge>> Create_Forward_Half_Edge(const std::vector<O::Unowned_Ptr<Vertex>>& ring_vertex);
 
 		/**
 		 * @brief Link the next and prev for each Half Edge of a ring
-		 * @param ring_vertex_indices list of Half Edge in a ring (i-1 is linked with i)
+		 * @param ring_vertex list of Half Edge in a ring (i-1 is linked with i)
 		 */
-		void Link_Next_Prev(const std::vector<size_t>& ring_edge_indices);
+		void Link_Next_Prev(const std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edges);
 
 		/**
 		 * @brief Links a ring of half-edges to a face.
 		 *        This function creates a face from a sequence of half-edges forming a closed ring.
-		 * @param ring_edge_indices  List of half-edge indices forming the ring.
+		 * @param ring_edge  List of half-edge indices forming the ring.
 		 * @param feature_id         ID of the feature associated with this face.
 		 * @param is_hole            Whether this ring represents a hole inside the face.
-		 * @param outer_face_id      ID of the outer face that contains this ring.
+		 * @param outer_face         the outer face that contains this ring.
 		 * @return The index of the newly created face.
 		 */
-		size_t Link_Face(const std::vector<size_t>& ring_edge_indices, size_t feature_id, size_t outer_face_id);
+		DCEL::Face& Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, size_t feature_id, O::Unowned_Ptr<Face> outer_face);
+
+		void Link_Outer_Bound_Face();
 
 
 	private:

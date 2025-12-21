@@ -1,14 +1,17 @@
 #ifndef DCEL_VERTEX_H
 #define DCEL_VERTEX_H
 
+// STL
 #include <vector>
-#include <unordered_map>
 #include <cstdint>
-#include <cmath>
-#include <limits>
+
+// UTILS
+#include <utils/unowned_ptr.h>
 
 namespace O::DCEL
 {
+	struct Half_Edge;
+
 	/**
 	 * @brief Vertex represent a Point in space linked to some outgoing and ingoing half_edges.
 	 */
@@ -16,13 +19,7 @@ namespace O::DCEL
 	{
 		double x = 0.0;  ///< x coordinate of the vertex (it is assumed that this value is in the same Coordinate system as the GeoJSON).
 		double y = 0.0;  ///< y coordinate of the vertex (it is assumed that this value is in the same Coordinate system as the GeoJSON).
-		std::vector<size_t> outgoing_edges; ///< ordered outgoing half edges of the vertex (hedges are ordered clockwise).
-
-
-		/**
-		 * @brief internal function of Vertex::Hash().
-		 */
-		uint64_t Hash() const noexcept { return Vertex::Hash(x, y); }
+		std::vector<O::Unowned_Ptr<Half_Edge>> outgoing_edges; ///< ordered outgoing half edges of the vertex (hedges are ordered clockwise).
 
 		/**
 		 * @brief Produces a hash value for the vertex using its coordinates.
@@ -39,6 +36,19 @@ namespace O::DCEL
 			long long fx = std::llround(x * 1e6);
 			long long fy = std::llround(y * 1e6);
 			return (static_cast<uint64_t>(static_cast<uint32_t>(fx)) << 32) | static_cast<uint64_t>(static_cast<uint32_t>(fy));
+		}
+
+		Vertex(double x, double y) :
+			x(x),
+			y(y),
+			outgoing_edges()
+		{
+			outgoing_edges.reserve(2);
+		}
+
+		bool operator==(const Vertex& other)
+		{
+			return Hash(x, y) == Hash(other.x, other.y);
 		}
 	};
 

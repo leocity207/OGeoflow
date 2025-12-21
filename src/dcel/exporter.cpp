@@ -1,21 +1,27 @@
 #include "dcel/exporter.h"
+
+// STL
 #include <unordered_map>
 #include <cassert>
 #include <map>
 
+// UTILS
 #include <utils/zip.h>
+
+// DCEL
+#include "dcel/face.h"
 
 using namespace O;
 
-std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel, size_t face_id)
+std::vector<GeoJSON::Position> DCEL::Exporter::To_GeoJSON::Extract_Ring(const Face& face)
 {
 	std::vector<GeoJSON::Position> coords;
-	size_t e = dcel.faces[face_id].edge;
+	Half_Edge* e = face.edge;
 	do {
-		const auto& v = dcel.vertices[dcel.half_edges[e].origin];
+		const Vertex& v = *e->tail;
 		coords.emplace_back(v.x, v.y);
-		e = dcel.half_edges[e].next;
-	} while (e != dcel.faces[face_id].edge && e != NO_IDX);
+		e = e->next;
+	} while (e != face.edge);
 
 	if (!coords.empty() && ((coords.front().altitude != coords.back().altitude) || (coords.front().latitude != coords.back().latitude) || (coords.front().longitude != coords.back().longitude)))
 		coords.push_back(coords.front());
@@ -23,50 +29,50 @@ std::vector<GeoJSON::Position> DCEL::Exporter::Extract_Ring(const Storage& dcel,
 	return coords;
 }
 
-std::vector<size_t> DCEL::Exporter::Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id)
+std::vector<Unowned_Ptr<const DCEL::Face>> DCEL::Exporter::To_GeoJSON::Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id)
 {
-	std::vector<size_t> indices;
-	for (auto&& [face, index] : O::Zip_Index(dcel.faces))
-    	if (face.associated_feature == feature_id)
-        	indices.push_back(index);
-	return indices;
+	std::vector<Unowned_Ptr<const Face>> faces;
+	for (auto& face : dcel.faces)
+    	if (face.associated_feature_index == feature_id)
+			faces.push_back(&face);
+	return faces;
 }
 
-std::unordered_map<size_t, GeoJSON::Polygon> DCEL::Exporter::Create_Polygones(const Storage& dcel, const std::vector<size_t>& faces_id)
+std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> DCEL::Exporter::To_GeoJSON::Create_Polygones(const std::vector<Unowned_Ptr<const Face>>& faces)
 {
-	std::unordered_map<size_t, GeoJSON::Polygon> polygons;
-	for (auto face_id : faces_id)
+	std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> polygons;
+	for (auto face : faces)
 	{
-		auto ring = Extract_Ring(dcel, face_id);
-		if (dcel.faces[face_id].outer_face == NO_IDX)
+		auto ring = Extract_Ring( *face);
+		if (face->outer_face == nullptr)
 		{
-			if (polygons[face_id].rings.size())
+			if (polygons[face].rings.size())
 			{
-				GeoJSON::Polygon tmps = std::move(polygons[face_id]);
-				polygons[face_id] = GeoJSON::Polygon{};
-				polygons[face_id].rings.emplace_back(std::move(ring));
+				GeoJSON::Polygon tmps = std::move(polygons[face]);
+				polygons[face] = GeoJSON::Polygon{};
+				polygons[face].rings.emplace_back(std::move(ring));
 				for (auto&& tmp : tmps.rings)
-					polygons[face_id].rings.emplace_back(std::move(tmp));
+					polygons[face].rings.emplace_back(std::move(tmp));
 			}
 			else
-				polygons[face_id].rings.emplace_back(ring);
+				polygons[face].rings.emplace_back(ring);
 		}
 		else
-			polygons[dcel.faces[face_id].outer_face].rings.emplace_back(ring);
+			polygons[face->outer_face].rings.emplace_back(ring);
 	}
 	assert(polygons.size());
 	return polygons;
 }
 
-GeoJSON::Root DCEL::Exporter::Convert(const Storage& dcel, const Feature_Info& info)
+GeoJSON::Root DCEL::Exporter::To_GeoJSON::Convert(const Storage& dcel, const Feature_Info& info)
 {
 	GeoJSON::Feature_Collection featureCollection;
 
 	for ( size_t i : std::views::iota(0ul, info.feature_properties.size()))
 	{
 		GeoJSON::Geometry geometry;
-		auto faces_id = Collect_Face_From_Feature_ID(dcel, i);
-		std::unordered_map<size_t, GeoJSON::Polygon> polygons = Create_Polygones(dcel, faces_id);
+		auto faces = Collect_Face_From_Feature_ID(dcel, i);
+		std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> polygons = Create_Polygones(faces);
 
 		// Create the Geometry (Polygon or multiPolygon)
 		if(polygons.size() == 1)
