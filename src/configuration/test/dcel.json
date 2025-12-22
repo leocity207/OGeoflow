@@ -1,0 +1,10 @@
+{
+	"DCEL": 
+	{
+		"max_vertices": 1000,
+		"max_half_edges": 100000,
+		"max_faces": 50,
+		"position_tolerance": 1e-8,
+		"equality_strategy": "AT_FIRST"
+	}
+}
