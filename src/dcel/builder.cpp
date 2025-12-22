@@ -10,6 +10,15 @@
 
 using namespace O;
 
+DCEL::Builder::From_GeoJSON::From_GeoJSON(const O::Configuration::DCEL& config) :
+	m_dcel(config),
+	m_valid_dcel(true),
+	m_valid_feature_info(true),
+	m_feature_info()
+{
+
+}
+
 bool DCEL::Builder::From_GeoJSON::Parse(GeoJSON::Root&& geojson)
 {
 	return std::visit([&](auto&& val) {
@@ -38,9 +47,9 @@ bool DCEL::Builder::From_GeoJSON::On_Full_Feature(GeoJSON::Feature&& feature)
 
 	auto& geom = *feature.geometry;
 	if (geom.Is_Polygon())
-		On_Polygon(geom.Get_Polygon(), m_feature_info.feature_properties.size() - 1);
+		On_Polygon(geom.Get_Polygon());
 	else if (geom.Is_Multi_Polygon())
-		On_MultiPolygon(geom.Get_Multi_Polygon(), m_feature_info.feature_properties.size() - 1);
+		On_MultiPolygon(geom.Get_Multi_Polygon());
 	return true;
 }
 
@@ -58,7 +67,7 @@ void DCEL::Builder::From_GeoJSON::Link_Outer_Bound_Face()
 	{
 		if (half_edge.face)
 			continue;
-		m_dcel.faces.emplace_back( &half_edge, ~0ul, nullptr );
+		m_dcel.faces.emplace_back( &half_edge );
 		Half_Edge* e = &half_edge;
 		do {
 			e->face = &m_dcel.faces.back();
@@ -92,17 +101,24 @@ std::optional<DCEL::Feature_Info> DCEL::Builder::From_GeoJSON::Get_Feature_Info(
 	return std::nullopt;
 }
 
-bool DCEL::Builder::From_GeoJSON::On_Polygon(const GeoJSON::Polygon& poly, size_t feature_id)
+bool DCEL::Builder::From_GeoJSON::On_Polygon(const GeoJSON::Polygon& poly)
 {
     if (poly.rings.empty()) return true;
-    Build_Face_From_Rings(poly.rings, feature_id);
+    auto faces = Build_Face_From_Rings(poly.rings);
+	std::vector<std::vector<O::Unowned_Ptr<Face>>> polygon({ std::move(faces) });
+	m_feature_info.faces.emplace_back(std::move(polygon));
     return true;
 }
 
-bool DCEL::Builder::From_GeoJSON::On_MultiPolygon(const GeoJSON::Multi_Polygon& mp, size_t feature_id)
+bool DCEL::Builder::From_GeoJSON::On_MultiPolygon(const GeoJSON::Multi_Polygon& mp)
 {
-    for (auto const& poly : mp.polygons)
-        On_Polygon(poly, feature_id);
+	m_feature_info.faces.push_back({});
+	for (auto const& poly : mp.polygons)
+	{
+		if (poly.rings.empty()) return true;
+		auto faces = Build_Face_From_Rings(poly.rings);
+		m_feature_info.faces.back().emplace_back(std::move(faces));
+	}
     return true;
 }
 
@@ -157,19 +173,12 @@ void DCEL::Builder::From_GeoJSON::Link_Next_Prev(const std::vector<O::Unowned_Pt
 	}
 }
 
-DCEL::Face& DCEL::Builder::From_GeoJSON::Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, size_t feature_id, O::Unowned_Ptr<Face> outer_face)
+DCEL::Face& DCEL::Builder::From_GeoJSON::Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face)
 {
 	Half_Edge& valid_start = (outer_face == nullptr) ? *ring_edge[0] : *ring_edge[1];
-	bool has_hit_another_face = false;
-	O::Unowned_Ptr<Face> other_face_id;
 	O::Unowned_Ptr<Half_Edge> current(&valid_start);
-	m_dcel.faces.emplace_back(&valid_start, feature_id, outer_face);
+	m_dcel.faces.emplace_back(&valid_start);
 	do {
-		if(current->face != nullptr)
-		{
-			has_hit_another_face = true;
-			other_face_id = current->face;
-		}
 		current->face = &m_dcel.faces.back();
 		current = current->next;
 	}
@@ -177,22 +186,16 @@ DCEL::Face& DCEL::Builder::From_GeoJSON::Link_Face(std::vector<O::Unowned_Ptr<Ha
 	return m_dcel.faces.back();
 }
 
-void DCEL::Builder::From_GeoJSON::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON::Position>>& rings, size_t feature_id)
+std::vector<O::Unowned_Ptr<DCEL::Face>> DCEL::Builder::From_GeoJSON::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON::Position>>& rings)
 {
 	assert(!rings.empty());
 
 	// estimate and reserve
-	size_t add_vertices_estimate = 0;
-	size_t addEdgeSegments = 0;
-	for (auto const& r : rings) { add_vertices_estimate += r.size(); addEdgeSegments += r.size(); }
-	m_dcel.vertices.reserve(m_dcel.vertices.size() + add_vertices_estimate);
-	m_dcel.half_edges.reserve(m_dcel.half_edges.size() + addEdgeSegments * 2);
-	m_dcel.faces.reserve(m_dcel.faces.size() + rings.size());
 
 	// For each ring, create or reuse vertices and halfedges (origin->head)
 	// We'll record forward edge for the ring in the same order for face assignment.
-	std::vector<size_t> created_vertices; created_vertices.reserve(add_vertices_estimate);
-	Face* outer_face = nullptr;
+	O::Unowned_Ptr<Face> outer_face = nullptr;
+	std::vector<O::Unowned_Ptr<Face>> created_faces;
 	for (auto&& [ring, ring_index] : O::Zip_Index(rings))
 	{
 		assert(ring.size() >= 4);
@@ -203,9 +206,15 @@ void DCEL::Builder::From_GeoJSON::Build_Face_From_Rings(const std::vector<std::v
 		for (Unowned_Ptr<Vertex> vid : ring_vertices)
 			m_dcel.Update_Around_Vertex(*vid);
 		
-		if(ring_index > 0)
-			Link_Face(ring_edges, feature_id, outer_face);
+		if (ring_index > 0)
+		{
+			created_faces.emplace_back(&Link_Face(ring_edges, outer_face));
+		}
 		else
-			outer_face = &Link_Face(ring_edges, feature_id, nullptr );
+		{
+			outer_face = &Link_Face(ring_edges, nullptr);
+			created_faces.emplace_back(outer_face);
+		}
 	} // end for each ring
+	return created_faces;
 };

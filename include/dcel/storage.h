@@ -13,6 +13,9 @@
 #include "half_edge.h"
 #include "vertex.h"
 
+// CONFIGURATION
+#include "configuration/dcel.h"
+
 // UTILS
 #include <utils/unowned_ptr.h>
 
@@ -25,6 +28,7 @@ namespace O::DCEL
 	 */
 	struct Storage
 	{
+		O::Configuration::DCEL config;
 		std::vector<Vertex> vertices;      ///< List of Vertex in the DCEL
 		std::vector<Half_Edge> half_edges; ///< List of Half_Edges in the DCEL
 		std::vector<Face> faces;           ///< List of Faces in the DCEL
@@ -74,7 +78,7 @@ namespace O::DCEL
 		void Update_Around_Vertex(const Vertex& vertex);
 
 		Storage() = delete;
-		Storage(size_t vertices_max_num, size_t half_edge_max_num, size_t faces_num);
+		Storage(const O::Configuration::DCEL& config);
 	};
 } // namespace O::DCEL
 

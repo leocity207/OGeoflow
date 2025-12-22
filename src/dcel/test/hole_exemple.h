@@ -170,22 +170,22 @@ struct Hole_Exemple
 		4,
 		0,
 		4,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
 		5,
-		0,
+		2,
 		5,
-		0,
+		2,
 		5,
-		0,
+		2,
 		5,
-		0
+		2
 	};
 
 	static inline const auto expected_edges = std::to_array<size_t>({
@@ -196,24 +196,6 @@ struct Hole_Exemple
 		1,
 		16
 	});
-
-	static inline const auto expected_features = std::vector<size_t>{
-		0,
-		0,
-		0,
-		1,
-		~0ul,
-		~0ul
-	};
-
-	static inline const auto expected_outer_faces= std::vector<size_t>{
-		~0ul,
-		0,
-		0,
-		~0ul,
-		~0ul,
-		~0ul
-	};
 };
 
 #endif //SRC_DCEL_TEST_HOLE_EXEMPLE_H

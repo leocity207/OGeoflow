@@ -5,6 +5,23 @@
 
 using namespace O;
 
+DCEL::Storage::Storage(const O::Configuration::DCEL& config) :
+	config(config),
+	vertices(),
+	half_edges(),
+	faces(),
+	vertex_lookup(),
+	edge_lookup(),
+	feature_to_faces()
+{
+	vertices.reserve(config.max_vertices);
+	half_edges.reserve(config.max_half_edges);
+	faces.reserve(config.max_faces);
+	vertex_lookup.reserve(config.max_vertices);
+	edge_lookup.reserve(config.max_half_edges);
+	feature_to_faces.reserve(config.max_faces);
+}
+
 DCEL::Vertex& DCEL::Storage::Get_Or_Create_Vertex(double x, double y)
 {
 	uint64_t key = Vertex::Hash(x, y);

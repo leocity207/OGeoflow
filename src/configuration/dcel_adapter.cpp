@@ -37,7 +37,7 @@ std::optional<Error> DCEL_Adapter::Load_From_JSON(const rapidjson::Value& v)
 	{
 		if(!v["vertex_merge_strategy"].IsString())
 			return Error::MERGE_STRATEGY_SHOULD_BE_STRING;
-		if(v["vertex_merge_strategy"].GetString() == "AT_FIRST")
+		if(std::string_view(v["vertex_merge_strategy"].GetString()) == "AT_FIRST")
 		{
 			data.vertex_merge_strategy = DCEL::Merge_Strategy::AT_FIRST;
 		}

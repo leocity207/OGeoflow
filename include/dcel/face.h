@@ -16,8 +16,6 @@ namespace O::DCEL
 	struct Face
 	{
 		O::Unowned_Ptr<Half_Edge> edge = nullptr;    ///< a representative halfedge belonging to this face
-		size_t associated_feature_index = ~0ul;             ///< indices of GeoJSON features that reference this face
-		O::Unowned_Ptr<Face> outer_face = nullptr;
 	};
 
 } // namespace DCEL

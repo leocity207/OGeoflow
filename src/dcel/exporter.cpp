@@ -29,59 +29,34 @@ std::vector<GeoJSON::Position> DCEL::Exporter::To_GeoJSON::Extract_Ring(const Fa
 	return coords;
 }
 
-std::vector<Unowned_Ptr<const DCEL::Face>> DCEL::Exporter::To_GeoJSON::Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id)
+GeoJSON::Polygon DCEL::Exporter::To_GeoJSON::Create_Polygones(const std::vector<Unowned_Ptr<Face>>& faces)
 {
-	std::vector<Unowned_Ptr<const Face>> faces;
-	for (auto& face : dcel.faces)
-    	if (face.associated_feature_index == feature_id)
-			faces.push_back(&face);
-	return faces;
-}
-
-std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> DCEL::Exporter::To_GeoJSON::Create_Polygones(const std::vector<Unowned_Ptr<const Face>>& faces)
-{
-	std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> polygons;
+	GeoJSON::Polygon polygons;
 	for (auto face : faces)
 	{
 		auto ring = Extract_Ring( *face);
-		if (face->outer_face == nullptr)
-		{
-			if (polygons[face].rings.size())
-			{
-				GeoJSON::Polygon tmps = std::move(polygons[face]);
-				polygons[face] = GeoJSON::Polygon{};
-				polygons[face].rings.emplace_back(std::move(ring));
-				for (auto&& tmp : tmps.rings)
-					polygons[face].rings.emplace_back(std::move(tmp));
-			}
-			else
-				polygons[face].rings.emplace_back(ring);
-		}
-		else
-			polygons[face->outer_face].rings.emplace_back(ring);
+		polygons.rings.emplace_back(ring);
 	}
-	assert(polygons.size());
+	assert(polygons.rings.size());
 	return polygons;
 }
 
-GeoJSON::Root DCEL::Exporter::To_GeoJSON::Convert(const Storage& dcel, const Feature_Info& info)
+GeoJSON::Root DCEL::Exporter::To_GeoJSON::Convert(const Feature_Info& info)
 {
 	GeoJSON::Feature_Collection featureCollection;
 
-	for ( size_t i : std::views::iota(0ul, info.feature_properties.size()))
+	for ( auto&& [ polygons_faces, i] : O::Zip_Index(info.faces))
 	{
 		GeoJSON::Geometry geometry;
-		auto faces = Collect_Face_From_Feature_ID(dcel, i);
-		std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> polygons = Create_Polygones(faces);
 
 		// Create the Geometry (Polygon or multiPolygon)
-		if(polygons.size() == 1)
-			geometry.value = std::move(polygons.begin()->second);
+		if(polygons_faces.size() == 1)
+			geometry.value = Create_Polygones(polygons_faces.front());
 		else
 		{
 			GeoJSON::Multi_Polygon multipolygon;
-			for(auto& polygon_kv : polygons)
-				multipolygon.polygons.emplace_back(polygon_kv.second);
+			for(auto& polygon_faces : polygons_faces)
+				multipolygon.polygons.emplace_back(std::move(Create_Polygones(polygon_faces).rings));
 			geometry.value = std::move(multipolygon);
 		}
 

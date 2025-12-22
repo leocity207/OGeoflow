@@ -16,10 +16,27 @@
 // UTILS
 #include <utils/zip.h>
 
+// CONFIGURATION
+#include "configuration/dcel.h"
+
+static O::Configuration::DCEL config{
+	1000,
+	1000,
+	1000,
+	1e-9,
+	O::Configuration::DCEL::Merge_Strategy::AT_FIRST
+};
+
 class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
 public:
 	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
 	using O::DCEL::Builder::From_GeoJSON::On_Root;
+	Auto_Builder(const O::Configuration::DCEL& conf) :
+		O::DCEL::Builder::From_GeoJSON(conf),
+		O::GeoJSON::IO::Feature_Parser<Auto_Builder>()
+	{
+
+	}
 };
 
 TYPED_TEST_SUITE_P(DCEL_Builder_Test);
@@ -27,7 +44,7 @@ TYPED_TEST_SUITE_P(DCEL_Builder_Test);
 TYPED_TEST_P(DCEL_Builder_Test, Vertex)
 {
 
-	Auto_Builder auto_builder;
+	Auto_Builder auto_builder(config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));
@@ -53,7 +70,7 @@ TYPED_TEST_P(DCEL_Builder_Test, Vertex)
 
 TYPED_TEST_P(DCEL_Builder_Test, Half_Edge)
 {
-    Auto_Builder auto_builder;
+    Auto_Builder auto_builder(config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));
@@ -89,7 +106,7 @@ TYPED_TEST_P(DCEL_Builder_Test, Half_Edge)
 
 TYPED_TEST_P(DCEL_Builder_Test, Face)
 {
-    Auto_Builder auto_builder;
+    Auto_Builder auto_builder(config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));
@@ -100,19 +117,6 @@ TYPED_TEST_P(DCEL_Builder_Test, Face)
 	for (auto&& [face, edge_index] : O::Zip(dcel.faces, TypeParam::expected_edges))
 	{
 		EXPECT_EQ(face.edge, &dcel.half_edges[edge_index]);
-	}
-
-	for (auto&& [face, feature] : O::Zip(dcel.faces, TypeParam::expected_features))
-	{
-		EXPECT_EQ(face.associated_feature_index, feature);
-	}
-
-	for (auto&& [face, outer_face_inndex] : O::Zip(dcel.faces, TypeParam::expected_outer_faces))
-	{
-		if (outer_face_inndex == ~0ul)
-			EXPECT_EQ(face.outer_face, nullptr);
-		else
-			EXPECT_EQ(face.outer_face, &dcel.faces[outer_face_inndex]);
 	}
 }
 

@@ -23,7 +23,7 @@ namespace O::DCEL::Builder
 	{
 	public:
 
-		From_GeoJSON(size_t vertices_max_num, size_t half_edge_max_num, size_t faces_num);
+		From_GeoJSON(const O::Configuration::DCEL& config);
 		/**
 		 * @brief Create the DCEL structure from a Fully parsed GeoJSON (from IO::Full_Parser for exemple)
 		 * @param geojson the full GeoJSON to parse from
@@ -59,13 +59,13 @@ namespace O::DCEL::Builder
 		 * @param rings The list of rings, each represented as a sequence of ``O::GeoJSON::Position`` objects. Nested rings are treated as holes inside the face.
 		 * @param feature_id The ID of the feature associated with the resulting face.
 		 */
-		void Build_Face_From_Rings(const std::vector<std::vector<O::GeoJSON::Position>>& rings, size_t feature_id);
+		std::vector<O::Unowned_Ptr<Face>> Build_Face_From_Rings(const std::vector<std::vector<O::GeoJSON::Position>>& rings);
 		
 		/// @name On_Feature
 		/// @brief These function are just a extension of On_Full_Feature to dispatch polygone and multipolygones
 		/// @{
-		bool On_Polygon(const O::GeoJSON::Polygon& poly, size_t feature_id);
-		bool On_MultiPolygon(const O::GeoJSON::Multi_Polygon& mp, size_t feature_id);
+		bool On_Polygon(const O::GeoJSON::Polygon& poly);
+		bool On_MultiPolygon(const O::GeoJSON::Multi_Polygon& mp);
 		/// @}
 
 		/**
@@ -97,7 +97,7 @@ namespace O::DCEL::Builder
 		 * @param outer_face         the outer face that contains this ring.
 		 * @return The index of the newly created face.
 		 */
-		DCEL::Face& Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, size_t feature_id, O::Unowned_Ptr<Face> outer_face);
+		DCEL::Face& Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face);
 
 		void Link_Outer_Bound_Face();
 

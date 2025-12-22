@@ -187,32 +187,32 @@ struct Multi_Polygon_Exemple
 		0,
 		4,
 		0,
-		0,
+		3,
 		0,
 		4,
 		0,
 		4,
 		5,
-		0,
+		1,
 		5,
-		0,
+		1,
 		5,
-		0,
+		1,
 		5,
-		0,
+		1,
 		6,
-		0,
+		2,
 		6,
-		0,
+		2,
 		6,
-		0,
+		2,
 		6,
-		0,
-		0,
+		2,
+		3,
 		4,
-		0,
+		3,
 		4,
-		0,
+		3,
 		4
 	};
 
@@ -225,27 +225,6 @@ struct Multi_Polygon_Exemple
 		8,
 		16
 	});
-
-	static inline const auto expected_features = std::vector<size_t>{
-		0,
-		0,
-		0,
-		0,
-		~0ul,
-		~0ul,
-		~0ul
-	};
-
-	static inline const auto expected_outer_faces= std::vector<size_t>{
-		~0ul,
-		0,
-		0,
-		~0ul,
-		~0ul,
-		~0ul,
-		~0ul
-	};
-
 };
 
 #endif //SRC_DCEL_TEST_MULTI_POLYGON_EXEMPLE_H

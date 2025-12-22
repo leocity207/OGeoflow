@@ -161,20 +161,6 @@ struct Simple_Exemple
 		10,
 		5,
 	});
-
-	static inline const auto expected_features = std::vector<size_t>{
-		0,
-		1,
-		2,
-		~0ul
-	};
-
-	static inline const auto expected_outer_faces= std::vector<size_t>{
-		~0ul,
-		~0ul,
-		~0ul,
-		~0ul
-	};
 };
 
 #endif //SRC_DCEL_SIMPLE_EXEMPLE_H

@@ -26,7 +26,7 @@ namespace O::DCEL::Exporter
 		 * @param info the Feature_INFO
 		 * @return O::GeoJSON::Root 
 		 */
-		static O::GeoJSON::Root Convert(const Storage& dcel, const Feature_Info& info);
+		static O::GeoJSON::Root Convert(const Feature_Info& info);
 
 	private:
 	
@@ -53,7 +53,7 @@ namespace O::DCEL::Exporter
 		 * @param face the list of face to sort in polygone
 		 * @return O::GeoJSON::Polygon the reconstructed Polygon
 		 */
-		static std::unordered_map<const DCEL::Face*, GeoJSON::Polygon> Create_Polygones( const std::vector<Unowned_Ptr<const Face>>& faces);
+		static GeoJSON::Polygon Create_Polygones( const std::vector<Unowned_Ptr<Face>>& faces);
 	};
 }
 
