@@ -16,10 +16,10 @@
 // UTILS
 #include <utils/zip.h>
 
-class Auto_Builder : public O::DCEL::Builder, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
+class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
 public:
-	using O::DCEL::Builder::On_Full_Feature;
-	using O::DCEL::Builder::On_Root;
+	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
+	using O::DCEL::Builder::From_GeoJSON::On_Root;
 };
 
 TYPED_TEST_SUITE_P(DCEL_Builder_Test);
@@ -44,9 +44,9 @@ TYPED_TEST_P(DCEL_Builder_Test, Vertex)
 	for (auto&& [vertex, expected_out_edge] : O::Zip(dcel.vertices, TypeParam::expected_out_edges))
 	{
 		ASSERT_EQ(vertex.outgoing_edges.size(), expected_out_edge.size());
-		for (auto&& [out_edge_index, expected_out_edge_index] : O::Zip(vertex.outgoing_edges, expected_out_edge))
+		for (auto&& [out_edge, expected_out_edge_index] : O::Zip(vertex.outgoing_edges, expected_out_edge))
 		{
-			EXPECT_EQ(out_edge_index, expected_out_edge_index);
+			EXPECT_EQ(out_edge, &dcel.half_edges[expected_out_edge_index]);
 		}
 	}
 }
@@ -61,29 +61,29 @@ TYPED_TEST_P(DCEL_Builder_Test, Half_Edge)
 	ASSERT_TRUE(opt_dcel.has_value());
 	auto& dcel = opt_dcel.value();
 
-	for (auto&& [half_edge, origin] : O::Zip(dcel.half_edges, TypeParam::expected_origins))
+	for (auto&& [half_edge, tail_index] : O::Zip(dcel.half_edges, TypeParam::expected_tails))
 	{
-		EXPECT_EQ(half_edge.origin, origin);
+		EXPECT_EQ(half_edge.tail, &dcel.vertices[tail_index]);
 	}
 
-	for (auto&& [half_edge, twin] : O::Zip(dcel.half_edges, TypeParam::expected_twins))
+	for (auto&& [half_edge, twin_index] : O::Zip(dcel.half_edges, TypeParam::expected_twins))
 	{
-		EXPECT_EQ(half_edge.twin, twin);
+		EXPECT_EQ(half_edge.twin, &dcel.half_edges[twin_index]);
 	}
 
-	for (auto&& [half_edge, prev] : O::Zip(dcel.half_edges, TypeParam::expected_prevs))
+	for (auto&& [half_edge, prev_index] : O::Zip(dcel.half_edges, TypeParam::expected_prevs))
 	{
-		EXPECT_EQ(half_edge.prev, prev);
+		EXPECT_EQ(half_edge.prev, &dcel.half_edges[prev_index]);
 	}
 
-	for (auto&& [half_edge, next] : O::Zip(dcel.half_edges, TypeParam::expected_nexts))
+	for (auto&& [half_edge, next_index] : O::Zip(dcel.half_edges, TypeParam::expected_nexts))
 	{
-		EXPECT_EQ(half_edge.next, next);
+		EXPECT_EQ(half_edge.next, &dcel.half_edges[next_index]);
 	}
 
-	for (auto&& [half_edge, face] : O::Zip(dcel.half_edges, TypeParam::expected_faces))
+	for (auto&& [half_edge, face_index] : O::Zip(dcel.half_edges, TypeParam::expected_faces))
 	{
-		EXPECT_EQ(half_edge.face, face);
+		EXPECT_EQ(half_edge.face, &dcel.faces[face_index]);
 	}
 }
 
@@ -97,19 +97,22 @@ TYPED_TEST_P(DCEL_Builder_Test, Face)
 	ASSERT_TRUE(opt_dcel.has_value());
 	auto& dcel = opt_dcel.value();
 
-	for (auto&& [face, edge] : O::Zip(dcel.faces, TypeParam::expected_edges))
+	for (auto&& [face, edge_index] : O::Zip(dcel.faces, TypeParam::expected_edges))
 	{
-		EXPECT_EQ(face.edge, edge);
+		EXPECT_EQ(face.edge, &dcel.half_edges[edge_index]);
 	}
 
 	for (auto&& [face, feature] : O::Zip(dcel.faces, TypeParam::expected_features))
 	{
-		EXPECT_EQ(face.associated_feature, feature);
+		EXPECT_EQ(face.associated_feature_index, feature);
 	}
 
-	for (auto&& [face, feature] : O::Zip(dcel.faces, TypeParam::expected_outer_faces))
+	for (auto&& [face, outer_face_inndex] : O::Zip(dcel.faces, TypeParam::expected_outer_faces))
 	{
-		EXPECT_EQ(face.outer_face, feature);
+		if (outer_face_inndex == ~0ul)
+			EXPECT_EQ(face.outer_face, nullptr);
+		else
+			EXPECT_EQ(face.outer_face, &dcel.faces[outer_face_inndex]);
 	}
 }
 

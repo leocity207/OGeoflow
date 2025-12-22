@@ -72,6 +72,9 @@ namespace O::DCEL
 		 * @param vertex the vertex where to update all outgoing edge
 		 */
 		void Update_Around_Vertex(const Vertex& vertex);
+
+		Storage() = delete;
+		Storage(size_t vertices_max_num, size_t half_edge_max_num, size_t faces_num);
 	};
 } // namespace O::DCEL
 

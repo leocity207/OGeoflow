@@ -18,10 +18,10 @@
 #include <rapidjson/ostreamwrapper.h>
 
 
-class Auto_Builder : public O::DCEL::Builder, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
+class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
 public:
-	using O::DCEL::Builder::On_Full_Feature;
-	using O::DCEL::Builder::On_Root;
+	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
+	using O::DCEL::Builder::From_GeoJSON::On_Root;
 };
 
 TYPED_TEST_SUITE_P(DCEL_Builder_Exporter);
@@ -49,7 +49,7 @@ TYPED_TEST_P(DCEL_Builder_Exporter, Exporter)
 	auto opt_feature = auto_builder.Get_Feature_Info();
 	ASSERT_TRUE(opt_feature.has_value());
 	auto& feature = opt_feature.value();
-	auto geojson = O::DCEL::Exporter::Convert(dcel, feature);
+	auto geojson = O::DCEL::Exporter::To_GeoJSON::Convert(dcel, feature);
 	auto str = SerializeToString(geojson);
 	EXPECT_EQ(str, TypeParam::expected_write);
 }

@@ -22,6 +22,8 @@ namespace O::DCEL::Builder
 	class From_GeoJSON
 	{
 	public:
+
+		From_GeoJSON(size_t vertices_max_num, size_t half_edge_max_num, size_t faces_num);
 		/**
 		 * @brief Create the DCEL structure from a Fully parsed GeoJSON (from IO::Full_Parser for exemple)
 		 * @param geojson the full GeoJSON to parse from

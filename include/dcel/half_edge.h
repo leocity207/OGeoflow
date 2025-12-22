@@ -32,7 +32,13 @@ namespace O::DCEL
 		 */
 		static uint64_t Hash(const Vertex& origin_vertex,const Vertex& head_vertex) noexcept
 		{
-			return ((uint64_t)&origin_vertex << 32) | (uint64_t)&head_vertex;
+			uintptr_t a = reinterpret_cast<uintptr_t>(&origin_vertex);
+			uintptr_t b = reinterpret_cast<uintptr_t>(&head_vertex);
+
+			uint64_t h = a;
+			h ^= b + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+
+			return h;
 		}
 
 		Half_Edge(Vertex& tail,Vertex& head) :
