@@ -7,6 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 #------
 # setup
+include(cmake/generate_locals.cmake)
 include(cmake/compiler_warning.cmake)
 include(cmake/simple_fetch_repository.cmake)
 include(cmake/simple_fetch_populate.cmake)
@@ -31,6 +32,7 @@ Simple_Fetch_Repository(
 # subdirectory include
 add_subdirectory(src/io)
 add_subdirectory(src/dcel)
+add_subdirectory(src/configuration)
 
 
 #------------------------------------
@@ -41,6 +43,7 @@ if(BUILD_TESTS)
 	add_subdirectory(src/dcel/test)
 	add_subdirectory(src/filter/test)
 	add_subdirectory(src/io/test)
+	add_subdirectory(src/configuration/test)
 endif()
 
 option(BUILD_DOC "Build doc" ON)
