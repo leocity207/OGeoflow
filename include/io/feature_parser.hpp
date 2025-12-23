@@ -10,16 +10,12 @@
 template <class Derived>
 bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Full_Feature(O::GeoJSON::Feature&& feature) 
 {
-	if constexpr (!requires(Derived d) { d.On_Full_Feature(std::move(feature)); })
-		static_assert(false,"Derived must implement:\n    bool On_Full_Feature(Feature&&)");
 	return static_cast<Derived&>(*this).On_Full_Feature(std::move(feature));
 }
 
 template <class Derived>
 bool O::GeoJSON::IO::Feature_Parser<Derived>::On_Root(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id) 
 {
-	if constexpr (!requires(Derived d) { d.On_Root(std::move(bbox), std::move(id)); })
-		static_assert(false,"Derived must implement:\n    bool On_Root(optional<Bbox>&&, optional<string>&&)");
 	return static_cast<Derived&>(*this).On_Root(std::move(bbox), std::move(id));
 }
 

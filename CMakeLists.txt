@@ -27,12 +27,19 @@ Simple_Fetch_Repository(
 	https://github.com/leocity207/OConfigurator.git
 	V0.0.4
 )
+Simple_Fetch_Repository(
+	pybind11
+	https://github.com/pybind/pybind11.git
+	v3.0.0
+)
+
 
 #------------------------------------
 # subdirectory include
 add_subdirectory(src/io)
 add_subdirectory(src/dcel)
 add_subdirectory(src/configuration)
+add_subdirectory(src/pybind)
 
 
 #------------------------------------

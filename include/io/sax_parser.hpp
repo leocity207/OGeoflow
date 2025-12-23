@@ -22,24 +22,18 @@ using Level4 = std::vector<O::GeoJSON::Polygon>;
 template<class Derived>
 bool O::GeoJSON::IO::SAX_Parser<Derived>::On_Geometry(O::GeoJSON::Geometry&& geometry, std::size_t element_number) 
 {
-	if constexpr (!requires(Derived d) { d.On_Geometry(std::move(geometry), element_number); })
-		static_assert(false,"Derived must implement:\n    bool On_Geometry(Geometry&&, std::size_t)");
 	return static_cast<Derived&>(*this).On_Geometry(std::move(geometry), element_number);
 }
 
 template<class Derived>
-bool O::GeoJSON::IO::SAX_Parser<Derived>::On_Feature(GeoJSON::Feature&& feature) 
+bool O::GeoJSON::IO::SAX_Parser<Derived>::On_Feature(O::GeoJSON::Feature&& feature) 
 {
-	if constexpr (!requires(Derived d) { d.On_Feature(std::move(feature)); })
-		static_assert(false,"Derived must implement:\n    bool On_Feature(Feature&&)");
 	return static_cast<Derived&>(*this).On_Feature(std::move(feature));
 }
 
 template<class Derived>
-bool O::GeoJSON::IO::SAX_Parser<Derived>::On_Feature_Collection(std::optional<GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+bool O::GeoJSON::IO::SAX_Parser<Derived>::On_Feature_Collection(std::optional<O::GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 {
-	if constexpr (!requires(Derived d) { d.On_Feature_Collection(std::move(bbox), std::move(id)); })
-		static_assert(false,"Derived must implement:\n    bool On_Feature_Collection(optional<Bbox>&&, optional<string>&&)");
 	return static_cast<Derived&>(*this).On_Feature_Collection(std::move(bbox), std::move(id));
 }
 
