@@ -2,10 +2,10 @@ DCEL::Builder
 =============
 
 
-O::DCEL::Builder
-----------------
+O::DCEL::Builder::From_GeoJSON
+------------------------------
 
-.. doxygenclass:: O::DCEL::Builder
+.. doxygenclass:: O::DCEL::Builder::From_GeoJSON
 	:members:
 	:protected-members:
 	:private-members:
@@ -21,7 +21,7 @@ Below is a minimal example of how to use the
 	#include <io/feature_Parser.h>
 	#include <dcel/builder.h>
 
-	class Auto_Builder : public O::DCEL::Builder, public O::GeoJSON::IO::Feature_Parser<O::DCEL::Builder> {};
+	class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<O::DCEL::Builder::From_GeoJSON> {};
 
 	int main()
 	{

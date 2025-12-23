@@ -25,6 +25,7 @@ This documentation is aimed for developper that want to contribute to the projec
 	:maxdepth: 2
 	:caption: C++
 
+	cplusplus/configuration/dcel
 	cplusplus/dcel/index
 	cplusplus/filter/index
 	cplusplus/geojson/index
