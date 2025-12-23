@@ -4,7 +4,6 @@
 #include <string>
 #include <array>
 #include <vector>
-#include "dcel/constant.h"
 
 struct Hole_Exemple
 {
@@ -66,7 +65,7 @@ struct Hole_Exemple
 		{16, 23}
 	};
 
-	static inline const auto expected_origins = std::vector<int>{
+	static inline const auto expected_tails = std::vector<int>{
 		0,
 		1,
 		1,
@@ -171,22 +170,22 @@ struct Hole_Exemple
 		4,
 		0,
 		4,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
+		3,
 		1,
-		0,
 		5,
-		0,
+		2,
 		5,
-		0,
+		2,
 		5,
-		0,
+		2,
 		5,
-		0
+		2
 	};
 
 	static inline const auto expected_edges = std::to_array<size_t>({
@@ -197,24 +196,6 @@ struct Hole_Exemple
 		1,
 		16
 	});
-
-	static inline const auto expected_features = std::vector<size_t>{
-		0,
-		0,
-		0,
-		1,
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX
-	};
-
-	static inline const auto expected_outer_faces= std::vector<size_t>{
-		O::DCEL::NO_IDX,
-		0,
-		0,
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX
-	};
 };
 
 #endif //SRC_DCEL_TEST_HOLE_EXEMPLE_H

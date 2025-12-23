@@ -1,13 +1,10 @@
 DCEL::Exporter
 ==============
 
-DCEL::Builder
-=============
+O::DCEL::Exporter::To_GeoJSON
+-----------------------------
 
-O::DCEL::Exporter
------------------
-
-.. doxygenclass:: O::DCEL::Exporter
+.. doxygenclass:: O::DCEL::Exporter::To_GeoJSON
 	:members:
 	:protected-members:
 	:private-members:
@@ -26,5 +23,5 @@ Below is a minimal example of how to use the O::DCEL::Exporter
 	{
 		O::DCEL::Storage dcel = ...
 		O::DCEL::Feature_Info info = ...;
-		O::GeoJSON::Root out = O::DCEL::Exporter::Convert(dcel, info);
+		O::GeoJSON::Root out = O::DCEL::Exporter::To_GeoJSON::Convert(dcel, info);
 	}

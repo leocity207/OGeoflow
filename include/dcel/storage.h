@@ -1,15 +1,23 @@
 #ifndef DCEL_STORAGE_H
 #define DCEL_STORAGE_H
 
+// STL
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
 #include <cmath>
 #include <limits>
 
+// DCEL
 #include "face.h"
 #include "half_edge.h"
 #include "vertex.h"
+
+// CONFIGURATION
+#include "configuration/dcel.h"
+
+// UTILS
+#include <utils/unowned_ptr.h>
 
 namespace O::DCEL
 {
@@ -20,13 +28,14 @@ namespace O::DCEL
 	 */
 	struct Storage
 	{
+		O::Configuration::DCEL config;
 		std::vector<Vertex> vertices;      ///< List of Vertex in the DCEL
 		std::vector<Half_Edge> half_edges; ///< List of Half_Edges in the DCEL
 		std::vector<Face> faces;           ///< List of Faces in the DCEL
 
-		std::unordered_map<uint64_t, size_t> vertex_lookup;               ///< Vertex::Hash -> vertex index in the Storage::vertices
-		std::unordered_map<uint64_t, size_t> edge_lookup;                 ///< half_edges::Hash -> halfedge index in the Storage::half_edges
-		std::unordered_map<size_t, std::vector<size_t>> feature_to_faces; ///< feature_Idx -> list of face indices
+		std::unordered_map<uint64_t, O::Unowned_Ptr<Vertex>> vertex_lookup;               ///< Vertex::Hash -> vertex index in the Storage::vertices
+		std::unordered_map<uint64_t, O::Unowned_Ptr<Half_Edge>> edge_lookup;                 ///< half_edges::Hash -> halfedge index in the Storage::half_edges
+		std::unordered_map<size_t, std::vector<O::Unowned_Ptr<Face>>> feature_to_faces; ///< feature_Idx -> list of face indices
 
 
 		/**
@@ -35,24 +44,24 @@ namespace O::DCEL
 		 * @param y coordinate of the vertex
 		 * @return size_t index of the vertex in the ``vertices``
 		 */
-		size_t Get_Or_Create_Vertex(double x, double y);
+		Vertex& Get_Or_Create_Vertex(double x, double y);
 
 		/**
 		 * @brief Create or Get Half_Edge if it does not exist inside the ``half_edges``
 		 *        Also ensures the twin exists (but twin may be a separate halfedge created before).
-		 * @param origin_vertex_index the origin ``vertex`` index (in the vertices inside the ``Storage``).
-		 * @param head_vertex_index the head ``vertex`` index (in the vertices inside the ``Storage``).
+		 * @param origin_vertex the origin ``vertex`` index (in the vertices inside the ``Storage``).
+		 * @param head_vertex the head ``vertex`` index (in the vertices inside the ``Storage``).
 		 * @return size_t index of the vertex in the ``half_edges``
 		 */
-		size_t Get_Or_Create_Half_Edge(size_t origin_vertex_index, size_t head_vertex_index);
+		Half_Edge& Get_Or_Create_Half_Edge(Vertex& origin_vertex, Vertex& head_vertex);
 
 		/**
 		 * @brief insert half_edge inside the vertext outedge list and directly sort it
 		 * 
-		 * @param vertex_id the vertex where to add the outgoing edge
-		 * @param edge_id the edge index that will be added inside the outgoing edge
+		 * @param vertex the vertex where to add the outgoing edge
+		 * @param edge the edge index that will be added inside the outgoing edge
 		 */
-		void Insert_Edge_Sorted(size_t vertex_id, size_t edge_id);
+		void Insert_Edge_Sorted(const Vertex& vertex, Half_Edge& edge);
 
 		/**
 		 * @brief Link the Edge and its twin edge together
@@ -60,13 +69,16 @@ namespace O::DCEL
 		 * @param edge one edge
 		 * @param twin the twin edge of the edge
 		 */
-		void Links_twins(size_t edge, size_t twin);
+		void Links_twins(Half_Edge& edge, Half_Edge& twin);
 		/**
 		 * @brief After we added outgoing edges for some vertices, call this to ensure the "around-vertex linking" invariants:
 		 *        For each outgoing edge e in clockwise order, set twin(e).next = nextOutgoingEdge and nextOutgoingEdge.prev = twin(e)
-		 * @param vertexIdx the vertex where to update all outgoing edge
+		 * @param vertex the vertex where to update all outgoing edge
 		 */
-		void Update_Around_Vertex(size_t vertexIdx);
+		void Update_Around_Vertex(const Vertex& vertex);
+
+		Storage() = delete;
+		Storage(const O::Configuration::DCEL& config);
 	};
 } // namespace O::DCEL
 

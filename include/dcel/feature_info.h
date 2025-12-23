@@ -1,12 +1,17 @@
 #ifndef DCEL_FEATURE_INFO_H
 #define DCEL_FEATURE_INFO_H
 
+// STL
 #include <vector>
 #include <optional>
 #include <string>
 
+// GEOJSON
 #include "geojson/properties.h"
 #include "geojson/bbox.h"
+
+// DCEL
+#include "face.h"
 
 namespace O::DCEL
 {
@@ -19,6 +24,7 @@ namespace O::DCEL
         std::vector<O::GeoJSON::Property> feature_properties; ///< list of properties
         std::vector<std::optional<std::string>> ids;          ///< list of id for all the features
         std::vector<std::optional<O::GeoJSON::Bbox>> bboxes;  ///< list of all bbox for each feature
+        std::vector<std::vector<std::vector<O::Unowned_Ptr<Face>>>> faces;
 
         bool has_root = false;                                ///< if we had a root while parsing the GeoJSON
         std::optional<std::string> root_id;                   ///< root id value in the GeoJSON

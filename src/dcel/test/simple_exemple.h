@@ -4,7 +4,6 @@
 #include <string>
 #include <array>
 #include <vector>
-#include "dcel/constant.h"
 
 struct Simple_Exemple
 {
@@ -60,7 +59,7 @@ struct Simple_Exemple
 		{10,17}
 	};
 
-	static inline const auto expected_origins = std::vector<int>{
+	static inline const auto expected_tails = std::vector<int>{
 		0,
 		1,
 		1,
@@ -162,20 +161,6 @@ struct Simple_Exemple
 		10,
 		5,
 	});
-
-	static inline const auto expected_features = std::vector<size_t>{
-		0,
-		1,
-		2,
-		O::DCEL::NO_IDX
-	};
-
-	static inline const auto expected_outer_faces= std::vector<size_t>{
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX,
-		O::DCEL::NO_IDX
-	};
 };
 
 #endif //SRC_DCEL_SIMPLE_EXEMPLE_H

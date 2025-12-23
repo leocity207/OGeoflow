@@ -1,23 +1,28 @@
 #ifndef DCEL_HALF_EDGE_H
 #define DCEL_HALF_EDGE_H
 
-
+// STL
 #include <cstdint>
 
-#include "constant.h"
+// UTILS
+#include <utils/unowned_ptr.h>
 
 namespace O::DCEL
 {
+	struct Vertex;
+	struct Face;
+
 	/**
 	 * @brief Hald_Edge can be seen as directional edges in a graph. one edge between two vertex have two Half_Edge in oposite direction. Hence the Doubly Connected Edge List.
 	 */
 	struct Half_Edge
 	{
-		size_t origin = NO_IDX; ///< index of origin Vertex
-		size_t twin = NO_IDX; ///< index of twin Half_Edge (reverse direction)
-		size_t next = NO_IDX; ///< index of next Half_Edge around face
-		size_t prev = NO_IDX; ///< index of previous Half_Edge around face
-		size_t face = NO_IDX; ///< index of incident face (left side)
+		O::Unowned_Ptr<Vertex> tail = nullptr; ///< index of origin Vertex
+		O::Unowned_Ptr<Vertex> head = nullptr; ///< index of origin Vertex
+		O::Unowned_Ptr<Half_Edge> twin = nullptr; ///< index of twin Half_Edge (reverse direction)
+		O::Unowned_Ptr<Half_Edge> next = nullptr; ///< index of next Half_Edge around face
+		O::Unowned_Ptr<Half_Edge> prev = nullptr; ///< index of previous Half_Edge around face
+		O::Unowned_Ptr<Face> face = nullptr; ///< index of incident face (left side)
 
 		/**
 		 * @brief Create a Unique hash for Half_Edge
@@ -25,9 +30,31 @@ namespace O::DCEL
 		 * @param head_vertex_index the head ``vertex`` index (in the vertices inside the ``Storage``).
 		 * @return uint64_t
 		 */
-		static uint64_t Hash(size_t origin_vertex_index, size_t head_vertex_index) noexcept
+		static uint64_t Hash(const Vertex& origin_vertex,const Vertex& head_vertex) noexcept
 		{
-			return ((uint64_t)origin_vertex_index << 32) | (uint64_t)head_vertex_index;
+			uintptr_t a = reinterpret_cast<uintptr_t>(&origin_vertex);
+			uintptr_t b = reinterpret_cast<uintptr_t>(&head_vertex);
+
+			uint64_t h = a;
+			h ^= b + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+
+			return h;
+		}
+
+		Half_Edge(Vertex& tail,Vertex& head) :
+			tail(&tail),
+			head(&head),
+			twin(nullptr),
+			next(nullptr),
+			prev(nullptr),
+			face(nullptr)
+		{
+
+		}
+
+		bool operator==(const Half_Edge& other) const
+		{
+			return Hash(*tail, *head) == Hash(*other.tail, *other.head);
 		}
 	};
 } // namespace DCEL

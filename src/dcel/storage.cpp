@@ -1,85 +1,84 @@
 #include "dcel/storage.h"
 
+//Utils
+#include <utils/zip.h>
+
 using namespace O;
 
-size_t DCEL::Storage::Get_Or_Create_Vertex(double x, double y)
+DCEL::Storage::Storage(const O::Configuration::DCEL& config) :
+	config(config),
+	vertices(),
+	half_edges(),
+	faces(),
+	vertex_lookup(),
+	edge_lookup(),
+	feature_to_faces()
 {
-	uint64_t key = Vertex::Hash(x,y);
+	vertices.reserve(config.max_vertices);
+	half_edges.reserve(config.max_half_edges);
+	faces.reserve(config.max_faces);
+	vertex_lookup.reserve(config.max_vertices);
+	edge_lookup.reserve(config.max_half_edges);
+	feature_to_faces.reserve(config.max_faces);
+}
+
+DCEL::Vertex& DCEL::Storage::Get_Or_Create_Vertex(double x, double y)
+{
+	uint64_t key = Vertex::Hash(x, y);
 	auto it = vertex_lookup.find(key);
-	if (it != vertex_lookup.end()) return it->second;
-	size_t idx = vertices.size();
-	vertices.emplace_back();
-	vertices.back().x = x;
-	vertices.back().y = y;
-	vertex_lookup.emplace(key, idx);
-	return idx;
+	if (it != vertex_lookup.end()) return *it->second;
+	vertices.emplace_back(x, y);
+	vertex_lookup.emplace(key, &vertices.back());
+	return vertices.back();
 }
 
-size_t DCEL::Storage::Get_Or_Create_Half_Edge(size_t origin_id, size_t head_id)
+DCEL::Half_Edge& DCEL::Storage::Get_Or_Create_Half_Edge(Vertex& origin,Vertex& head)
 {
-	uint64_t key = Half_Edge::Hash(origin_id, head_id);
+	uint64_t key = Half_Edge::Hash(origin, head);
 	auto it = edge_lookup.find(key);
-	if (it != edge_lookup.end()) return it->second;
-
+	if (it != edge_lookup.end()) return *it->second;
 	// create new halfedge for origin->head
-	size_t e_idx = half_edges.size();
-	half_edges.emplace_back(origin_id);
-	edge_lookup.emplace(key, half_edges.size() - 1);
+	half_edges.emplace_back(origin, head);
+	edge_lookup.emplace(key, &half_edges.back());
 
-	return e_idx;
+	return half_edges.back();
 }
 
-void DCEL::Storage::Links_twins(size_t edge, size_t twin)
+void DCEL::Storage::Links_twins( Half_Edge& edge, Half_Edge& twin)
 {
-	auto& edge_ref = half_edges[edge];
-	auto& twin_ref = half_edges[twin];
-
-	edge_ref.twin = twin;
-	twin_ref.twin = edge;
+	edge.twin = &twin;
+	twin.twin = &edge;
 }
 
-
-void DCEL::Storage::Insert_Edge_Sorted(size_t vertex_id, size_t edge_id)
+void DCEL::Storage::Insert_Edge_Sorted(const Vertex& vertex,Half_Edge& edge)
 {
-	const Half_Edge& eNew = half_edges[edge_id];
-	size_t head_id = half_edges[eNew.twin].origin;
-	const Vertex& head = vertices[head_id];
-	Vertex& tail = vertices[vertex_id];
-	double vx = head.x - tail.x;
-	double vy = head.y - tail.y;
+	double vx = edge.head->x - vertex.x;
+	double vy = edge.head->y - vertex.y;
 
-	auto pos = tail.outgoing_edges.begin();
-	for (; pos != tail.outgoing_edges.end(); ++pos)
+	auto pos = edge.tail->outgoing_edges.begin();
+	for (; pos != edge.tail->outgoing_edges.end(); ++pos)
 	{
-		size_t old_edge_id = *pos;
-		if (edge_id == old_edge_id)
+		const Half_Edge& old_edge = **pos;
+		if (edge == old_edge)
 			return; // we already inserted this half edge in vertex
-		size_t old_edge_head = half_edges[half_edges[old_edge_id].twin].origin;
-		const Vertex& oldHead = vertices[old_edge_head];
-		double ox = oldHead.x - tail.x;
-		double oy = oldHead.y - tail.y;
+		const Vertex& old_head = *old_edge.head;
+		double ox = old_head.x - edge.tail->x;
+		double oy = old_head.y - edge.tail->y;
 
 		double cross = ox * vy - oy * vx;
 		if (cross < 0) break; // new edge is clockwise after old edge
 	}
 
-	tail.outgoing_edges.insert(pos, edge_id);
+	edge.tail->outgoing_edges.insert(pos, &edge);
 }
 
-void DCEL::Storage::Update_Around_Vertex(size_t vertexIdx)
+void DCEL::Storage::Update_Around_Vertex(const Vertex& vertex)
 {
-	Vertex& v = vertices[vertexIdx];
-	if (v.outgoing_edges.size() < 2) return;
+	if (vertex.outgoing_edges.size() < 2) return;
 
-	for (size_t i = 0; i < v.outgoing_edges.size(); ++i)
+	for (auto&& [half_edge_curr,half_edge_next] : O::Zip_Adjacent_Circular(vertex.outgoing_edges))
 	{
-		size_t e_i    = v.outgoing_edges[i];
-		size_t e_next = v.outgoing_edges[(i + 1) % v.outgoing_edges.size()];
-
-		size_t twin_next = half_edges[e_next].twin;
-		if (twin_next == NO_IDX) continue;
-
-		half_edges[twin_next].next = e_i;
-		half_edges[e_i].prev = twin_next;
+		half_edge_next->twin->next = half_edge_curr;
+		half_edge_curr->prev = half_edge_next->twin;
 	}
 }
