@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7] - 2025-12-09
+
+### fix
+
+ * `DCEL`: DCEL now use pre-allocation for stability and use direct pointer reference instead of index
+
+
 ## [0.0.6] - 2025-12-09
 
 ### fix

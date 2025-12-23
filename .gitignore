@@ -58,3 +58,5 @@ Release/
 #utility
 *merge_file.py
 *out.txt
+
+include/locals.h
