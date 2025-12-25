@@ -1,5 +1,11 @@
 #include "pybind/io.h"
 
+// PYBIND
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
+#include <pybind11/functional.h>
+
 // STL
 #include <filesystem>
 
@@ -133,14 +139,18 @@ void Init_Io_Bindings(pybind11::module_ &m)
 
 	
 	// FeatureParser (trampoline class for Python inheritance)
-	pybind11::class_<Py_Feature_Parser>(m, "FeatureParser")
+	pybind11::class_<Py_Feature_Parser>(m, "Feature_Parser")
 		.def(pybind11::init<>())
 		.def("Parse_From_File", &Py_Feature_Parser::Parse_From_File)
 		.def("Parse_From_String", &Py_Feature_Parser::Parse_From_String);
 	
 	// SAXParser (trampoline class for Python inheritance)  
-	pybind11::class_<Py_SAX_Parser>(m, "FeatureParser")
+	pybind11::class_<Py_SAX_Parser>(m, "Sax_Parser")
 		.def(pybind11::init<>())
 		.def("Parse_From_File", &Py_SAX_Parser::Parse_From_File)
 		.def("Parse_From_String", &Py_SAX_Parser::Parse_From_String);
+
+	pybind11::class_<std::filesystem::path>(m, "Path")
+		.def(pybind11::init<std::string>());
+	pybind11::implicitly_convertible<std::string, std::filesystem::path>();
 }

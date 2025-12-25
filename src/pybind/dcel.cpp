@@ -2,10 +2,16 @@
 
 using namespace O;
 
+// PYBIND
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
+#include <pybind11/functional.h>
+
 // RAPIDJSON
 #include <rapidjson/filereadstream.h>
 
-//Filter
+// Filter
 #include "filter/feature.h"
 
 
@@ -220,5 +226,4 @@ void Init_DCEL_Bindings(pybind11::module_ &m)
 		.def_readwrite("max_faces",             &Configuration::DCEL::max_faces)
 		.def_readwrite("position_tolerance",    &Configuration::DCEL::position_tolerance)
 		.def_readwrite("vertex_merge_strategy", &Configuration::DCEL::vertex_merge_strategy);
-
 }
