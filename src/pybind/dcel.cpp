@@ -65,16 +65,16 @@ GeoJSON::IO::Error Py_DCEL_Builder::Parse_File(const std::filesystem::path& path
 	rapidjson::FileReadStream is(fp.get(), readBuffer, sizeof(readBuffer));
 	rapidjson::Reader reader;
 	Auto_Builder auto_builder(m_config);
-	if(reader.Parse(is, auto_builder))
+	if(!reader.Parse(is, auto_builder))
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
 	auto opt_dcel = auto_builder.Get_Dcel();
 	if(!opt_dcel.has_value())
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
-	m_storage = opt_dcel.value();
+	m_storage = std::move(opt_dcel).value();
 	auto opt_feature_info = auto_builder.Get_Feature_Info();
 	if(!opt_feature_info.has_value())
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
-	m_features_infos = opt_feature_info.value();
+	m_features_infos = std::move(opt_feature_info).value();
 	return GeoJSON::IO::Error::NO_ERROR;
 }
 
@@ -83,16 +83,16 @@ GeoJSON::IO::Error Py_DCEL_Builder::Parse_String(const std::string& str)
 	Auto_Builder auto_builder(m_config);
 	rapidjson::StringStream ss(str.c_str());
 	rapidjson::Reader reader;
-	if(reader.Parse(ss, auto_builder))
+	if(!reader.Parse(ss, auto_builder))
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
 	auto opt_dcel = auto_builder.Get_Dcel();
 	if(!opt_dcel.has_value())
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
-	m_storage = opt_dcel.value();
+	m_storage = std::move(opt_dcel).value();
 		auto opt_feature_info = auto_builder.Get_Feature_Info();
 	if(!opt_feature_info.has_value())
 		return (auto_builder.Get_Error() != GeoJSON::IO::Error::NO_ERROR) ? auto_builder.Get_Error() : GeoJSON::IO::Error::PARSING_ERROR;
-	m_features_infos = opt_feature_info.value();
+	m_features_infos = std::move(opt_feature_info).value();
 	return GeoJSON::IO::Error::NO_ERROR;
 }
 
@@ -198,18 +198,23 @@ void Init_DCEL_Bindings(pybind11::module_ &m)
 	pybind11::class_<DCEL::Vertex>(m, "Vertex")
 		.def_property_readonly("x",              [](const DCEL::Vertex& v) { return v.x; })
 		.def_property_readonly("y",              [](const DCEL::Vertex& v) { return v.y; })
-		.def_property_readonly("outgoing_edges", [](const DCEL::Vertex& v) { return v.outgoing_edges;},pybind11::return_value_policy::reference_internal);
+		.def_property_readonly("outgoing_edges", [](const DCEL::Vertex& v) { 
+			std::vector<DCEL::Half_Edge> half_edges;
+			for(auto outgoing_edges : v.outgoing_edges)
+				half_edges.emplace_back(*outgoing_edges);	
+			return half_edges;
+		});
 
 	pybind11::class_<DCEL::Half_Edge>(m, "HalfEdge")
-		.def_property_readonly("tail", [](const DCEL::Half_Edge& e) { return e.tail; },pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("head", [](const DCEL::Half_Edge& e) { return e.head; },pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("twin", [](const DCEL::Half_Edge& e) { return e.twin; },pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("next", [](const DCEL::Half_Edge& e) { return e.next; },pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("prev", [](const DCEL::Half_Edge& e) { return e.prev; },pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("face", [](const DCEL::Half_Edge& e) { return e.face; },pybind11::return_value_policy::reference_internal);
+		.def_property_readonly("tail", [](const DCEL::Half_Edge& e) { assert(e.tail); return *e.tail; })
+		.def_property_readonly("head", [](const DCEL::Half_Edge& e) { assert(e.head); return *e.head; })
+		.def_property_readonly("twin", [](const DCEL::Half_Edge& e) { assert(e.twin); return *e.twin; })
+		.def_property_readonly("next", [](const DCEL::Half_Edge& e) { assert(e.next); return *e.next; })
+		.def_property_readonly("prev", [](const DCEL::Half_Edge& e) { assert(e.prev); return *e.prev; })
+		.def_property_readonly("face", [](const DCEL::Half_Edge& e) { assert(e.face); return *e.face; });
 	
 	pybind11::class_<DCEL::Face>(m, "Face")
-		.def_property_readonly("edge", [](const DCEL::Face& f) { return f.edge; }, pybind11::return_value_policy::reference_internal);
+		.def_property_readonly("edge", [](const DCEL::Face& f) { return *f.edge; }, pybind11::return_value_policy::reference_internal);
 
 	pybind11::class_<DCEL::Storage>(m, "Storage")
 		.def_property_readonly("vertices",  [](DCEL::Storage& s) { return s.vertices;},   pybind11::return_value_policy::reference_internal)
