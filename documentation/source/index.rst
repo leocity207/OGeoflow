@@ -36,14 +36,6 @@ This documentation is aimed for developper that want to contribute to the projec
 	:maxdepth: 2
 	:caption: Python
 
-	python/geojson/index
-	python/io/index
-	python/filter/index
-
-.. toctree::
-	:maxdepth: 2
-	:caption: Javascript
-
-	javascript/geojson/index
-	javascript/io/index
-	javascript/filter/index
+	python/geojson
+	python/io
+	python/dcel
