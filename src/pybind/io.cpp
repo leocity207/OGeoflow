@@ -79,7 +79,7 @@ GeoJSON::IO::Error Py_Full_Parser::Parse_From_File(const std::filesystem::path& 
 	if (this->Get_Error() != GeoJSON::IO::Error::NO_ERROR)
 		return this->Get_Error();
 	else
-		return GeoJSON::IO::Error::PARSING_ERROR;
+		return GeoJSON::IO::Error::NO_ERROR;
 }
 
 GeoJSON::IO::Error Py_Full_Parser::Parse_From_String(const std::string& str)
@@ -92,7 +92,7 @@ GeoJSON::IO::Error Py_Full_Parser::Parse_From_String(const std::string& str)
 	if (this->Get_Error() != GeoJSON::IO::Error::NO_ERROR)
 		return this->Get_Error();
 	else
-		return GeoJSON::IO::Error::PARSING_ERROR;
+		return GeoJSON::IO::Error::NO_ERROR;
 }
 
 O::GeoJSON::Root Py_Full_Parser::Get_Value()
