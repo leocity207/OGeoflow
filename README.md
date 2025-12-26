@@ -20,6 +20,7 @@ This library is part of the larger **Octoliner** family of tools (hence the `O` 
 - Doubly Connected Edge list <-> GeoJSON structure.
 - simple holdind structure.
 - Designed to be easy to fetch & embed via CMake `FetchContent`.
+- Python library ready to be used
 
 ---
 

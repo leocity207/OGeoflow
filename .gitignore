@@ -60,3 +60,7 @@ Release/
 *out.txt
 
 include/locals.h
+
+#python lib
+*.pyd
+*.pdb

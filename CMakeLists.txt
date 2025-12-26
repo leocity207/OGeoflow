@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(OGeoFlow VERSION 0.0.7)
+project(OGeoFlow VERSION 0.0.8)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -27,12 +27,19 @@ Simple_Fetch_Repository(
 	https://github.com/leocity207/OConfigurator.git
 	V0.0.4
 )
+Simple_Fetch_Repository(
+	pybind11
+	https://github.com/pybind/pybind11.git
+	v3.0.0
+)
+
 
 #------------------------------------
 # subdirectory include
 add_subdirectory(src/io)
 add_subdirectory(src/dcel)
 add_subdirectory(src/configuration)
+add_subdirectory(src/pybind)
 
 
 #------------------------------------

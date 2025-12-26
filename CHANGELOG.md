@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.8] - 2025-12-09
+
+### fix
+
+ * `pybind`: added a python binder with some exemple
+
 ## [0.0.7] - 2025-12-09
 
 ### fix
