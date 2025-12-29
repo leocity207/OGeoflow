@@ -18,24 +18,26 @@ using namespace O;
 template<class T>
 using Filtered_Builder = O::GeoJSON::Filter::Feature< T, Py_Feature_Predicate>;
 
-class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
+using Builder_From_GeoJSON = O::DCEL::Builder::From_GeoJSON<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>;
+
+class Auto_Builder : public Builder_From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
 public:
-	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
-	using O::DCEL::Builder::From_GeoJSON::On_Root;
+	using Builder_From_GeoJSON::On_Full_Feature;
+	using Builder_From_GeoJSON::On_Root;
 	Auto_Builder(const O::Configuration::DCEL& conf) :
-		O::DCEL::Builder::From_GeoJSON(conf),
+		Builder_From_GeoJSON(conf),
 		O::GeoJSON::IO::Feature_Parser<Auto_Builder>()
 	{
 
 	}
 };
 
-class Auto_Filtered_Builder : public O::DCEL::Builder::From_GeoJSON, public Filtered_Builder<Auto_Filtered_Builder> {
+class Auto_Filtered_Builder : public Builder_From_GeoJSON, public Filtered_Builder<Auto_Filtered_Builder> {
 public:
-	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
-	using O::DCEL::Builder::From_GeoJSON::On_Root;
+	using Builder_From_GeoJSON::On_Full_Feature;
+	using Builder_From_GeoJSON::On_Root;
 	Auto_Filtered_Builder(const O::Configuration::DCEL& conf, Py_Feature_Predicate predicate) :
-		O::DCEL::Builder::From_GeoJSON(conf),
+		Builder_From_GeoJSON(conf),
 		Filtered_Builder<Auto_Filtered_Builder>( predicate)
 	{
 
@@ -53,7 +55,7 @@ Py_DCEL_Builder::Py_DCEL_Builder(const O::Configuration::DCEL& config):
 
 bool Py_DCEL_Builder::Parse_Root(O::GeoJSON::Root& geojson)
 {
-	O::DCEL::Builder::From_GeoJSON builder(m_config);
+	O::DCEL::Builder::From_GeoJSON<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>> builder(m_config);
 	return builder.Parse(std::move(geojson));
 }
 
@@ -96,12 +98,12 @@ GeoJSON::IO::Error Py_DCEL_Builder::Parse_String(const std::string& str)
 	return GeoJSON::IO::Error::NO_ERROR;
 }
 
-O::DCEL::Storage& Py_DCEL_Builder::Get_DCEL_Ref()
+O::DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>& Py_DCEL_Builder::Get_DCEL_Ref()
 {
 	return m_storage;
 }
 
-O::DCEL::Feature_Info& Py_DCEL_Builder::Get_Feature_Info_Ref()
+O::DCEL::Feature_Info<O::DCEL::Face<Half_Edge_Impl>>& Py_DCEL_Builder::Get_Feature_Info_Ref()
 {
 	return m_features_infos;
 }
@@ -168,12 +170,12 @@ GeoJSON::IO::Error Py_DCEL_Builder_With_Filter::Parse_String(const std::string& 
 	return GeoJSON::IO::Error::NO_ERROR;
 }
 
-O::DCEL::Storage& Py_DCEL_Builder_With_Filter::Get_DCEL_Ref()
+O::DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>& Py_DCEL_Builder_With_Filter::Get_DCEL_Ref()
 {
 	return m_storage;
 }
 
-O::DCEL::Feature_Info& Py_DCEL_Builder_With_Filter::Get_Feature_Info_Ref()
+O::DCEL::Feature_Info<O::DCEL::Face<Half_Edge_Impl>>& Py_DCEL_Builder_With_Filter::Get_Feature_Info_Ref()
 {
 	return m_features_infos;
 }
@@ -195,31 +197,31 @@ void Init_DCEL_Bindings(pybind11::module_ &m)
 		.def("DCEL",                 &Py_DCEL_Builder_With_Filter::Get_DCEL_Ref)
 		.def("Feature_Info",         &Py_DCEL_Builder_With_Filter::Get_Feature_Info_Ref);
 
-	pybind11::class_<DCEL::Vertex>(m, "Vertex")
-		.def_property_readonly("x",              [](const DCEL::Vertex& v) { return v.x; })
-		.def_property_readonly("y",              [](const DCEL::Vertex& v) { return v.y; })
-		.def_property_readonly("outgoing_edges", [](const DCEL::Vertex& v) { 
-			std::vector<DCEL::Half_Edge> half_edges;
+	pybind11::class_<DCEL::Vertex<Half_Edge_Impl>>(m, "Vertex")
+		.def_property_readonly("x",              [](const DCEL::Vertex<Half_Edge_Impl>& v) { return v.x; })
+		.def_property_readonly("y",              [](const DCEL::Vertex<Half_Edge_Impl>& v) { return v.y; })
+		.def_property_readonly("outgoing_edges", [](const DCEL::Vertex<Half_Edge_Impl>& v) {
+			std::vector<Half_Edge_Impl> half_edges;
 			for(auto outgoing_edges : v.outgoing_edges)
 				half_edges.emplace_back(*outgoing_edges);	
 			return half_edges;
 		});
 
-	pybind11::class_<DCEL::Half_Edge>(m, "HalfEdge")
-		.def_property_readonly("tail", [](const DCEL::Half_Edge& e) { assert(e.tail); return *e.tail; })
-		.def_property_readonly("head", [](const DCEL::Half_Edge& e) { assert(e.head); return *e.head; })
-		.def_property_readonly("twin", [](const DCEL::Half_Edge& e) { assert(e.twin); return *e.twin; })
-		.def_property_readonly("next", [](const DCEL::Half_Edge& e) { assert(e.next); return *e.next; })
-		.def_property_readonly("prev", [](const DCEL::Half_Edge& e) { assert(e.prev); return *e.prev; })
-		.def_property_readonly("face", [](const DCEL::Half_Edge& e) { assert(e.face); return *e.face; });
+	pybind11::class_<Half_Edge_Impl>(m, "HalfEdge")
+		.def_property_readonly("tail", [](const Half_Edge_Impl& e) { assert(e.tail); return *e.tail; })
+		.def_property_readonly("head", [](const Half_Edge_Impl& e) { assert(e.head); return *e.head; })
+		.def_property_readonly("twin", [](const Half_Edge_Impl& e) { assert(e.twin); return *e.twin; })
+		.def_property_readonly("next", [](const Half_Edge_Impl& e) { assert(e.next); return *e.next; })
+		.def_property_readonly("prev", [](const Half_Edge_Impl& e) { assert(e.prev); return *e.prev; })
+		.def_property_readonly("face", [](const Half_Edge_Impl& e) { assert(e.face); return *e.face; });
 	
-	pybind11::class_<DCEL::Face>(m, "Face")
-		.def_property_readonly("edge", [](const DCEL::Face& f) { return *f.edge; }, pybind11::return_value_policy::reference_internal);
+	pybind11::class_<DCEL::Face<Half_Edge_Impl>>(m, "Face")
+		.def_property_readonly("edge", [](const DCEL::Face<Half_Edge_Impl>& f) { return *f.edge; }, pybind11::return_value_policy::reference_internal);
 
-	pybind11::class_<DCEL::Storage>(m, "Storage")
-		.def_property_readonly("vertices",  [](DCEL::Storage& s) { return s.vertices;},   pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("half_edges",[](DCEL::Storage& s) { return s.half_edges;}, pybind11::return_value_policy::reference_internal)
-		.def_property_readonly("faces",     [](DCEL::Storage& s) { return s.faces;},      pybind11::return_value_policy::reference_internal);
+	pybind11::class_<DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>>(m, "Storage")
+		.def_property_readonly("vertices",  [](DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>& s) { return s.vertices;},   pybind11::return_value_policy::reference_internal)
+		.def_property_readonly("half_edges",[](DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>& s) { return s.half_edges;}, pybind11::return_value_policy::reference_internal)
+		.def_property_readonly("faces",     [](DCEL::Storage<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>& s) { return s.faces;},      pybind11::return_value_policy::reference_internal);
 
 	pybind11::enum_<Configuration::DCEL::Merge_Strategy>(m, "Merge_Strategy")
 		.value("AT_FIRST",                                    Configuration::DCEL::Merge_Strategy::AT_FIRST);
