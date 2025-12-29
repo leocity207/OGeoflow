@@ -10,11 +10,11 @@
 
 namespace O::DCEL
 {
-	struct Half_Edge;
 
 	/**
 	 * @brief Vertex represent a Point in space linked to some outgoing and ingoing half_edges.
 	 */
+	template< class Half_Edge>
 	struct Vertex
 	{
 		double x = 0.0;  ///< x coordinate of the vertex (it is assumed that this value is in the same Coordinate system as the GeoJSON).

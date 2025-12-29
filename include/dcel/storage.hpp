@@ -1,11 +1,13 @@
+#ifndef DCEL_STORAGE_HPP
+#define DCEL_STORAGE_HPP
+
 #include "dcel/storage.h"
 
 //Utils
 #include <utils/zip.h>
 
-using namespace O;
-
-DCEL::Storage::Storage(const O::Configuration::DCEL& config) :
+template<class Vertex, class Half_Edge, class Face>
+O::DCEL::Storage<Vertex, Half_Edge, Face>::Storage(const O::Configuration::DCEL& config) :
 	config(config),
 	vertices(),
 	half_edges(),
@@ -22,7 +24,8 @@ DCEL::Storage::Storage(const O::Configuration::DCEL& config) :
 	feature_to_faces.reserve(config.max_faces);
 }
 
-DCEL::Vertex& DCEL::Storage::Get_Or_Create_Vertex(double x, double y)
+template<class Vertex, class Half_Edge, class Face>
+Vertex& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Vertex(double x, double y)
 {
 	uint64_t key = Vertex::Hash(x, y);
 	auto it = vertex_lookup.find(key);
@@ -32,7 +35,8 @@ DCEL::Vertex& DCEL::Storage::Get_Or_Create_Vertex(double x, double y)
 	return vertices.back();
 }
 
-DCEL::Half_Edge& DCEL::Storage::Get_Or_Create_Half_Edge(Vertex& origin,Vertex& head)
+template<class Vertex, class Half_Edge, class Face>
+Half_Edge& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Half_Edge(Vertex& origin,Vertex& head)
 {
 	uint64_t key = Half_Edge::Hash(origin, head);
 	auto it = edge_lookup.find(key);
@@ -44,13 +48,15 @@ DCEL::Half_Edge& DCEL::Storage::Get_Or_Create_Half_Edge(Vertex& origin,Vertex& h
 	return half_edges.back();
 }
 
-void DCEL::Storage::Links_twins( Half_Edge& edge, Half_Edge& twin)
+template<class Vertex, class Half_Edge, class Face>
+void O::DCEL::Storage<Vertex, Half_Edge, Face>::Links_twins( Half_Edge& edge, Half_Edge& twin)
 {
 	edge.twin = &twin;
 	twin.twin = &edge;
 }
 
-void DCEL::Storage::Insert_Edge_Sorted(const Vertex& vertex,Half_Edge& edge)
+template<class Vertex, class Half_Edge, class Face>
+void O::DCEL::Storage<Vertex, Half_Edge, Face>::Insert_Edge_Sorted(const Vertex& vertex,Half_Edge& edge)
 {
 	double vx = edge.head->x - vertex.x;
 	double vy = edge.head->y - vertex.y;
@@ -72,7 +78,8 @@ void DCEL::Storage::Insert_Edge_Sorted(const Vertex& vertex,Half_Edge& edge)
 	edge.tail->outgoing_edges.insert(pos, &edge);
 }
 
-void DCEL::Storage::Update_Around_Vertex(const Vertex& vertex)
+template<class Vertex, class Half_Edge, class Face>
+void O::DCEL::Storage<Vertex, Half_Edge, Face>::Update_Around_Vertex(const Vertex& vertex)
 {
 	if (vertex.outgoing_edges.size() < 2) return;
 
@@ -82,3 +89,5 @@ void DCEL::Storage::Update_Around_Vertex(const Vertex& vertex)
 		half_edge_curr->prev = half_edge_next->twin;
 	}
 }
+
+#endif //DCEL_STORAGE_HPP

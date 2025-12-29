@@ -7,12 +7,12 @@
 
 namespace O::DCEL
 {
-	struct Half_Edge;
 
 	/**
 	 * @brief A face is way to create half_edge cycle inside the DCEL gaph.
 	 *        In our case face are tightly linked to Polygone of the GeoJSON
 	 */
+	template<class Half_Edge>
 	struct Face
 	{
 		O::Unowned_Ptr<Half_Edge> edge = nullptr;    ///< a representative halfedge belonging to this face

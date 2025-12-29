@@ -8,11 +8,6 @@
 #include <cmath>
 #include <limits>
 
-// DCEL
-#include "face.h"
-#include "half_edge.h"
-#include "vertex.h"
-
 // CONFIGURATION
 #include "configuration/dcel.h"
 
@@ -26,6 +21,7 @@ namespace O::DCEL
 	 *        The class also contain look up map for fast acess to linked feature.
 	 *        We also embed a look up table that link face to their feature inside the GeoJSON it can be linked to the ``Feature_Info`` class
 	 */
+	template<class Vertex, class Half_Edge, class Face>
 	struct Storage
 	{
 		O::Configuration::DCEL config;
@@ -81,5 +77,7 @@ namespace O::DCEL
 		Storage(const O::Configuration::DCEL& config);
 	};
 } // namespace O::DCEL
+
+#include "storage.hpp"
 
 #endif // DCEL_STORAGE_H

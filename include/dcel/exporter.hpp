@@ -1,3 +1,6 @@
+#ifndef DCEL_EXPORTER_H
+#define DCEL_EXPORTER_H
+
 #include "dcel/exporter.h"
 
 // STL
@@ -11,9 +14,8 @@
 // DCEL
 #include "dcel/face.h"
 
-using namespace O;
-
-std::vector<GeoJSON::Position> DCEL::Exporter::To_GeoJSON::Extract_Ring(const Face& face)
+template<class Vertex, class Half_Edge, class Face>
+std::vector<O::GeoJSON::Position> O::DCEL::Exporter::To_GeoJSON<Vertex, Half_Edge, Face>::Extract_Ring(const Face& face)
 {
 	std::vector<GeoJSON::Position> coords;
 	Half_Edge* e = face.edge;
@@ -29,7 +31,8 @@ std::vector<GeoJSON::Position> DCEL::Exporter::To_GeoJSON::Extract_Ring(const Fa
 	return coords;
 }
 
-GeoJSON::Polygon DCEL::Exporter::To_GeoJSON::Create_Polygones(const std::vector<Unowned_Ptr<Face>>& faces)
+template<class Vertex, class Half_Edge, class Face>
+O::GeoJSON::Polygon O::DCEL::Exporter::To_GeoJSON<Vertex, Half_Edge, Face>::Create_Polygones(const std::vector<Unowned_Ptr<Face>>& faces)
 {
 	GeoJSON::Polygon polygons;
 	for (auto face : faces)
@@ -41,7 +44,8 @@ GeoJSON::Polygon DCEL::Exporter::To_GeoJSON::Create_Polygones(const std::vector<
 	return polygons;
 }
 
-GeoJSON::Root DCEL::Exporter::To_GeoJSON::Convert(const Feature_Info& info)
+template<class Vertex, class Half_Edge, class Face>
+O::GeoJSON::Root O::DCEL::Exporter::To_GeoJSON<Vertex, Half_Edge, Face>::Convert(const O::DCEL::Feature_Info<Face>& info)
 {
 	GeoJSON::Feature_Collection featureCollection;
 
@@ -83,3 +87,5 @@ GeoJSON::Root DCEL::Exporter::To_GeoJSON::Convert(const Feature_Info& info)
 	result.object = std::move(featureCollection);
 	return result;
 }
+
+#endif //DCEL_EXPORTER_H

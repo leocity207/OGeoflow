@@ -1,3 +1,6 @@
+#ifndef DCEL_BUILDER_HPP
+#define DCEL_BUILDER_HPP
+
 #include "dcel/builder.h"
 
 // STD
@@ -8,9 +11,8 @@
 // UTILS
 #include <utils/zip.h>
 
-using namespace O;
-
-DCEL::Builder::From_GeoJSON::From_GeoJSON(const O::Configuration::DCEL& config) :
+template<class Vertex, class Half_Edge, class Face>
+O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::From_GeoJSON(const O::Configuration::DCEL& config) :
 	m_dcel(config),
 	m_valid_dcel(true),
 	m_valid_feature_info(true),
@@ -19,7 +21,8 @@ DCEL::Builder::From_GeoJSON::From_GeoJSON(const O::Configuration::DCEL& config) 
 
 }
 
-bool DCEL::Builder::From_GeoJSON::Parse(GeoJSON::Root&& geojson)
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Parse(GeoJSON::Root&& geojson)
 {
 	return std::visit([&](auto&& val) {
 		using T = std::decay_t<decltype(val)>;
@@ -38,7 +41,8 @@ bool DCEL::Builder::From_GeoJSON::Parse(GeoJSON::Root&& geojson)
 
 }
 
-bool DCEL::Builder::From_GeoJSON::On_Full_Feature(GeoJSON::Feature&& feature)
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::On_Full_Feature(GeoJSON::Feature&& feature)
 {
 	if (!feature.geometry) return true;
 	m_feature_info.feature_properties.emplace_back(std::move(feature.properties));
@@ -53,7 +57,8 @@ bool DCEL::Builder::From_GeoJSON::On_Full_Feature(GeoJSON::Feature&& feature)
 	return true;
 }
 
-bool  DCEL::Builder::From_GeoJSON::On_Root(std::optional<GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::On_Root(std::optional<GeoJSON::Bbox>&& bbox, std::optional<std::string>&& id)
 {
 	m_feature_info.root_bbox = std::move(bbox);
 	m_feature_info.root_id = std::move(id);
@@ -61,14 +66,15 @@ bool  DCEL::Builder::From_GeoJSON::On_Root(std::optional<GeoJSON::Bbox>&& bbox, 
 	return true;
 }
 
-void DCEL::Builder::From_GeoJSON::Link_Outer_Bound_Face()
+template<class Vertex, class Half_Edge, class Face>
+void O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Link_Outer_Bound_Face()
 {
 	for (Half_Edge& half_edge: m_dcel.half_edges)
 	{
 		if (half_edge.face)
 			continue;
 		m_dcel.faces.emplace_back( &half_edge );
-		Half_Edge* e = &half_edge;
+		O::Unowned_Ptr<Half_Edge> e(&half_edge);
 		do {
 			e->face = &m_dcel.faces.back();
 			e = e->next;
@@ -77,7 +83,8 @@ void DCEL::Builder::From_GeoJSON::Link_Outer_Bound_Face()
 	}
 }
 
-std::optional<DCEL::Storage> DCEL::Builder::From_GeoJSON::Get_Dcel()
+template<class Vertex, class Half_Edge, class Face>
+std::optional<O::DCEL::Storage<Vertex, Half_Edge, Face>> O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Get_Dcel()
 {
 
 	// finish face for outer bound
@@ -86,12 +93,13 @@ std::optional<DCEL::Storage> DCEL::Builder::From_GeoJSON::Get_Dcel()
 	if(m_valid_dcel)
 	{
 		m_valid_dcel = false;
-		return static_cast<Storage>(std::move(m_dcel));
+		return static_cast<Storage<Vertex, Half_Edge, Face>>(std::move(m_dcel));
 	}
 	return std::nullopt;
 }
 
-std::optional<DCEL::Feature_Info> DCEL::Builder::From_GeoJSON::Get_Feature_Info()
+template<class Vertex, class Half_Edge, class Face>
+std::optional<O::DCEL::Feature_Info<Face>> O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Get_Feature_Info()
 {
 	if(m_valid_feature_info)
 	{
@@ -101,7 +109,8 @@ std::optional<DCEL::Feature_Info> DCEL::Builder::From_GeoJSON::Get_Feature_Info(
 	return std::nullopt;
 }
 
-bool DCEL::Builder::From_GeoJSON::On_Polygon(const GeoJSON::Polygon& poly)
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::On_Polygon(const GeoJSON::Polygon& poly)
 {
     if (poly.rings.empty()) return true;
     auto faces = Build_Face_From_Rings(poly.rings);
@@ -110,7 +119,8 @@ bool DCEL::Builder::From_GeoJSON::On_Polygon(const GeoJSON::Polygon& poly)
     return true;
 }
 
-bool DCEL::Builder::From_GeoJSON::On_MultiPolygon(const GeoJSON::Multi_Polygon& mp)
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::On_MultiPolygon(const GeoJSON::Multi_Polygon& mp)
 {
 	m_feature_info.faces.push_back({});
 	for (auto const& poly : mp.polygons)
@@ -122,9 +132,10 @@ bool DCEL::Builder::From_GeoJSON::On_MultiPolygon(const GeoJSON::Multi_Polygon& 
     return true;
 }
 
-std::vector<Unowned_Ptr<DCEL::Vertex>> DCEL::Builder::From_GeoJSON::Create_Vertex(const std::vector<GeoJSON::Position>& ring)
+template<class Vertex, class Half_Edge, class Face>
+std::vector<O::Unowned_Ptr<Vertex>> O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Create_Vertex(const std::vector<GeoJSON::Position>& ring)
 {
-	std::vector<Unowned_Ptr<DCEL::Vertex>> ring_vertices;
+	std::vector<Unowned_Ptr<Vertex>> ring_vertices;
 	ring_vertices.reserve(ring.size());
 
 	// create/get vertices
@@ -143,9 +154,10 @@ std::vector<Unowned_Ptr<DCEL::Vertex>> DCEL::Builder::From_GeoJSON::Create_Verte
 	return ring_vertices;
 }
 
-std::vector<Unowned_Ptr<DCEL::Half_Edge>> DCEL::Builder::From_GeoJSON::Create_Forward_Half_Edge(const std::vector<Unowned_Ptr<Vertex>>& ring_vertex)
+template<class Vertex, class Half_Edge, class Face>
+std::vector<O::Unowned_Ptr<Half_Edge>> O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Create_Forward_Half_Edge(const std::vector<O::Unowned_Ptr<Vertex>>& ring_vertex)
 {
-	std::vector<Unowned_Ptr<DCEL::Half_Edge>> ring_edges;
+	std::vector<Unowned_Ptr<Half_Edge>> ring_edges;
 	ring_edges.reserve(ring_vertex.size());
 	for (auto&& [origin, head] : O::Zip_Adjacent_Circular(ring_vertex))
 	{
@@ -161,7 +173,8 @@ std::vector<Unowned_Ptr<DCEL::Half_Edge>> DCEL::Builder::From_GeoJSON::Create_Fo
 	return ring_edges;
 }
 
-void DCEL::Builder::From_GeoJSON::Link_Next_Prev(const std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edges)
+template<class Vertex, class Half_Edge, class Face>
+void O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Link_Next_Prev(const std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edges)
 {
 	for (size_t i : std::views::iota(0ul, ring_edges.size()))
 	{
@@ -173,7 +186,8 @@ void DCEL::Builder::From_GeoJSON::Link_Next_Prev(const std::vector<O::Unowned_Pt
 	}
 }
 
-DCEL::Face& DCEL::Builder::From_GeoJSON::Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face)
+template<class Vertex, class Half_Edge, class Face>
+Face& O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face)
 {
 	Half_Edge& valid_start = (outer_face == nullptr) ? *ring_edge[0] : *ring_edge[1];
 	O::Unowned_Ptr<Half_Edge> current(&valid_start);
@@ -186,7 +200,8 @@ DCEL::Face& DCEL::Builder::From_GeoJSON::Link_Face(std::vector<O::Unowned_Ptr<Ha
 	return m_dcel.faces.back();
 }
 
-std::vector<O::Unowned_Ptr<DCEL::Face>> DCEL::Builder::From_GeoJSON::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON::Position>>& rings)
+template<class Vertex, class Half_Edge, class Face>
+std::vector<O::Unowned_Ptr<Face>> O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Build_Face_From_Rings(const std::vector<std::vector<GeoJSON::Position>>& rings)
 {
 	assert(!rings.empty());
 
@@ -218,3 +233,5 @@ std::vector<O::Unowned_Ptr<DCEL::Face>> DCEL::Builder::From_GeoJSON::Build_Face_
 	} // end for each ring
 	return created_faces;
 };
+
+#endif //DCEL_BUILDER_HPP

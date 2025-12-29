@@ -19,6 +19,7 @@ namespace O::DCEL::Builder
 	/**
 	 * @brief Builder is a GeoJSON reciever (from ``IO::Full_Parser``or ``IO::Feature_Parser``) that build a DCEL Structure from the input GeoJSON data
 	 */
+	template<class Vertex, class Half_Edge, class Face>
 	class From_GeoJSON
 	{
 	public:
@@ -44,14 +45,14 @@ namespace O::DCEL::Builder
 		 * @return DCEL::Storage Object, std::nullopt if the parsing went bad or if already been called. 
 		 * @warning this function must only be called once since the ``DCEL::Storage`` is moved to the caller
 		 */
-		std::optional<Storage> Get_Dcel();
+		std::optional<Storage<Vertex, Half_Edge, Face>> Get_Dcel();
 
 		/**
 		 * @brief retirve the fully parsed ``DCEL::Feature_Info`` Object if parsing went well
 		 * @return DCEL::Feature_Info Object, std::nullopt if the parsing went bad or if already been called. 
 		 * @warning this function must only be called once since the ``DCEL::Feature_Info`` is moved to the caller
 		 */
-		std::optional<Feature_Info> Get_Feature_Info();
+		std::optional<Feature_Info<Face>> Get_Feature_Info();
 
 	private:
 		/**
@@ -97,18 +98,20 @@ namespace O::DCEL::Builder
 		 * @param outer_face         the outer face that contains this ring.
 		 * @return The index of the newly created face.
 		 */
-		DCEL::Face& Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face);
+		Face& Link_Face(std::vector<O::Unowned_Ptr<Half_Edge>>& ring_edge, O::Unowned_Ptr<Face> outer_face);
 
 		void Link_Outer_Bound_Face();
 
 
 	private:
 
-		Storage m_dcel;    ///< Storage for the DCEL
+		Storage<Vertex, Half_Edge, Face> m_dcel;    ///< Storage for the DCEL
 		bool m_valid_dcel = true;         ///< runonce for the Get_Dcel() function
 		bool m_valid_feature_info = true; ///< runonce for the Get_Feature_Info function
-		Feature_Info m_feature_info;      ///< Feature_Info to retain the parsed GeoJSON meta data
+		Feature_Info<Face> m_feature_info;      ///< Feature_Info to retain the parsed GeoJSON meta data
 	};
 }
+
+#include "builder.hpp"
 
 #endif //DCEL_BUILDER_H

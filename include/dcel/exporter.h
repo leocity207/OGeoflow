@@ -17,6 +17,7 @@ namespace O::DCEL::Exporter
 	/**
 	 * @brief Exporter can be used to reconstruct back a GeoJSON object from A DCEL Storage and a FeatureInfo
 	 */
+	template<class Vertex, class Half_Edge, class Face>
 	class To_GeoJSON
 	{
 	public:
@@ -26,7 +27,7 @@ namespace O::DCEL::Exporter
 		 * @param info the Feature_INFO
 		 * @return O::GeoJSON::Root 
 		 */
-		static O::GeoJSON::Root Convert(const Feature_Info& info);
+		static O::GeoJSON::Root Convert(const Feature_Info<Face>& info);
 
 	private:
 	
@@ -44,7 +45,7 @@ namespace O::DCEL::Exporter
 		 * @param feature_id feature index that can be found inside the ``Feature_Info``
 		 * @return std::vector<Unowned_Ptr<Face>> containing index of the feature
 		 */
-		static std::vector<Unowned_Ptr<const Face>> Collect_Face_From_Feature_ID(const Storage& dcel, size_t feature_id);
+		static std::vector<Unowned_Ptr<const Face>> Collect_Face_From_Feature_ID(const Storage<Vertex, Half_Edge, Face>& dcel, size_t feature_id);
 
 
 		/**
@@ -56,5 +57,7 @@ namespace O::DCEL::Exporter
 		static GeoJSON::Polygon Create_Polygones( const std::vector<Unowned_Ptr<Face>>& faces);
 	};
 }
+
+#include "exporter.hpp"
 
 #endif // DCEL_TO_GEOJSON_H
