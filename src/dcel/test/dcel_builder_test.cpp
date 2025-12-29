@@ -3,6 +3,9 @@
 // DCEL
 #include "dcel_builder_test.h"
 #include "dcel/builder.h"
+#include "dcel/face.h"
+#include "dcel/vertex.h"
+#include "dcel/half_edge.h"
 
 // IO
 #include "io/feature_parser.h"
@@ -19,7 +22,7 @@
 // CONFIGURATION
 #include "configuration/dcel.h"
 
-static O::Configuration::DCEL config{
+static O::Configuration::DCEL g_config{
 	1000,
 	1000,
 	1000,
@@ -27,12 +30,18 @@ static O::Configuration::DCEL config{
 	O::Configuration::DCEL::Merge_Strategy::AT_FIRST
 };
 
-class Auto_Builder : public O::DCEL::Builder::From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
+struct Half_Edge_Impl : public O::DCEL::Half_Edge<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>> {
+	using O::DCEL::Half_Edge<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>::Half_Edge;
+};
+
+using Builder_From_GeoJSON = O::DCEL::Builder::From_GeoJSON<O::DCEL::Vertex<Half_Edge_Impl>, Half_Edge_Impl, O::DCEL::Face<Half_Edge_Impl>>;
+
+class Auto_Builder : public Builder_From_GeoJSON, public O::GeoJSON::IO::Feature_Parser<Auto_Builder> {
 public:
-	using O::DCEL::Builder::From_GeoJSON::On_Full_Feature;
-	using O::DCEL::Builder::From_GeoJSON::On_Root;
+	using Builder_From_GeoJSON::On_Full_Feature;
+	using Builder_From_GeoJSON::On_Root;
 	Auto_Builder(const O::Configuration::DCEL& conf) :
-		O::DCEL::Builder::From_GeoJSON(conf),
+		Builder_From_GeoJSON(conf),
 		O::GeoJSON::IO::Feature_Parser<Auto_Builder>()
 	{
 
@@ -44,7 +53,7 @@ TYPED_TEST_SUITE_P(DCEL_Builder_Test);
 TYPED_TEST_P(DCEL_Builder_Test, Vertex)
 {
 
-	Auto_Builder auto_builder(config);
+	Auto_Builder auto_builder(g_config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));
@@ -70,7 +79,7 @@ TYPED_TEST_P(DCEL_Builder_Test, Vertex)
 
 TYPED_TEST_P(DCEL_Builder_Test, Half_Edge)
 {
-    Auto_Builder auto_builder(config);
+    Auto_Builder auto_builder(g_config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));
@@ -106,7 +115,7 @@ TYPED_TEST_P(DCEL_Builder_Test, Half_Edge)
 
 TYPED_TEST_P(DCEL_Builder_Test, Face)
 {
-    Auto_Builder auto_builder(config);
+    Auto_Builder auto_builder(g_config);
 	rapidjson::StringStream ss(TypeParam::json.c_str());
 	rapidjson::Reader reader;
 	ASSERT_TRUE(reader.Parse(ss, auto_builder));

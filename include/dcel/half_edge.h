@@ -9,19 +9,17 @@
 
 namespace O::DCEL
 {
-	struct Vertex;
-	struct Face;
-
 	/**
 	 * @brief Hald_Edge can be seen as directional edges in a graph. one edge between two vertex have two Half_Edge in oposite direction. Hence the Doubly Connected Edge List.
 	 */
+	template<class Vertex, class Half_Edge_T, class Face>
 	struct Half_Edge
 	{
 		O::Unowned_Ptr<Vertex> tail = nullptr; ///< index of origin Vertex
 		O::Unowned_Ptr<Vertex> head = nullptr; ///< index of origin Vertex
-		O::Unowned_Ptr<Half_Edge> twin = nullptr; ///< index of twin Half_Edge (reverse direction)
-		O::Unowned_Ptr<Half_Edge> next = nullptr; ///< index of next Half_Edge around face
-		O::Unowned_Ptr<Half_Edge> prev = nullptr; ///< index of previous Half_Edge around face
+		O::Unowned_Ptr<Half_Edge_T> twin = nullptr; ///< index of twin Half_Edge (reverse direction)
+		O::Unowned_Ptr<Half_Edge_T> next = nullptr; ///< index of next Half_Edge around face
+		O::Unowned_Ptr<Half_Edge_T> prev = nullptr; ///< index of previous Half_Edge around face
 		O::Unowned_Ptr<Face> face = nullptr; ///< index of incident face (left side)
 
 		/**

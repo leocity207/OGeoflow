@@ -19,6 +19,7 @@ namespace O::DCEL
      * @brief Feature_Info is a structure that help retain GeoJSON data after the construction of the DCEL for later GeoJSON reconstruction
      * @note all feature encountered inside the GeoJSON are push with their respective index inside each lists. ``feature_properties``, ``ids``, ``bboxes`` are assumed to be of the same size
      */
+    template<class Face>
     struct Feature_Info
     {
         std::vector<O::GeoJSON::Property> feature_properties; ///< list of properties
