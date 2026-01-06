@@ -4,6 +4,12 @@
 
 ### fix
 
+ * `CMAKE`: Update Outils
+
+## [0.1.9] - 2025-12-09
+
+### fix
+
  * `DCEL`: DCEL are now template
   
 ## [0.1.8] - 2025-12-09
