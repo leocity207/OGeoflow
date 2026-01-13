@@ -36,6 +36,15 @@ Vertex& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Vertex(double x
 }
 
 template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Does_Vertex_Exist(double x, double y)
+{
+	uint64_t key = Vertex::Hash(x, y);
+	auto it = vertex_lookup.find(key);
+	return it != vertex_lookup.end();
+}
+
+
+template<class Vertex, class Half_Edge, class Face>
 Half_Edge& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Half_Edge(Vertex& origin,Vertex& head)
 {
 	uint64_t key = Half_Edge::Hash(origin, head);
@@ -46,6 +55,14 @@ Half_Edge& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Half_Edge(Ve
 	edge_lookup.emplace(key, &half_edges.back());
 
 	return half_edges.back();
+}
+
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Does_Half_Edge_Exist(Vertex& origin_vertex, Vertex& head_vertex)
+{
+	uint64_t key = Half_Edge::Hash(origin, head);
+	auto it = edge_lookup.find(key);
+	return it != edge_lookup.end();
 }
 
 template<class Vertex, class Half_Edge, class Face>
@@ -88,6 +105,67 @@ void O::DCEL::Storage<Vertex, Half_Edge, Face>::Update_Around_Vertex(const Verte
 		half_edge_next->twin->next = half_edge_curr;
 		half_edge_curr->prev = half_edge_next->twin;
 	}
+}
+
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_x, double new_y)
+{
+	if(!Does_Vertex_Exist(new_x, new_y))
+		return vertex.Move(new_x,new_y);
+	else
+	{
+		auto& other_vertex = Get_Or_Create_Vertex(new_x,new_y);
+		if(!Does_Half_Edge_Exist(vertex, other_vertex))
+			return false;
+		auto& half_edge = Get_Or_Create_Half_Edge(vertex, other_vertex);
+		if(!half_edge.twin)
+			return false;
+		auto& half_edge_twin = *half_edge.twin;
+
+		half_edge.prev->next = half_edge.next;
+		for(half_edges : vertex.outgoing_edges)
+	}
+}
+
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Remove_Half_Edge(Half_Edge& edge)
+{
+	if(!half_edge.twin)
+		return false;
+	auto& half_edge_twin = *half_edge.twin;
+	
+	half_edge.prev->next = half_edge.next;
+	half_edge.next->prev = half_edge.next;
+	half_edge_twin.prev->next = half_edge_twin.next;
+	half_edge_twin.prev->next = half_edge_twin.next;
+
+	dcel.half_edges.back()->next->prev = &half_edge_twin;
+	dcel.half_edges.back()->prev->next = &half_edge_twin;
+	std::swap(dcel.half_edges.back(), half_edge_twin);
+	dcel.half_edges.pop_back();
+
+	dcel.half_edges.back()->next->prev = &half_edge;
+	dcel.half_edges.back()->prev->next = &half_edge;
+	std::swap(dcel.half_edges.back(), half_edge);
+	dcel.half_edges.pop_back();
+
+	half_edge.twin = &half_edge_twin;
+	Links_twins(half_edge,half_edge_twin);
+}
+
+template<class Vertex, class Half_Edge, class Face>
+bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Relink_Outgoing_Edges(Vertex& v_new, Vertex& v_old, Half_Edge& edge)
+{
+	auto it = std::ranges::find(v_new.outgoing_edges, &edge);
+	if(it == v_new.outgoing_edges.end()) return false;
+	v_new.outgoing_edges.erase(it);
+
+	auto it = std::ranges::find(v_old.outgoing_edges, &edge);
+	if(it == v_old.outgoing_edges.end()) return false;
+	v_old.outgoing_edges.erase(it);
+
+	for(auto remaining_edge : v_old.outgoing_edges)
+		Insert_Edge_Sorted(v_new, *remaining_edge)
 }
 
 #endif //DCEL_STORAGE_HPP
