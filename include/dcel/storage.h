@@ -99,15 +99,23 @@ namespace O::DCEL
 		private:
 
 			/**
-			 * @brief remove the half_edge 
-			 * @note does not update
-			 * @param edge edge and twin to remove
+			 * @brief remove the half_edge and its twin by swaping it with the last half_edge
+			 * @param edge edge and its associated twin to remove
+			 * @return true if removing was successfull
+			 * @return false if removing failed
+			 * @note care should be taken because this function does not check if the given edge was used in the storage you should merge it before remove it
+			 */
+			bool Remove(Half_Edge& edge);
+
+			/**
+			 * @brief remove the vertex by swaping it with the last vertex in the storage
+			 * @param vertex to remove
 			 * @return true if removing was successfull
 			 * @return false if removing failed
 			 */
-			bool Remove_Half_Edge(Half_Edge& edge);
+			bool Remove(Vertex& vertex);
 
-			bool Relink_Outgoing_Edges(Vertex& v1, Vertex& v2, Half_Edge& edge)
+			bool Merge(Vertex& v_keep, Vertex& v_discard, Half_Edge& e_discard);
 
 	};
 } // namespace O::DCEL
