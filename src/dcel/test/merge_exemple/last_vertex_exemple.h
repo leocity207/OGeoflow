@@ -1,9 +1,9 @@
-#ifndef SRC_DCEL_TEST_MERGE_EXEMPLE_ALINGED_EXEMPLE_H
-#define SRC_DCEL_TEST_MERGE_EXEMPLE_ALINGED_EXEMPLE_H
+#ifndef SRC_DCEL_TEST_MERGE_EXEMPLE_LAST_VERTEX_EXEMPLE_H
+#define SRC_DCEL_TEST_MERGE_EXEMPLE_LAST_VERTEX_EXEMPLE_H
 
 #include "common.h"
 
-struct Aligned_Exemple
+struct Last_Vertex_Exemple
 {
 	static inline const std::vector<Merge_Exemple::Vertex> vertices =
 	{
@@ -22,13 +22,13 @@ struct Aligned_Exemple
 
 	static inline const std::vector<Merge_Exemple::Move> moves =
 	{
-		{4,0,1},
+		{0,0,2},
 	};
 
 	static inline const std::vector<Merge_Exemple::Vertex> expected_vertices =
 	{
 		{-4,0,{0}},
-		{4,0,{1}},
+		{0,0,{1}},
 	};
 
 	static inline const std::vector<Merge_Exemple::Half_Edge> expected_edges =
@@ -38,4 +38,4 @@ struct Aligned_Exemple
 	};
 };
 
-#endif //SRC_DCEL_TEST_MERGE_EXEMPLE_ALINGED_EXEMPLE_H
+#endif //SRC_DCEL_TEST_MERGE_EXEMPLE_LAST_VERTEX_EXEMPLE_H

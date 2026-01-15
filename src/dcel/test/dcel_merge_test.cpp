@@ -8,6 +8,8 @@
 // EXEMPLE
 #include "merge_exemple/x_exemple.h"
 #include "merge_exemple/aligned_exemple.h"
+#include "merge_exemple/aligned_reverse_exemple.h"
+#include "merge_exemple/last_vertex_exemple.h"
 
 template<typename T>
 class Merge_Test : public ::testing::Test {};
@@ -66,7 +68,7 @@ TYPED_TEST_P(Merge_Test, Nominal)
 		//EXPECT_EQ(d_next, expected_half_edge.prev);
 		//EXPECT_EQ(d_prev, expected_half_edge.next);
 		//EXPECT_EQ(d_face, expected_half_edge.face);
-		//EXPECT_EQ(dcel.edge_lookup[Merge_Exemple::Half_Edge_Impl::Hash(*half_edge.tail, *half_edge.head)], &half_edge);
+		EXPECT_EQ(dcel.edge_lookup[Merge_Exemple::Half_Edge_Impl::Hash(*half_edge.tail, *half_edge.head)], &half_edge);
 	}
 }
 
@@ -78,7 +80,9 @@ REGISTER_TYPED_TEST_SUITE_P(
 // Instantiate for all ts
 using All_Test_Sets = ::testing::Types<
 	X_Exemple,
-	Aligned_Exemple
+	Aligned_Exemple,
+	Aligned_Rerverse_Exemple,
+	Last_Vertex_Exemple
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DCEL, Merge_Test, All_Test_Sets);

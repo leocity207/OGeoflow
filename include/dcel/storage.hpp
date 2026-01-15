@@ -129,17 +129,18 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 		if (&linking_half_edge < linking_half_edge.twin)
 		{
 			// tricks so we always move from the orginial edge and dcel keep its order
-			if (!Merge(other_vertex, vertex, linking_half_edge)) [[unlikely]] return false;
+			vertex.Move(new_x, new_y);
+			if (!Merge(vertex, other_vertex, *linking_half_edge.twin)) [[unlikely]] return false;
 			// check edge order with twin to always remove in the right order
-			if (!Remove(*linking_half_edge.twin)) [[unlikely]] return false;
-			if (!Remove(vertex)) [[unlikely]] return false;
+			if (!Remove(linking_half_edge)) [[unlikely]] return false;
+			if (!Remove(other_vertex)) [[unlikely]] return false;
 		}
 		else
 		{
 			// tricks so we always move from the orginial edge and dcel keep its order
 			if (!Merge(other_vertex, vertex, linking_half_edge)) [[unlikely]] return false;
 			// check edge order with twin to always remove in the right order
-			if (!Remove(linking_half_edge)) [[unlikely]] return false;
+			if (!Remove(*linking_half_edge.twin)) [[unlikely]] return false;
 			if (!Remove(vertex)) [[unlikely]] return false;
 		}
 		return true;
@@ -149,6 +150,13 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 template<class Vertex, class Half_Edge, class Face>
 bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Remove(Half_Edge& half_edge)
 {
+	if (half_edge.twin == &half_edges.back())
+	{
+		half_edges.pop_back();
+		half_edges.pop_back();
+		return true;
+	}
+
 	if(!half_edge.twin ) [[unlikely]] return false;
 	if (!half_edges.back().next || !half_edges.back().prev) return false;
 
@@ -181,6 +189,12 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Remove(Half_Edge& half_edge)
 template<class Vertex, class Half_Edge, class Face>
 bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Remove(Vertex& vertex)
 {
+	if (&vertex == &vertices.back())
+	{
+		vertices.pop_back();
+		return true;
+	}
+
 	for (auto edge : vertices.back().outgoing_edges)
 	{
 		if(!edge || !edge->twin) [[unlikely]] return false;
