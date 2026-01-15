@@ -5,7 +5,7 @@
 
 struct Aligned_Exemple
 {
-	static inline const std::vector<Merge_Exemple::Vertex> vertex =
+	static inline const std::vector<Merge_Exemple::Vertex> vertices =
 	{
 		{0,0,{0,2}},
 		{4,0,{1}},
@@ -25,16 +25,16 @@ struct Aligned_Exemple
 		{4,0,0},
 	};
 
-	static inline const std::vector<Merge_Exemple::Vertex> expected_vertex =
+	static inline const std::vector<Merge_Exemple::Vertex> expected_vertices =
 	{
+		{-4,0,{0}},
 		{4,0,{1}},
-		{-4,0,{3}},
 	};
 
 	static inline const std::vector<Merge_Exemple::Half_Edge> expected_edges =
 	{
-		{ 0,1,1,1,2,0},
-		{ 1,0,0,3,0,1},
+		{ 0,1,1,1,1,0},
+		{ 1,0,0,0,0,1},
 	};
 };
 

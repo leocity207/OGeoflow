@@ -75,7 +75,7 @@ namespace O::DCEL
 		 * @param vertex the vertex where to add the outgoing edge
 		 * @param edge the edge index that will be added inside the outgoing edge
 		 */
-		void Insert_Edge_Sorted(const Vertex& vertex, Half_Edge& edge);
+		void Insert_Edge_Sorted(Vertex& vertex, Half_Edge& edge);
 
 		/**
 		 * @brief Link the Edge and its twin edge together
