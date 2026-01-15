@@ -126,9 +126,22 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 		if(!Does_Half_Edge_Exist(vertex, other_vertex))
 			return false; // Half edge should exist otherwise the move means we are crossing a different vertex.
 		auto& linking_half_edge = Get_Or_Create_Half_Edge(vertex, other_vertex);
-		if(!Merge(other_vertex, vertex, linking_half_edge)) [[unlikely]] return false;
-		if(!Remove(linking_half_edge)) [[unlikely]] return false;
-		if(!Remove(vertex)) [[unlikely]] return false;
+		if (&linking_half_edge < linking_half_edge.twin)
+		{
+			// tricks so we always move from the orginial edge and dcel keep its order
+			if (!Merge(other_vertex, vertex, linking_half_edge)) [[unlikely]] return false;
+			// check edge order with twin to always remove in the right order
+			if (!Remove(*linking_half_edge.twin)) [[unlikely]] return false;
+			if (!Remove(vertex)) [[unlikely]] return false;
+		}
+		else
+		{
+			// tricks so we always move from the orginial edge and dcel keep its order
+			if (!Merge(other_vertex, vertex, linking_half_edge)) [[unlikely]] return false;
+			// check edge order with twin to always remove in the right order
+			if (!Remove(linking_half_edge)) [[unlikely]] return false;
+			if (!Remove(vertex)) [[unlikely]] return false;
+		}
 		return true;
 	}
 }
@@ -210,8 +223,15 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Merge(Vertex& v_keep, Vertex& v_
 		if(!remaining_edge || !remaining_edge->twin) [[unlikely]] return false;
 		Insert_Edge_Sorted(v_keep, *remaining_edge);
 		// While we are here change head tail of kept edge to v_keep
+
+		edge_lookup.erase(Half_Edge::Hash(*remaining_edge->tail, *remaining_edge->head));
+		edge_lookup.erase(Half_Edge::Hash(*remaining_edge->head, *remaining_edge->tail));
+
 		remaining_edge->tail = &v_keep;
 		remaining_edge->twin->head = &v_keep;
+
+		edge_lookup.emplace(Half_Edge::Hash(*remaining_edge->tail, *remaining_edge->head), remaining_edge);
+		edge_lookup.emplace(Half_Edge::Hash(*remaining_edge->head, *remaining_edge->tail), remaining_edge->twin);
 	}
 
 	// Relink next and prev of all edge connected to 
