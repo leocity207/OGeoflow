@@ -43,13 +43,31 @@ namespace O::DCEL
 		Vertex& Get_Or_Create_Vertex(double x, double y);
 
 		/**
+		 * @brief tell if a vertex already exist at coordinate
+		 * @param x coordinate of the vertex
+		 * @param y coordinate of the vertex
+		 * @return true if a vertex exist
+		 * @return false vertex does not exist
+		 */
+		bool Does_Vertex_Exist(double x, double y);
+
+		/**
 		 * @brief Create or Get Half_Edge if it does not exist inside the ``half_edges``
 		 *        Also ensures the twin exists (but twin may be a separate halfedge created before).
-		 * @param origin_vertex the origin ``vertex`` index (in the vertices inside the ``Storage``).
-		 * @param head_vertex the head ``vertex`` index (in the vertices inside the ``Storage``).
+		 * @param origin_vertex the origin ``vertex`` (in the vertices inside the ``Storage``).
+		 * @param head_vertex the head ``vertex`` (in the vertices inside the ``Storage``).
 		 * @return size_t index of the vertex in the ``half_edges``
 		 */
 		Half_Edge& Get_Or_Create_Half_Edge(Vertex& origin_vertex, Vertex& head_vertex);
+
+		/**
+		 * @brief tell if an half edge linking the two vertex exist
+		 * @param x the origin ``vertex`` (in the vertices inside the ``Storage``).
+		 * @param y the head ``vertex`` (in the vertices inside the ``Storage``).
+		 * @return true if a half edge exist
+		 * @return false half edge does not exist
+		 */
+		bool Does_Half_Edge_Exist(Vertex& origin_vertex, Vertex& head_vertex);
 
 		/**
 		 * @brief insert half_edge inside the vertext outedge list and directly sort it
@@ -57,7 +75,7 @@ namespace O::DCEL
 		 * @param vertex the vertex where to add the outgoing edge
 		 * @param edge the edge index that will be added inside the outgoing edge
 		 */
-		void Insert_Edge_Sorted(const Vertex& vertex, Half_Edge& edge);
+		void Insert_Edge_Sorted(Vertex& vertex, Half_Edge& edge);
 
 		/**
 		 * @brief Link the Edge and its twin edge together
@@ -75,6 +93,30 @@ namespace O::DCEL
 
 		Storage() = delete;
 		Storage(const O::Configuration::DCEL& config);
+
+		bool Move(Vertex& edge, double new_x, double new_y);
+
+		private:
+
+			/**
+			 * @brief remove the half_edge and its twin by swaping it with the last half_edge
+			 * @param edge edge and its associated twin to remove
+			 * @return true if removing was successfull
+			 * @return false if removing failed
+			 * @note care should be taken because this function does not check if the given edge was used in the storage you should merge it before remove it
+			 */
+			bool Remove(Half_Edge& edge);
+
+			/**
+			 * @brief remove the vertex by swaping it with the last vertex in the storage
+			 * @param vertex to remove
+			 * @return true if removing was successfull
+			 * @return false if removing failed
+			 */
+			bool Remove(Vertex& vertex);
+
+			bool Merge(Vertex& v_keep, Vertex& v_discard, Half_Edge& e_discard);
+
 	};
 } // namespace O::DCEL
 

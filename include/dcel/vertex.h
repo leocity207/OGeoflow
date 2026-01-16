@@ -50,6 +50,20 @@ namespace O::DCEL
 		{
 			return Hash(x, y) == Hash(other.x, other.y);
 		}
+
+		/**
+		 * @brief Move the vertex
+		 * @param new_x new_coordinate
+		 * @param new_y 
+		 * @note does not check if the DCEL containing the moved vertex is valid
+		 * @return true always
+		 */
+		bool Move(double new_x, double new_y)
+		{
+			x = new_x;
+			y = new_y;
+			return true;
+		}
 	};
 
 } // namespace O::DCEL
