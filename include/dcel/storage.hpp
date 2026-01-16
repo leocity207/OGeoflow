@@ -129,11 +129,15 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 		if (&linking_half_edge < linking_half_edge.twin)
 		{
 			// tricks so we always move from the orginial edge and dcel keep its order
+			auto old_hash = Vertex::Hash(vertex.x, vertex.y);
 			vertex.Move(new_x, new_y);
 			if (!Merge(vertex, other_vertex, *linking_half_edge.twin)) [[unlikely]] return false;
 			// check edge order with twin to always remove in the right order
 			if (!Remove(linking_half_edge)) [[unlikely]] return false;
 			if (!Remove(other_vertex)) [[unlikely]] return false;
+			vertex_lookup.erase(old_hash);
+			vertex_lookup.emplace(Vertex::Hash(new_x, new_y), &vertex);
+
 		}
 		else
 		{

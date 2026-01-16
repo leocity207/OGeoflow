@@ -34,7 +34,7 @@ struct Last_Vertex_Exemple
 	static inline const std::vector<Merge_Exemple::Half_Edge> expected_edges =
 	{
 		{ 0,1,1,1,1,0},
-		{ 1,0,0,0,0,0},
+		{ 1,0,0,0,0,1},
 	};
 };
 
