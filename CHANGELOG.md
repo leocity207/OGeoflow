@@ -2,6 +2,12 @@
 
 ## [0.1.11] - 2025-12-09
 
+### Fix
+
+ * `DCEL`: add exception on overflow
+
+## [0.1.11] - 2025-12-09
+
 ### Added
 
  * `DCEL`: Added Move/Merge/Remove
