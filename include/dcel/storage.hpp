@@ -1,7 +1,9 @@
 #ifndef DCEL_STORAGE_HPP
 #define DCEL_STORAGE_HPP
 
+//DCEL
 #include "dcel/storage.h"
+#include "dcel/exception.h"
 
 //STD
 #include <ranges>
@@ -33,6 +35,7 @@ Vertex& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Vertex(double x
 	uint64_t key = Vertex::Hash(x, y);
 	auto it = vertex_lookup.find(key);
 	if (it != vertex_lookup.end()) return *it->second;
+	if(vertices.size() + 1 > config.max_vertices) [[unlikely]] throw Exception{Exception::VERTICES_OVERFLOW};
 	vertices.emplace_back(x, y);
 	vertex_lookup.emplace(key, &vertices.back());
 	return vertices.back();
@@ -53,6 +56,7 @@ Half_Edge& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Half_Edge(Ve
 	uint64_t key = Half_Edge::Hash(origin, head);
 	auto it = edge_lookup.find(key);
 	if (it != edge_lookup.end()) return *it->second;
+	if(vertices.size() + 1 > config.max_half_edges) [[unlikely]] throw Exception{Exception::HALF_EDGES_OVERFLOW};
 	// create new halfedge for origin->head
 	half_edges.emplace_back(origin, head);
 	edge_lookup.emplace(key, &half_edges.back());

@@ -73,6 +73,7 @@ void O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Link_Outer_Bound_F
 	{
 		if (half_edge.face)
 			continue;
+		if(m_dcel.faces.size() + 1 > m_dcel.config.max_faces) [[unlikely]] throw Exception{Exception::FACES_OVERFLOW};
 		m_dcel.faces.emplace_back( &half_edge );
 		O::Unowned_Ptr<Half_Edge> e(&half_edge);
 		do {
@@ -191,6 +192,7 @@ Face& O::DCEL::Builder::From_GeoJSON<Vertex, Half_Edge, Face>::Link_Face(std::ve
 {
 	Half_Edge& valid_start = (outer_face == nullptr) ? *ring_edge[0] : *ring_edge[1];
 	O::Unowned_Ptr<Half_Edge> current(&valid_start);
+	if(m_dcel.faces.size() + 1 > m_dcel.config.max_faces) [[unlikely]] throw Exception{Exception::FACES_OVERFLOW};
 	m_dcel.faces.emplace_back(&valid_start);
 	do {
 		current->face = &m_dcel.faces.back();
