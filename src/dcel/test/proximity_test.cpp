@@ -12,7 +12,7 @@
 #include "io/feature_parser.h"
 
 // EXEMPLE
-#include "dcel_exemple/simple_exemple.h"
+#include "proximity_exemple/simple_exemple.h"
 
 // CONFIGURATION
 #include "configuration/dcel.h"
@@ -36,14 +36,14 @@ public:
 };
 
 
-TEST(DCEL, Overflow_Vertices)
+TEST(DCEL, Proximity_Test)
 {
 
 	static O::Configuration::DCEL config{
-		1,
 		1000,
 		1000,
-		1e-9,
+		1000,
+		0.1,
 		O::Configuration::DCEL::Merge_Strategy::AT_FIRST
 	};
 
@@ -54,56 +54,8 @@ TEST(DCEL, Overflow_Vertices)
 	try {
 		reader.Parse(ss, auto_builder);
 	}
-	catch(O::DCEL::Exception& ex)
+	catch (O::DCEL::Exception& ex)
 	{
 		ASSERT_EQ(ex.type, O::DCEL::Exception::VERTICES_OVERFLOW);
-	}
-}
-
-TEST(DCEL, Overflow_Half_Edge)
-{
-
-	static O::Configuration::DCEL config{
-		100,
-		1,
-		1000,
-		1e-9,
-		O::Configuration::DCEL::Merge_Strategy::AT_FIRST
-	};
-
-	Auto_Builder auto_builder(config);
-	rapidjson::StringStream ss(Simple_Exemple::json.c_str());
-	rapidjson::Reader reader;
-
-	try {
-		reader.Parse(ss, auto_builder);
-	}
-	catch(O::DCEL::Exception& ex)
-	{
-		ASSERT_EQ(ex.type, O::DCEL::Exception::HALF_EDGES_OVERFLOW);
-	}
-}
-
-TEST(DCEL, Overflow_Face)
-{
-
-	static O::Configuration::DCEL config{
-		100,
-		1000,
-		1,
-		1e-9,
-		O::Configuration::DCEL::Merge_Strategy::AT_FIRST
-	};
-
-	Auto_Builder auto_builder(config);
-	rapidjson::StringStream ss(Simple_Exemple::json.c_str());
-	rapidjson::Reader reader;
-
-	try {
-		reader.Parse(ss, auto_builder);
-	}
-	catch(O::DCEL::Exception& ex)
-	{
-		ASSERT_EQ(ex.type, O::DCEL::Exception::FACES_OVERFLOW);
 	}
 }

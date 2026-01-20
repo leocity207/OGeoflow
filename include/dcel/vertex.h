@@ -33,9 +33,12 @@ namespace O::DCEL
 		 */
 		static uint64_t Hash(double x, double y) noexcept
 		{
-			long long fx = std::llround(x * 1e6);
-			long long fy = std::llround(y * 1e6);
-			return (static_cast<uint64_t>(static_cast<uint32_t>(fx)) << 32) | static_cast<uint64_t>(static_cast<uint32_t>(fy));
+   			const double inv = 1.0 / tol;
+
+			int64_t ix = static_cast<int64_t>(std::floor(x * inv));
+			int64_t iy = static_cast<int64_t>(std::floor(y * inv));
+
+    		return (static_cast<uint64_t>(static_cast<uint32_t>(ix)) << 32) | static_cast<uint64_t>(static_cast<uint32_t>(iy));
 		}
 
 		Vertex(double x, double y) :

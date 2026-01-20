@@ -11,10 +11,10 @@
 #include "io/feature_parser.h"
 
 // EXEMPLE
-#include "hole_exemple.h"
-#include "multi_polygon_exemple.h"
-#include "reverse_exemple.h"
-#include "simple_exemple.h"
+#include "dcel_exemple/hole_exemple.h"
+#include "dcel_exemple/multi_polygon_exemple.h"
+#include "dcel_exemple/reverse_exemple.h"
+#include "dcel_exemple/simple_exemple.h"
 
 // UTILS
 #include <utils/zip.h>
