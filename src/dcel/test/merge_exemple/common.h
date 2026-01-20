@@ -73,7 +73,8 @@ namespace Merge_Exemple
 			{
 				storage.vertices[i].outgoing_edges.push_back(&storage.half_edges[v[i].outgoing_edges[j]]);
 			}
-			storage.vertex_lookup[O::DCEL::Vertex<Half_Edge_Impl>::Hash(v[i].x, v[i].y)] = &storage.vertices[i];
+			auto vertex_temp = O::DCEL::Vertex<Half_Edge_Impl>(v[i].x, v[i].y);
+			storage.vertex_lookup[storage.Key_From_Vertex(vertex_temp)] = &storage.vertices[i];
 		}
 
 		//initialize edges

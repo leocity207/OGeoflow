@@ -24,12 +24,49 @@ namespace O::DCEL
 	template<class Vertex, class Half_Edge, class Face>
 	struct Storage
 	{
+		private:
+
+			struct Vertex_Key {
+				int64_t qx;
+				int64_t qy;
+
+				Vertex_Key(const Vertex& vertex, const O::Configuration::DCEL& config) :
+					qx(std::llround(vertex.x / config.position_tolerance)),
+					qy(std::llround(vertex.y / config.position_tolerance))
+				{
+
+				}
+
+				Vertex_Key(double x, double y, const O::Configuration::DCEL& config) :
+					qx(std::llround(x / config.position_tolerance)),
+					qy(std::llround(y / config.position_tolerance))
+				{
+
+				}
+
+				bool operator==(Vertex_Key const& o) const noexcept
+				{
+					return qx == o.qx && qy == o.qy;
+				}
+			};
+
+			struct Vertex_Hash
+			{
+				size_t operator()(Vertex_Key const& k) const noexcept
+				{
+					uint64_t a = static_cast<uint64_t>(k.qx) * 0xbf58476d1ce4e5b9ULL;
+					uint64_t b = static_cast<uint64_t>(k.qy) * 0x94d049bb133111ebULL;
+					uint64_t h = a ^ (b + 0x9e3779b97f4a7c15ULL + (a << 6) + (a >> 2));
+					return static_cast<size_t>(h);
+				}
+			};
+		public:
 		O::Configuration::DCEL config;
 		std::vector<Vertex> vertices;      ///< List of Vertex in the DCEL
 		std::vector<Half_Edge> half_edges; ///< List of Half_Edges in the DCEL
 		std::vector<Face> faces;           ///< List of Faces in the DCEL
 
-		std::unordered_map<uint64_t, O::Unowned_Ptr<Vertex>> vertex_lookup;               ///< Vertex::Hash -> vertex index in the Storage::vertices
+		std::unordered_map<Vertex_Key, O::Unowned_Ptr<Vertex>, Vertex_Hash> vertex_lookup;               ///< Vertex::Hash -> vertex index in the Storage::vertices
 		std::unordered_map<uint64_t, O::Unowned_Ptr<Half_Edge>> edge_lookup;                 ///< half_edges::Hash -> halfedge index in the Storage::half_edges
 		std::unordered_map<size_t, std::vector<O::Unowned_Ptr<Face>>> feature_to_faces; ///< feature_Idx -> list of face indices
 
@@ -95,6 +132,8 @@ namespace O::DCEL
 		Storage(const O::Configuration::DCEL& config);
 
 		bool Move(Vertex& edge, double new_x, double new_y);
+
+		Vertex_Key Key_From_Vertex(Vertex& vertex);
 
 		private:
 

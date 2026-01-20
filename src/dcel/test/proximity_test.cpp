@@ -51,11 +51,13 @@ TEST(DCEL, Proximity_Test)
 	rapidjson::StringStream ss(Simple_Exemple::json.c_str());
 	rapidjson::Reader reader;
 
-	try {
-		reader.Parse(ss, auto_builder);
-	}
-	catch (O::DCEL::Exception& ex)
+	auto opt_dcel = auto_builder.Get_Dcel();
+	ASSERT_TRUE(opt_dcel.has_value());
+	auto& dcel = opt_dcel.value();
+	for (auto&& [vertex, expected_coord] : O::Zip(dcel.vertices, Simple_Exemple::expected_coords))
 	{
-		ASSERT_EQ(ex.type, O::DCEL::Exception::VERTICES_OVERFLOW);
+		SCOPED_TRACE(std::format("vertex: {} {} but expected: {} {}", vertex.x, vertex.y, expected_coord.first, expected_coord.second));
+		EXPECT_EQ(vertex.x, expected_coord.first);
+		EXPECT_EQ(vertex.y, expected_coord.second);
 	}
 }
