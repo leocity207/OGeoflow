@@ -48,13 +48,13 @@ TEST(DCEL, Proximity_Test)
 	};
 
 	Auto_Builder auto_builder(config);
-	rapidjson::StringStream ss(Simple_Exemple::json.c_str());
+	rapidjson::StringStream ss(Simple_Proximity_Exemple::json.c_str());
 	rapidjson::Reader reader;
-
+	ASSERT_TRUE(reader.Parse(ss, auto_builder));
 	auto opt_dcel = auto_builder.Get_Dcel();
 	ASSERT_TRUE(opt_dcel.has_value());
 	auto& dcel = opt_dcel.value();
-	for (auto&& [vertex, expected_coord] : O::Zip(dcel.vertices, Simple_Exemple::expected_coords))
+	for (auto&& [vertex, expected_coord] : O::Zip(dcel.vertices, Simple_Proximity_Exemple::expected_coords))
 	{
 		SCOPED_TRACE(std::format("vertex: {} {} but expected: {} {}", vertex.x, vertex.y, expected_coord.first, expected_coord.second));
 		EXPECT_EQ(vertex.x, expected_coord.first);
