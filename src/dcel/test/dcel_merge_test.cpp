@@ -47,7 +47,7 @@ TYPED_TEST_P(Merge_Test, Nominal)
 		}
 		//std::cout<< "}" << std::endl;
 
-		EXPECT_EQ(dcel.vertex_lookup[O::DCEL::Vertex<Merge_Exemple::Half_Edge_Impl>::Hash(vertex.x, vertex.y)], &vertex);
+		EXPECT_EQ(dcel.vertex_lookup[dcel.Key_From_Vertex(vertex)], &vertex);
 	}
 
 	for (auto&& [half_edge, expected_half_edge] : O::Zip(dcel.half_edges, TypeParam::expected_edges))

@@ -12,10 +12,10 @@
 #include "io/writer.h"
 
 // EXEMPLE
-#include "hole_exemple.h"
-#include "multi_polygon_exemple.h"
-#include "reverse_exemple.h"
-#include "simple_exemple.h"
+#include "dcel_exemple/hole_exemple.h"
+#include "dcel_exemple/multi_polygon_exemple.h"
+#include "dcel_exemple/reverse_exemple.h"
+#include "dcel_exemple/simple_exemple.h"
 
 // RAPIDJSON
 #include <rapidjson/ostreamwrapper.h>

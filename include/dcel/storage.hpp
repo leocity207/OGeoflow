@@ -32,7 +32,7 @@ O::DCEL::Storage<Vertex, Half_Edge, Face>::Storage(const O::Configuration::DCEL&
 template<class Vertex, class Half_Edge, class Face>
 Vertex& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Vertex(double x, double y)
 {
-	uint64_t key = Vertex::Hash(x, y);
+	auto key = Vertex_Key(x, y, config);
 	auto it = vertex_lookup.find(key);
 	if (it != vertex_lookup.end()) return *it->second;
 	if(vertices.size() + 1 > config.max_vertices) [[unlikely]] throw Exception{Exception::VERTICES_OVERFLOW};
@@ -44,7 +44,7 @@ Vertex& O::DCEL::Storage<Vertex, Half_Edge, Face>::Get_Or_Create_Vertex(double x
 template<class Vertex, class Half_Edge, class Face>
 bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Does_Vertex_Exist(double x, double y)
 {
-	uint64_t key = Vertex::Hash(x, y);
+	auto key = Vertex_Key(x, y, config);
 	auto it = vertex_lookup.find(key);
 	return it != vertex_lookup.end();
 }
@@ -119,8 +119,8 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 {
 	if (!Does_Vertex_Exist(new_x, new_y))
 	{
-		vertex_lookup.erase(Vertex::Hash(vertex.x, vertex.y));
-		vertex_lookup.emplace(Vertex::Hash(new_x, new_y),&vertex);
+		vertex_lookup.erase(Vertex_Key(vertex, config));
+		vertex_lookup.emplace(Vertex_Key(new_x, new_y, config),&vertex);
 		return vertex.Move(new_x, new_y);
 	}
 	else
@@ -133,14 +133,14 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Move(Vertex& vertex, double new_
 		if (&linking_half_edge < linking_half_edge.twin)
 		{
 			// tricks so we always move from the orginial edge and dcel keep its order
-			auto old_hash = Vertex::Hash(vertex.x, vertex.y);
+			auto old_hash = Vertex_Key(vertex, config);
 			vertex.Move(new_x, new_y);
 			if (!Merge(vertex, other_vertex, *linking_half_edge.twin)) [[unlikely]] return false;
 			// check edge order with twin to always remove in the right order
 			if (!Remove(linking_half_edge)) [[unlikely]] return false;
 			if (!Remove(other_vertex)) [[unlikely]] return false;
 			vertex_lookup.erase(old_hash);
-			vertex_lookup.emplace(Vertex::Hash(new_x, new_y), &vertex);
+			vertex_lookup.emplace(Vertex_Key(new_x, new_y, config), &vertex);
 
 		}
 		else
@@ -214,7 +214,7 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Remove(Vertex& vertex)
 		edge->tail = &vertex;
 		edge->twin->head = &vertex;
 	}
-	vertex_lookup[Vertex::Hash(vertices.back().x, vertices.back().y)] = &vertex;
+	vertex_lookup[Vertex_Key(vertices.back(), config)] = &vertex;
 	std::swap(vertex, vertices.back());
 	vertices.pop_back();
 	return true;
@@ -226,7 +226,7 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Merge(Vertex& v_keep, Vertex& v_
 	if(!e_discard.prev || !e_discard.next || !e_discard.twin) [[unlikely]] return false;
 
 	//remove inside the lookup the vertex and edge
-	vertex_lookup.erase(Vertex::Hash(v_discard.x, v_discard.y));
+	vertex_lookup.erase(Vertex_Key(v_discard, config));
 	edge_lookup.erase(Half_Edge::Hash(*e_discard.tail, *e_discard.head));
 	edge_lookup.erase(Half_Edge::Hash(*e_discard.head, *e_discard.tail));
 
@@ -262,6 +262,12 @@ bool O::DCEL::Storage<Vertex, Half_Edge, Face>::Merge(Vertex& v_keep, Vertex& v_
 	e_discard.twin->prev->next = e_discard.twin->next;
 	e_discard.twin->next->prev = e_discard.twin->prev;
 	return true;
+}
+
+template<class Vertex, class Half_Edge, class Face>
+O::DCEL::Storage<Vertex, Half_Edge, Face>::Vertex_Key O::DCEL::Storage<Vertex, Half_Edge, Face>::Key_From_Vertex(Vertex& vertex)
+{
+	return Vertex_Key(vertex, config);
 }
 
 #endif //DCEL_STORAGE_HPP
